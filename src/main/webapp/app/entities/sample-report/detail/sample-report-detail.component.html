@@ -1,0 +1,90 @@
+<div class="d-flex justify-content-center">
+  <div class="col-15">
+    <form name="editForm" role="form" novalidate>
+      @if (sampleReport) {
+        <div>
+          <h2 data-cy="sampleReportDetailsHeading"><span>Thông tin chi tiết Mẫu biên bản kiểm tra</span></h2>
+
+          <hr />
+
+          <!-- <dl class="row-md jh-entity-details"> -->
+          <!-- <div class="mb-4">
+          <label class="form-label"><span>ID</span></label>
+          <span class="form-control">{{ sampleReport.id }}</span>
+        </div> -->
+          <div class="mb-4">
+            <label class="form-label"><span>Mã mẫu BBKT</span></label>
+
+            <span class="form-control">{{ sampleReport.code }}</span>
+          </div>
+          <div class="mb-4">
+            <label class="form-label"><span>Tên mẫu BBKT</span></label>
+
+            <span class="form-control">{{ sampleReport.name }}</span>
+          </div>
+          <div class="mb-4">
+            <label class="form-label"><span>Loại BBKT</span></label>
+
+            <span class="form-control">{{ sampleReport.reportType }}</span>
+          </div>
+          <div class="mb-4">
+            <label class="form-label"><span>Trạng thái</span></label>
+
+            <span class="form-control">{{ sampleReport.status }}</span>
+          </div>
+          <div class="mb-4">
+            <label class="form-label"><span>Thời gian tạo</span></label>
+
+            <span class="form-control">{{ sampleReport.createdAt | formatMediumDatetime }}</span>
+          </div>
+          <div class="mb-4">
+            <label class="form-label"><span>Thời gian cập nhật</span></label>
+
+            <span class="form-control">{{ sampleReport.updatedAt | formatMediumDatetime }}</span>
+          </div>
+          <div class="mb-4">
+            <label class="form-label"><span>Người cập nhật</span></label>
+
+            <span class="form-control">{{ sampleReport.updateBy }}</span>
+          </div>
+          <div class="mb-4">
+            <label class="form-label"><span>Tần suất</span></label>
+
+            <span class="form-control">{{ sampleReport.frequency }}</span>
+          </div>
+
+          <!-- <dt><span>Loại BBKT (ID)</span></dt>
+          <dd>
+            <span>{{ sampleReport.reportTypeId }}</span>
+          </dd> -->
+          <!-- </dl> -->
+          <div class="d-flex justify-content-end">
+            <table>
+              <thead>
+                <tr>
+                  <th class="text-center border">STT</th>
+                  <th class="text-center border" *ngFor="let item of listTitleHeaders">{{ item.name }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of listTitleBody; let i = index">
+                  <td class="text-center border">{{ i + 1 }}</td>
+                  <td class="text-center border" *ngFor="let data of item.data">{{ data.value }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="d-flex justify-content-end">
+            <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+              <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Quay lại</span>
+            </button>
+
+            <button type="button" [routerLink]="['/sample-report', sampleReport.id, 'edit']" class="btn btn-primary">
+              <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Sửa</span>
+            </button>
+          </div>
+        </div>
+      }
+    </form>
+  </div>
+</div>

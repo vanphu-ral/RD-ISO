@@ -1,0 +1,404 @@
+<div>
+  <div class="col-15" style="width: 100%">
+    <form name="editForm" role="form" novalidate [formGroup]="editForm">
+      <h2 id="jhi-plan-heading" data-cy="PlanCreateUpdateHeading">
+        {{ mode === 'NEW' ? 'Thêm mới' : mode === 'COPY' ? 'Sao chép' : 'Cập nhật' }} Kế hoạch đánh giá
+      </h2>
+
+      <div style="display: flex; flex-direction: column">
+        <div class="col-container">
+          <div class="col-m4-25 col-container-child">
+            <label for="field_code">Mã kế hoạch</label>
+            <input type="text" class="inp-style" name="code" id="field_code" data-cy="code" formControlName="code" readonly />
+          </div>
+
+          <div class="col-m4-25 col-container-child">
+            <label for="field_name">Tên kế hoạch</label>
+            <input
+              type="text"
+              class="inp-style"
+              name="name"
+              id="field_name"
+              data-cy="name"
+              formControlName="name"
+              [ngClass]="{ 'is-invalid': editForm.get('name')?.invalid && editForm.get('name')?.touched }"
+              required
+            />
+            <div
+              class="error-message"
+              *ngIf="editForm.get('name')?.invalid && (editForm.get('name')?.touched || editForm.get('name')?.dirty)"
+            >
+              <span *ngIf="editForm.get('name')?.errors?.['required']">Tên không được để trống </span>
+              <span *ngIf="editForm.get('name')?.errors?.['duplicate']">Tên này đã tồn tại</span>
+            </div>
+          </div>
+
+          <div class="col-m4-25 col-container-child">
+            <label for="field_subjectOfAssetmentPlan">Nhóm đối tượng kế hoạch đánh giá</label>
+            <select
+              class="inp-style"
+              name="subjectOfAssetmentPlan"
+              id="field_subjectOfAssetmentPlan"
+              data-cy="subjectOfAssetmentPlan"
+              formControlName="subjectOfAssetmentPlan"
+            >
+              <option *ngFor="let data of checkerGroups" [value]="data.name">
+                {{ data.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="col-container">
+          <div class="col-m4-25 col-container-child">
+            <label for="field_frequency">Tần suất</label>
+            <!-- <input type="text" class="inp-style" name="frequency" id="field_frequency" data-cy="frequency"
+              formControlName="frequency" /> -->
+            <select class="inp-style" name="frequency" id="field_frequency" data-cy="frequency" formControlName="frequency">
+              <option *ngFor="let freq of listOfFrequency" [value]="freq.name">
+                {{ freq.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-m4-25 col-container-child">
+            <label for="field_timeStart">Thời gian bắt đầu</label>
+
+            <input
+              id="field_timeStart"
+              data-cy="timeStart"
+              type="datetime-local"
+              class="inp-style"
+              name="timeStart"
+              formControlName="timeStart"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+
+          <div class="col-m4-25 col-container-child">
+            <label for="field_timeEnd">Thời gian kết thúc</label>
+
+            <input
+              id="field_timeEnd"
+              data-cy="timeEnd"
+              type="datetime-local"
+              class="inp-style"
+              name="timeEnd"
+              formControlName="timeEnd"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="d-flex justify-content-end">
+        <button
+          id="jh-create-entity"
+          data-cy="entityCreateButton"
+          class="btn btn-primary jh-create-entity create-plan"
+          (click)="addNewRow()"
+        >
+          <fa-icon icon="plus"></fa-icon>
+          <span>Thêm mới</span>
+        </button>
+      </div>
+      <p-table
+        [value]="listReports"
+        [paginator]="true"
+        [rows]="100"
+        [responsive]="true"
+        [scrollable]="true"
+        styleClass="p-datatable-gridlines"
+        [rowsPerPageOptions]="[5, 10, 20]"
+        [autoLayout]="true"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>STT</th>
+            <th style="min-width: 400px; width: 400px">Tên BBKT</th>
+            <th style="min-width: 200px; width: 200px">Đối tượng đánh giá</th>
+            <th style="min-width: 200px; width: 200px">Người kiểm tra</th>
+            <th style="min-width: 180px; width: 180px">Loại BBKT</th>
+            <th style="min-width: 300px; width: 300px">Mẫu BBKT</th>
+            <th style="min-width: 180px; width: 180px">Mã BBKT</th>
+            <th style="min-width: 200px; width: 200px">Tần suất kiểm tra</th>
+            <th style="min-width: 150px; width: 150px">Kiểu quy đổi</th>
+            <th style="min-width: 150px; width: 150px">Thang điểm</th>
+            <th style="min-width: 150px; width: 150px">Trạng thái</th>
+            <th style="min-width: 200px; width: 200px">Tuỳ chọn</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-index="rowIndex" let-report>
+          <tr>
+            <td>{{ index + 1 }}</td>
+            <td>
+              <input type="text" [(ngModel)]="report.name" [ngModelOptions]="{ standalone: true }" />
+            </td>
+            <td>
+              <select [(ngModel)]="report.testOfObject" [ngModelOptions]="{ standalone: true }" (click)="checkTarget()">
+                <option *ngFor="let data of checkTargets" [value]="data.name">
+                  {{ data.name }}
+                </option>
+              </select>
+            </td>
+            <td>
+              <select
+                [(ngModel)]="report.checker"
+                [ngModelOptions]="{ standalone: true }"
+                (change)="updateReportName(index, report.checker)"
+              >
+                <option *ngFor="let data of evaluators" [value]="data.name">
+                  {{ data.name }}
+                </option>
+              </select>
+            </td>
+            <td>
+              <select [(ngModel)]="report.reportType" [ngModelOptions]="{ standalone: true }">
+                <option *ngFor="let data of reportTypes" [value]="data.name">
+                  {{ data.name }}
+                </option>
+              </select>
+            </td>
+            <td>
+              <select
+                [(ngModel)]="report.sampleReportId"
+                (change)="updateReportCode($event, index)"
+                [ngModelOptions]="{ standalone: true }"
+              >
+                <option *ngFor="let data of sampleReport" [value]="data.id">
+                  {{ data.name }}
+                </option>
+              </select>
+            </td>
+            <td>
+              <input type="text" class="inp-style" [value]="report.code" readonly />
+            </td>
+            <td>
+              <select [(ngModel)]="report.frequency" [ngModelOptions]="{ standalone: true }">
+                <option *ngFor="let data of listOfFrequency" [value]="data.name">
+                  {{ data.name }}
+                </option>
+              </select>
+            </td>
+            <td>
+              <select [(ngModel)]="report.convertScore" name="report.convert" [ngModelOptions]="{ standalone: true }">
+                <option *ngFor="let item1 of listConvert" [value]="item1">{{ item1 }}</option>
+              </select>
+            </td>
+            <td>
+              <input type="text" class="inp-style" [(ngModel)]="report.scoreScale" [ngModelOptions]="{ standalone: true }" />
+            </td>
+            <td>
+              <select [(ngModel)]="report.status" name="report.status" [ngModelOptions]="{ standalone: true }">
+                <option *ngFor="let item1 of listStatusReport" [value]="item1">{{ item1 }}</option>
+              </select>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <p-button
+                  icon="pi pi-pencil"
+                  aria-label="Edit"
+                  [rounded]="true"
+                  styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+                  [severity]="'warning'"
+                  (onClick)="showDialogEdit(index)"
+                />
+                <p-button
+                  icon="pi pi-user-edit"
+                  aria-label="Gross"
+                  styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+                  [severity]="'help'"
+                  (onClick)="openModalUser(index, report)"
+                />
+                <p-button
+                  icon="pi pi-trash"
+                  aria-label="Delete"
+                  styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+                  [severity]="'danger'"
+                  (onClick)="deleteRow(index)"
+                />
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <div class="d-flex justify-content-end" style="margin-bottom: 10px">
+        <button class="btn btn-secondary" (click)="checkAllData()">
+          <span>Check data</span>
+        </button>
+      </div>
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Hủy</span>
+        </button>
+
+        <button type="submit" id="save-entity" data-cy="entityCreateSaveButton" class="btn btn-primary" (click)="save()">
+          <fa-icon icon="save"></fa-icon>&nbsp;<span>Lưu</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<ng-template #userTesting let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Phân quyền người thực hiện kiểm tra</h4>
+    <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <div class="col-md-12">
+      <div class="col-md-6">
+        <label for="checkerGroups">Nhóm người dùng</label>
+        <select class="inp-style" [(ngModel)]="userTester.checkerGroup" name="checkerGroups">
+          <option *ngFor="let data of checkerGroups" [ngValue]="data">
+            {{ data.name }}
+          </option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label for="">Người dùng</label>
+        <select class="inp-style" [(ngModel)]="userTester.name" (click)="checkEvaluator()">
+          <option *ngFor="let data of evaluator" [value]="data.name">
+            {{ data.name }}
+          </option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="modal.close(true)">Lưu</button>
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cancel click')">Hủy</button>
+  </div>
+</ng-template>
+
+<p-dialog
+  header="Chỉnh sửa BBKT"
+  [resizable]="false"
+  [modal]="true"
+  [maximizable]="true"
+  appendTo="body"
+  [(visible)]="dialogVisible"
+  [style]="{ width: '80vw' }"
+  [contentStyle]="{ height: '70vh' }"
+>
+  <div
+    *ngIf="listReports && listReports.length > 0 && selectedIndex !== undefined && selectedIndex >= 0 && selectedIndex < listReports.length"
+  >
+    <div>
+      <div class="col-container">
+        <div class="col-m4-25 col-container-child">
+          <label for="">Mã BBKT</label>
+          <input type="text" class="inp-style" name="code" id="field_code" [(ngModel)]="listReports[selectedIndex].code" />
+        </div>
+
+        <div class="col-m4-25 col-container-child">
+          <label for="">Mã mẫu BBKT</label>
+          <input type="text" class="inp-style" name="code" id="field_code" [(ngModel)]="listReports[selectedIndex].sampleReportId" />
+        </div>
+
+        <div class="col-m4-25 col-container-child">
+          <label for="">Tên BBKT</label>
+          <input type="text" class="inp-style" name="code" id="field_code" [(ngModel)]="listReports[selectedIndex].name" />
+        </div>
+
+        <div class="col-m4-25 col-container-child">
+          <label for="">Loại BBKT</label>
+          <input type="text" class="inp-style" name="code" id="field_code" [(ngModel)]="listReports[selectedIndex].reportType" />
+        </div>
+      </div>
+      <div class="col-container">
+        <div class="col-m4-25 col-container-child">
+          <label for="">Đối tượng đánh giá</label>
+          <input type="text" class="inp-style" name="code" id="field_code" [(ngModel)]="listReports[selectedIndex].testOfObject" />
+        </div>
+
+        <div class="col-m4-25 col-container-child">
+          <label for="">Người kiểm tra</label>
+          <input type="text" class="inp-style" name="code" id="field_code" [(ngModel)]="listReports[selectedIndex].checker" />
+        </div>
+
+        <div class="col-m4-25 col-container-child">
+          <label for="">Quy đổi</label>
+          <select [(ngModel)]="listReports[selectedIndex].convertScore" name="listReports[selectedIndex].convert">
+            <option>{{ listReports[selectedIndex].convertScore }}</option>
+            <option *ngFor="let item1 of listConvert" [value]="item1">{{ item1 }}</option>
+          </select>
+        </div>
+
+        <div class="col-m4-25 col-container-child">
+          <label for="">Trạng thái</label>
+          <select [(ngModel)]="listReports[selectedIndex].status" name="listReports[selectedIndex].status">
+            <option>{{ listReports[selectedIndex].status }}</option>
+            <option *ngFor="let item1 of listStatusReport" [value]="item1">{{ item1 }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex justify-content-end">
+    <button type="button" class="btn btn-info" (click)="addNewRowBBKT(listReports[selectedIndex])">
+      <span>Thêm dòng</span>
+    </button>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <table>
+      <thead>
+        <tr>
+          <th class="text-center border">STT</th>
+          <th class="text-center border" *ngFor="let item of listReports[selectedIndex]?.detail?.header">{{ item.name }}</th>
+          <th class="text-center border">Tần suất</th>
+          <th class="text-center border">Tuỳ chọn</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of listReports[selectedIndex]?.detail?.body; let i = index">
+          <td class="text-center border">{{ i + 1 }}</td>
+          <td class="text-center border" *ngFor="let data of item.data; let j = index">
+            <select
+              [(ngModel)]="data.value"
+              name="data.value-{{ j }}"
+              [ngModelOptions]="{ standalone: true }"
+              (click)="checkEvent(data.header, selectedIndex)"
+            >
+              <option>{{ data.value }}</option>
+              <option *ngFor="let item1 of listSuggestions" [value]="item1">{{ item1 }}</option>
+            </select>
+          </td>
+          <td class="text-center border">
+            <select [(ngModel)]="item.frequency" [ngModelOptions]="{ standalone: true }">
+              <option *ngFor="let frequency of listOfFrequency" [value]="frequency.name">{{ frequency.name }}</option>
+            </select>
+          </td>
+          <td class="text-center border">
+            <button
+              type="button"
+              id="cancel-save"
+              data-cy="entityCreateCancelButton"
+              class="btn btn-secondary"
+              (click)="deleteRowBBKT(i, item)"
+            >
+              <fa-icon icon="ban"></fa-icon>&nbsp;<span>Xoá</span>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <ng-template pTemplate="footer">
+    <div class="action-buttons">
+      <p-button
+        label="Huỷ"
+        icon="pi pi-ban"
+        (onClick)="dialogVisible = false"
+        styleClass="p-button-rounded p-button-info p-button-sm mr-2 gross-btn"
+        severity="danger"
+      />
+      <p-button
+        label="Lưu"
+        icon="pi pi-save"
+        (onClick)="dialogVisible = false"
+        styleClass="p-button-rounded p-button-info p-button-sm mr-2 gross-btn"
+        severity="info"
+      />
+    </div>
+  </ng-template>
+</p-dialog>

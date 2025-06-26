@@ -1,0 +1,147 @@
+<div class="d-flex justify-content-center">
+  <div class="col-15">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-report-heading" data-cy="ReportCreateUpdateHeading">
+        {{ editForm.controls.id.value ? 'Cập nhật Biên bản kiểm tra' : 'Thêm mới Biên bản kiểm tra' }}
+      </h2>
+
+      <div>
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-5">
+            <label class="form-label" jhiTranslate="global.field.id" for="field_id">ID</label>
+            <input
+              type="number"
+              class="form-control"
+              name="id"
+              id="field_id"
+              data-cy="id"
+              formControlName="id"
+              [readonly]="true"
+              readonly
+            />
+          </div>
+        }
+
+        <div class="mb-5">
+          <label class="form-label" for="field_code">Mã biên bản kiểm tra</label>
+          <input type="text" class="form-control" name="code" id="field_code" data-cy="code" formControlName="code" readonly />
+        </div>
+
+        <div class="mb-5">
+          <label class="form-label" for="field_name">Tên biên bản kiểm tra</label>
+          <input
+            type="text"
+            class="form-control"
+            name="name"
+            id="field_name"
+            data-cy="name"
+            formControlName="name"
+            [ngClass]="{ 'is-invalid': editForm.get('name')?.invalid && editForm.get('name')?.touched }"
+            required
+          />
+          <div
+            class="error-message"
+            *ngIf="editForm.get('name')?.invalid && (editForm.get('name')?.touched || editForm.get('name')?.dirty)"
+          >
+            <span *ngIf="editForm.get('name')?.errors?.['required']">Tên không được để trống </span>
+            <span *ngIf="editForm.get('name')?.errors?.['duplicate']">Tên này đã tồn tại</span>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label" for="field_sampleReportId">Mẫu biên bản kiểm tra</label>
+          <select [(ngModel)]="sampleReport" [ngModelOptions]="{ standalone: true }" (change)="updateSampleReportId()">
+            <option value=""></option>
+            <option *ngFor="let item of sampleReports" [value]="item[1]">{{ item[1] }}({{ item[2] }})</option>
+          </select>
+        </div>
+
+        <div class="mb-8">
+          <label class="form-label" for="field_testOfObject">Đối tượng kiểm tra</label>
+          <input
+            type="text"
+            class="form-control"
+            name="testOfObject"
+            id="field_testOfObject"
+            data-cy="testOfObject"
+            formControlName="testOfObject"
+          />
+        </div>
+
+        <div class="mb-8">
+          <label class="form-label" for="field_checker">Người kiểm tra</label>
+          <input type="text" class="form-control" name="checker" id="field_checker" data-cy="checker" formControlName="checker" />
+        </div>
+
+        <div class="mb-8">
+          <label class="form-label" for="field_status">Trạng thái</label>
+          <input type="text" class="form-control" name="status" id="field_status" data-cy="status" formControlName="status" />
+        </div>
+
+        <div class="mb-8">
+          <label class="form-label" for="field_scoreScale">Thang điểm</label>
+          <input
+            type="text"
+            class="form-control"
+            name="scoreScale"
+            id="field_scoreScale"
+            data-cy="scoreScale"
+            formControlName="scoreScale"
+          />
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-info" (click)="addNewRow()">
+          <span>Thêm dòng</span>
+        </button>
+      </div>
+
+      <div class="d-flex justify-content-end">
+        <table>
+          <thead>
+            <tr>
+              <th class="text-center border">STT</th>
+              <th class="text-center border" *ngFor="let item of listTitleHeaders">{{ item.name }}</th>
+              <!-- <th class="text-center border">Hình ảnh đánh giá</th> -->
+              <th class="text-center border">Tuỳ chọn</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of listTitleBody; let i = index">
+              <td class="text-center border">{{ i + 1 }}</td>
+              <td class="text-center border" *ngFor="let data of item.data">
+                <select [(ngModel)]="data.value" [ngModelOptions]="{ standalone: true }" (click)="checkEvent(data.header)">
+                  <option>{{ data.value }}</option>
+                  <option *ngFor="let item1 of listSuggestions" [value]="item1">{{ item1 }}</option>
+                </select>
+              </td>
+              <!-- <td class="text-center border"><input type="image" /></td> -->
+              <td class="text-center border">
+                <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="deleteRow(i)">
+                  <fa-icon icon="ban"></fa-icon>&nbsp;<span>Xoá</span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span>Hủy</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span>Lưu</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,123 @@
+<div class="d-flex justify-content-center">
+  <div class="col-15">
+    <form name="editForm" role="form" novalidate>
+      @if (report) {
+        <div>
+          <h2 data-cy="reportDetailsHeading"><span>Thông tin chi tiết Biên bản kiểm tra</span></h2>
+
+          <hr />
+          <div class="mb-4">
+            <label class="form-label"><span>ID</span></label>
+
+            <span class="form-control">{{ report.id }}</span>
+          </div>
+          <div class="mb-4">
+            <label class="form-label"><span>Tên BBKT</span></label>
+
+            <span class="form-control">{{ report.name }}</span>
+          </div>
+          <div class="mb-4">
+            <label class="form-label"><span>Mã BBKT</span></label>
+
+            <span class="form-control">{{ report.code }}</span>
+          </div>
+          <!-- <div class="mb-4">
+
+             <label  class="form-label"><span>Sample Report Id</span></label>
+
+               <span>{{ report.sampleReportId }}</span>
+          </div> -->
+          <div class="mb-4">
+            <label class="form-label"><span>Đối tượng kiểm tra</span></label>
+
+            <span class="form-control">{{ report.testOfObject }}</span>
+          </div>
+          <div class="mb-4">
+            <label class="form-label"><span>Người kiểm tra</span></label>
+
+            <span class="form-control">{{ report.checker }}</span>
+          </div>
+          <div class="mb-4">
+            <label class="form-label"><span>Trạng thái</span></label>
+
+            <span class="form-control">{{ report.status }}</span>
+          </div>
+          <div class="mb-4">
+            <label class="form-label"><span>Tần suất</span></label>
+
+            <span class="form-control">{{ report.frequency }}</span>
+          </div>
+          <div class="mb-4">
+            <label class="form-label"><span>Loại BBKT</span></label>
+
+            <span class="form-control">{{ report.reportType }}</span>
+          </div>
+          <!-- <div class="mb-4">
+
+          <label class="form-label"><span>Report Type Id</span></label>
+
+          <span class="form-control">{{ report.reportTypeId }}</span>
+        </div> -->
+          <div class="mb-4">
+            <label class="form-label"><span>Thời gian tạo</span></label>
+
+            <span class="form-control">{{ report.createdAt | formatMediumDatetime }}</span>
+          </div>
+          <div class="mb-4">
+            <label class="form-label"><span>Thời gian cập nhật</span></label>
+
+            <span class="form-control">{{ report.updatedAt | formatMediumDatetime }}</span>
+          </div>
+          <div class="mb-4">
+            <label class="form-label"><span>Thang điểm</span></label>
+
+            <span class="form-control">{{ report.scoreScale }}</span>
+          </div>
+          <div class="mb-4">
+            <label class="form-label"><span>Người cập nhật</span></label>
+
+            <span class="form-control">{{ report.updateBy }}</span>
+          </div>
+          <!-- <div class="mb-4">
+
+          <label class="form-label"><span>Plan Id</span></label>
+
+          <span class="form-control">{{ report.planId }}</span>
+        </div> -->
+          <!-- <div class="mb-4">
+
+          <label class="form-label"><span>User</span></label>
+
+          <span class="form-control">{{ report.user }}</span>
+        </div> -->
+
+          <div class="d-flex jusstify-content-end">
+            <table>
+              <thead>
+                <tr>
+                  <th class="text-center border">STT</th>
+                  <th class="text-center border" *ngFor="let item of listTitleHeaders">{{ item.name }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of listTitleBody; let i = index">
+                  <td class="text-center border">{{ i + 1 }}</td>
+                  <td class="text-center border" *ngFor="let data of item.data">
+                    <span>{{ data.value }}</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+            <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Quay lại</span>
+          </button>
+
+          <button type="button" [routerLink]="['/report', report.id, 'edit']" class="btn btn-primary">
+            <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Sửa</span>
+          </button>
+        </div>
+      }
+    </form>
+  </div>
+</div>
