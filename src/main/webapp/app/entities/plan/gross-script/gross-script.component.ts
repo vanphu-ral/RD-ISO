@@ -440,6 +440,7 @@ export class GrossScriptComponent {
   }
 
   openGroupReportModal(): void {
+    this.groupReportData.checker = this.account.login;
     this.modalService
       .open(this.groupReport, {
         ariaLabelledBy: 'modal-basic-title',

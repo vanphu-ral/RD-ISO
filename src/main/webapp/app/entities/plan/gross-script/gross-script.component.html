@@ -83,7 +83,7 @@
         <th>Mã BBKT</th>
         <th>Tên BBKT</th>
         <th>Đối tượng KT</th>
-        <th>Loại BBKT</th>
+        <th>Người kiểm tra</th>
         <th>Trạng thái</th>
         <th>Gộp</th>
       </tr>
@@ -131,7 +131,7 @@
         <td>{{ script.code }}</td>
         <td>{{ script.name }}</td>
         <td>{{ script.testOfObject }}</td>
-        <td>{{ script.reportType }}</td>
+        <td>{{ script.checker }}</td>
         <td><p-tag [value]="script.status" [severity]="getSeverity(script.status)"></p-tag></td>
         <td>
           <!-- <p-checkbox
@@ -141,7 +141,7 @@
             [falseValue]="0"
             (onChange)="checkGroupSelected()"
           ></p-checkbox> -->
-          <p-tableCheckbox [value]="script" />
+          <p-tableCheckbox [value]="script" *ngIf="script.checker == account.login" />
         </td>
       </tr>
     </ng-template>
