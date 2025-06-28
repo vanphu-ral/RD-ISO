@@ -278,7 +278,12 @@ export class PlanUpdateComponent implements OnInit {
 
   save(): void {
     this.isSaving = true;
-    const plan = this.planFormService.getPlan(this.editForm);
+    const formPlan = this.planFormService.getPlan(this.editForm);
+    const plan = {
+      ...formPlan,
+      createBy: formPlan.createBy ?? this.plan?.createBy,
+      updatedAt: formPlan.updatedAt ?? this.plan?.updatedAt,
+    };
     if (plan.id === null || this.mode === 'COPY') {
       // Create mode
       const newPlan = { ...plan, id: null };
@@ -300,6 +305,7 @@ export class PlanUpdateComponent implements OnInit {
     } else {
       // Update mode
       plan.updateBy = this.account?.login;
+      plan.updatedAt = dayjs(new Date());
       this.planService.update(plan).subscribe(response => {
         const savedPlan = response.body;
         if (savedPlan) {
