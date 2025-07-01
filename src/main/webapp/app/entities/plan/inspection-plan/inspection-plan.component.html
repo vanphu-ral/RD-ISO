@@ -94,7 +94,20 @@
       <div class="row">
         <div class="col">
           <label for="userNameGroups">Tên kế hoạch khắc phục</label>
-          <input type="text" name="name" [(ngModel)]="groupCriterialError.name" required class="form-control w-100" />
+          <input
+            type="text"
+            name="name"
+            [(ngModel)]="groupCriterialError.name"
+            required
+            class="form-control w-100"
+            [style.borderColor]="!groupCriterialError.name || isNameDuplicate ? '#f44336' : ''"
+            [style.borderLeft]="!groupCriterialError.name || isNameDuplicate ? '3px solid #e74c3c' : ''"
+            (ngModelChange)="duplicateNameValidator(groupCriterialError.name)"
+          />
+          <div class="error-message">
+            <span *ngIf="!groupCriterialError.name">Tên không được để trống </span>
+            <span *ngIf="isNameDuplicate">Tên này đã tồn tại</span>
+          </div>
         </div>
       </div>
       <div class="row">
@@ -179,7 +192,7 @@
         type="button"
         styleClass="p-button-rounded p-button-info p-button-sm mr-2"
         [severity]="'success'"
-        [disabled]="!groupCriterialError.name || !groupCriterialError.createdBy || !groupCriterialError.repairDate"
+        [disabled]="!groupCriterialError.name || !groupCriterialError.createdBy || !groupCriterialError.repairDate || isNameDuplicate"
         (onClick)="saveRemediationPlan(groupCriterialError)"
         >Gộp</p-button
       >

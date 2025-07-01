@@ -1,11 +1,11 @@
 import { ChangeDetectorRef, Component, inject, NgZone, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, Observable } from 'rxjs';
-import { finalize, switchMap } from 'rxjs/operators';
+import { forkJoin, Observable, of } from 'rxjs';
+import { catchError, finalize, map, switchMap } from 'rxjs/operators';
 
 import SharedModule from 'app/shared/shared.module';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 
 import { IPlan } from '../plan.model';
@@ -228,6 +228,9 @@ export class PlanUpdateComponent implements OnInit {
         this.editForm.patchValue({ code }, { emitEvent: false });
       }
     });
+    this.editForm.get('name')?.addValidators([Validators.required]);
+    this.editForm.get('name')?.setAsyncValidators([this.duplicateNameValidator.bind(this)]);
+    this.editForm.get('name')?.updateValueAndValidity();
     this.accountService.identity().subscribe(account => {
       this.account = account;
 
@@ -237,6 +240,19 @@ export class PlanUpdateComponent implements OnInit {
         });
       }
     });
+  }
+
+  duplicateNameValidator(control: AbstractControl): Observable<ValidationErrors | null> {
+    if (!control.value) {
+      return of(null);
+    }
+    if (this.plan && this.plan.name === control.value) {
+      return of(null);
+    }
+    return this.planService.checkNameExists(control.value).pipe(
+      map(isDuplicate => (isDuplicate ? { duplicate: true } : null)),
+      catchError(() => of(null)),
+    );
   }
 
   showHelp(): void {
@@ -277,6 +293,9 @@ export class PlanUpdateComponent implements OnInit {
   }
 
   save(): void {
+    if (!this.checkAllData()) {
+      return;
+    }
     this.isSaving = true;
     const formPlan = this.planFormService.getPlan(this.editForm);
     const plan = {
@@ -317,21 +336,32 @@ export class PlanUpdateComponent implements OnInit {
     }
   }
 
-  checkAllData(): void {
-    // Raw data for BE
-
-    // Formatted data with names
-    const formattedData = this.planDetailResults.map((row, index) => ({
-      checkLevel: this.checkLevels.find(x => x.id === row.checkLevelId)?.name,
-      checkTarget: this.checkTargets.find(x => x.id === row.checkTargetId)?.name,
-      reportType: this.reportTypes.find(x => x.id === row.reportTypeId)?.name,
-      sampleReport: this.sampleReport.find(x => x.id === row.sampleReportId)?.name,
-      code: row.code,
-      testOfObject: row.testOfObject,
-      frequency: this.listOfFrequency[index].id,
-      scoreScale: row.scoreScale,
-    }));
+  checkAllData(): boolean {
+    for (let i = 0; i < this.listReports.length; i++) {
+      const r = this.listReports[i];
+      if (
+        !r.name ||
+        !r.testOfObject ||
+        !r.checker ||
+        !r.reportType ||
+        !r.sampleReportId ||
+        !r.frequency ||
+        !r.convertScore ||
+        !r.scoreScale ||
+        !r.status
+      ) {
+        Swal.fire({
+          title: 'Error',
+          text: `Dòng ${i + 1} có trường bị bỏ trống.`,
+          icon: 'error',
+          confirmButtonText: 'OK',
+        });
+        return false;
+      }
+    }
+    return true;
   }
+
   generateCode(name: string): string {
     const currentDate = dayjs().format('DDMMYYYYHHmm');
     const initials = name

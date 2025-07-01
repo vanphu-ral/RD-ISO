@@ -112,6 +112,10 @@ export class PlanGroupComponent implements OnInit {
     });
   }
 
+  hasAnyAuthority(authorities: string[]): boolean {
+    return this.accountService.hasAnyAuthority(authorities);
+  }
+
   toggleSelectAll(): void {
     this.selectAll = !this.selectAll;
   }

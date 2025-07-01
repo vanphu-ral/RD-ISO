@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, inject, NgZone, TemplateRef, ViewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { AbstractControl, FormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormatMediumDatetimePipe } from 'app/shared/date';
@@ -111,6 +111,7 @@ export class GrossScriptComponent {
   selectedReports: any[] = [];
   originalGrossScripts: any[] = [];
   account: any = {};
+  isNameDuplicate: boolean = false;
 
   constructor(
     protected modalService: NgbModal,
@@ -155,6 +156,25 @@ export class GrossScriptComponent {
     this.accountService.identity().subscribe(account => {
       this.account = account;
     });
+  }
+
+  duplicateNameValidator(name: string | null): void {
+    if (!name) {
+      this.isNameDuplicate = false;
+      return;
+    }
+    this.planGroupService.checkNameExists(name).subscribe({
+      next: isDuplicate => {
+        this.isNameDuplicate = isDuplicate;
+      },
+      error: () => {
+        this.isNameDuplicate = false;
+      },
+    });
+  }
+
+  hasAnyAuthority(authorities: string[]): boolean {
+    return this.accountService.hasAnyAuthority(authorities);
   }
 
   toggleSelectAll(): void {

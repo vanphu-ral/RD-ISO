@@ -4,7 +4,19 @@ import { ApplicationConfigService } from 'app/core/config/application-config.ser
 import { Observable, map } from 'rxjs';
 import dayjs from 'dayjs/esm';
 import { createRequestOption } from 'app/core/request/request-util';
-
+export interface IGrossScript {
+  id: number;
+  code?: string | null;
+  name?: string | null;
+  planId?: number | null;
+  checker?: string | null;
+  checkDate?: dayjs.Dayjs | null;
+  type?: string | null;
+  createdAt?: dayjs.Dayjs | null;
+  updatedAt?: dayjs.Dayjs | null;
+  createdBy?: string | null;
+  status?: string | null;
+}
 export type EntityResponseType = HttpResponse<any>;
 export type EntityArrayResponseType = HttpResponse<any[]>;
 
@@ -20,6 +32,10 @@ export class PlanGroupService {
     return this.http
       .get<any[]>(this.resourceUrl, { params: options, observe: 'response' })
       .pipe(map((res: HttpResponse<any[]>) => this.convertResponseArrayFromServer(res)));
+  }
+
+  checkNameExists(name: string): Observable<boolean> {
+    return this.http.get<IGrossScript[]>(this.resourceUrl).pipe(map(converts => converts.some(convert => convert.name === name)));
   }
 
   find(id: number): Observable<EntityResponseType> {
