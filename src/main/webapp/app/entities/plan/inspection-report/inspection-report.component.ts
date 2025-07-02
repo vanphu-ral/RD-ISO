@@ -91,6 +91,7 @@ export class InspectionReportComponent implements OnInit {
   completeRemePlan: any[] = [];
   selectedRecheckCriterial: any[] = [];
   remediationPlanInfo: any = {};
+  isNameDuplicate: boolean = false;
 
   constructor(
     protected modalService: NgbModal,
@@ -179,6 +180,21 @@ export class InspectionReportComponent implements OnInit {
         });
         this.days = Array.from({ length: 31 }, (_, i) => i + 1);
       });
+    });
+  }
+
+  duplicateNameValidator(name: string | null): void {
+    if (!name) {
+      this.isNameDuplicate = false;
+      return;
+    }
+    this.remediationPlanService.checkNameExistsByReport(name, this.report.id).subscribe({
+      next: isDuplicate => {
+        this.isNameDuplicate = isDuplicate;
+      },
+      error: () => {
+        this.isNameDuplicate = false;
+      },
     });
   }
 

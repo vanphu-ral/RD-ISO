@@ -1,8 +1,21 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
-import { Observable } from 'rxjs';
-
+import dayjs from 'dayjs/esm';
+import { map, Observable } from 'rxjs';
+export interface IRemediationPlanGroup {
+  id: number;
+  code?: string | null;
+  name?: string | null;
+  reportId?: number | null;
+  planId?: number | null;
+  repairDate?: dayjs.Dayjs | null;
+  createdAt?: dayjs.Dayjs | null;
+  updatedAt?: dayjs.Dayjs | null;
+  createdBy?: string | null;
+  type?: string | null;
+  status?: string | null;
+}
 @Injectable({ providedIn: 'root' })
 export class RemediationPlanService {
   protected http = inject(HttpClient);
@@ -11,6 +24,18 @@ export class RemediationPlanService {
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/remediation-plan');
   protected resourceDetailUrl = this.applicationConfigService.getEndpointFor('api/remediation-plan-detail');
   protected resourceRecheckDetailUrl = this.applicationConfigService.getEndpointFor('api/recheck-remediation-plan-detail');
+
+  checkNameExistsByReport(name: string, reportId: number): Observable<boolean> {
+    return this.http
+      .get<IRemediationPlanGroup[]>(`${this.resourceUrl}/report-id/${reportId}`)
+      .pipe(map(converts => converts.some(convert => convert.name === name)));
+  }
+
+  checkNameExistsByPlan(name: string, planId: number): Observable<boolean> {
+    return this.http
+      .get<IRemediationPlanGroup[]>(`${this.resourceUrl}/plan-id/${planId}`)
+      .pipe(map(converts => converts.some(convert => convert.name === name)));
+  }
 
   getListByReportId(id: number): Observable<HttpResponse<any>> {
     return this.http.get<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
