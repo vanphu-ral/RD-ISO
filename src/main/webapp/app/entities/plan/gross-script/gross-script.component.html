@@ -83,7 +83,7 @@
         <th>Mã BBKT</th>
         <th>Tên BBKT</th>
         <th>Đối tượng KT</th>
-        <th>Loại BBKT</th>
+        <th>Người kiểm tra</th>
         <th>Trạng thái</th>
         <th>Gộp</th>
       </tr>
@@ -131,7 +131,7 @@
         <td>{{ script.code }}</td>
         <td>{{ script.name }}</td>
         <td>{{ script.testOfObject }}</td>
-        <td>{{ script.reportType }}</td>
+        <td>{{ script.checker }}</td>
         <td><p-tag [value]="script.status" [severity]="getSeverity(script.status)"></p-tag></td>
         <td>
           <!-- <p-checkbox
@@ -141,7 +141,7 @@
             [falseValue]="0"
             (onChange)="checkGroupSelected()"
           ></p-checkbox> -->
-          <p-tableCheckbox [value]="script" />
+          <p-tableCheckbox [value]="script" *ngIf="script.checker == account.login || hasAnyAuthority(['ROLE_ISO_ADMIN'])" />
         </td>
       </tr>
     </ng-template>
@@ -387,7 +387,20 @@
       <div class="row">
         <div class="col">
           <label for="userNameGroups">Tên kế hoạch gộp</label>
-          <input type="text" name="name" [(ngModel)]="groupReportData.name" required class="form-control" />
+          <input
+            type="text"
+            name="name"
+            [(ngModel)]="groupReportData.name"
+            required
+            class="form-control"
+            [style.borderColor]="!groupReportData.name || isNameDuplicate ? '#f44336' : ''"
+            [style.borderLeft]="!groupReportData.name || isNameDuplicate ? '3px solid #e74c3c' : ''"
+            (ngModelChange)="duplicateNameValidator(groupReportData.name)"
+          />
+          <div class="error-message">
+            <span *ngIf="!groupReportData.name">Tên không được để trống </span>
+            <span *ngIf="isNameDuplicate">Tên này đã tồn tại</span>
+          </div>
         </div>
       </div>
       <div class="row">
@@ -415,7 +428,9 @@
     </div>
 
     <div class="modal-footer">
-      <button type="submit" class="btn btn-primary" [disabled]="form.invalid" (click)="saveGroupReport(groupReportData)">Lưu</button>
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid || isNameDuplicate" (click)="saveGroupReport(groupReportData)">
+        Lưu
+      </button>
       <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cancel click')">Hủy</button>
     </div>
   </form>

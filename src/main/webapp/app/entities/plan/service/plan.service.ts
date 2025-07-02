@@ -41,6 +41,10 @@ export class PlanService {
     return this.http.post<RestPlan>(this.resourceUrl, copy, { observe: 'response' }).pipe(map(res => this.convertResponseFromServer(res)));
   }
 
+  checkNameExists(name: string): Observable<boolean> {
+    return this.http.get<IPlan[]>(this.resourceUrl).pipe(map(converts => converts.some(convert => convert.name === name)));
+  }
+
   // custom API plan-detail
   getPlanDetail(): Observable<any> {
     return this.http.get<any>(this.planDetailUrl);

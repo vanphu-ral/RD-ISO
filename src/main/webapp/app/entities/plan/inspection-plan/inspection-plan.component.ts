@@ -71,6 +71,7 @@ export class InspectionPlanComponent implements OnInit {
   dialogVisibility: { [key: string]: boolean } = {};
   criterialSelected: any = {};
   listReCheckRemediationPlan: any[] = [];
+  isNameDuplicate: boolean = false;
 
   constructor(
     protected activatedRoute: ActivatedRoute,
@@ -100,6 +101,21 @@ export class InspectionPlanComponent implements OnInit {
       const today = new Date();
       this.groupCriterialError.repairDate = today.toISOString().substring(0, 10);
     }
+  }
+
+  duplicateNameValidator(name: string | null): void {
+    if (!name) {
+      this.isNameDuplicate = false;
+      return;
+    }
+    this.remediationPlanService.checkNameExistsByPlan(name, this.plan.id).subscribe({
+      next: isDuplicate => {
+        this.isNameDuplicate = isDuplicate;
+      },
+      error: () => {
+        this.isNameDuplicate = false;
+      },
+    });
   }
 
   // region
