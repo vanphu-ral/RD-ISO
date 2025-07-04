@@ -81,6 +81,10 @@ export class PlanGroupComponent implements OnInit {
   first: number = 0;
   selectedPageSize: number = 10;
   account: any = {};
+  dialogSummaryOfCriteriaConclusion: boolean = false;
+  criteriaSummaries: any[] = [];
+  dialogViewImage: boolean = false;
+  listImgReports: any[] = [];
 
   constructor(
     protected modalService: NgbModal,
@@ -125,13 +129,15 @@ export class PlanGroupComponent implements OnInit {
       return;
     }
     this.plantGroupResult = this.listPlanGroups.filter(planGr => {
-      const checkDate = planGr.checkDate ? new Date(planGr.checkDate).toISOString().split('T')[0] : '';
-      const searchCreatedDate = this.filters.checkDate ? new Date(this.filters.checkDate).toISOString().split('T')[0] : '';
+      const checkDate = planGr.checkDate ? new Date(planGr.checkDate) : null;
+      const filterDate = this.filters.checkDate ? new Date(this.filters.checkDate) : null;
+      const checkDateStr = checkDate ? checkDate.toLocaleDateString('en-CA') : '';
+      const filterDateStr = filterDate ? filterDate.toLocaleDateString('en-CA') : '';
       return (
         (!this.filters.name || planGr.name?.toLowerCase().includes(this.filters.name.toLowerCase())) &&
         (!this.filters.checker || planGr.checker?.toLowerCase().includes(this.filters.checker.toLowerCase())) &&
         (!this.filters.type || planGr.type?.toLowerCase().includes(this.filters.type.toLowerCase())) &&
-        (!this.filters.checkDate || checkDate === searchCreatedDate) &&
+        (!this.filters.checkDate || checkDateStr === filterDateStr) &&
         (!this.filters.status || planGr.status?.toString().includes(this.filters.status))
       );
     });
@@ -383,5 +389,31 @@ export class PlanGroupComponent implements OnInit {
       },
       reject: () => {},
     });
+  }
+
+  onEvaluationToggle(item: any): void {
+    if (item.hasEvaluation === 0) {
+      item.result = null;
+      item.note = '';
+      item.image = [];
+    }
+  }
+
+  showResultEval(data: any) {
+    this.planGroupService.findAllDetail(data.id).subscribe(res => {
+      this.criteriaSummaries = res.body;
+      this.criteriaSummaries = this.criteriaSummaries.every(item => item.result === null) ? [] : this.criteriaSummaries;
+      this.criteriaSummaries.sort((a: any, b: any) => {
+        if (a.criterialGroupName < b.criterialGroupName) return -1;
+        if (a.criterialGroupName > b.criterialGroupName) return 1;
+        return 0;
+      });
+    });
+    this.dialogSummaryOfCriteriaConclusion = true;
+  }
+
+  showDialogViewImg(data: any) {
+    this.listImgReports = JSON.parse(data);
+    this.dialogViewImage = true;
   }
 }

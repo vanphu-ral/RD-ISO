@@ -132,15 +132,20 @@ export class FieldsComponent implements OnInit {
       return;
     }
 
-    this.fieldResult = this.fields.filter(
-      item =>
+    this.fieldResult = this.fields.filter(item => {
+      const createdDate = item.createdAt ? new Date(item.createdAt.toDate()).toISOString().split('T')[0] : '';
+      const updatedDate = item.updatedAt ? new Date(item.updatedAt.toDate()).toISOString().split('T')[0] : '';
+      const searchCreatedDate = this.filters.createdAt ? new Date(this.filters.createdAt).toISOString().split('T')[0] : '';
+      const searchUpdatedDate = this.filters.updatedAt ? new Date(this.filters.updatedAt).toISOString().split('T')[0] : '';
+      return (
         (!this.filters.name || item.name?.toLowerCase().includes(this.filters.name.toLowerCase())) &&
         (!this.filters.fieldName || item.fieldName?.toLowerCase().includes(this.filters.fieldName.toLowerCase())) &&
         (!this.filters.sourceId || item.sourceId?.toString().includes(this.filters.sourceId)) &&
-        (!this.filters.createdAt || item.createdAt?.toString().includes(this.filters.createdAt)) &&
-        (!this.filters.updatedAt || item.updatedAt?.toString().includes(this.filters.updatedAt)) &&
-        (!this.filters.createBy || item.createBy?.toLowerCase().includes(this.filters.createBy.toLowerCase())),
-    );
+        (!this.filters.createdAt || createdDate === searchCreatedDate) &&
+        (!this.filters.updatedAt || updatedDate === searchUpdatedDate) &&
+        (!this.filters.createBy || item.createBy?.toLowerCase().includes(this.filters.createBy.toLowerCase()))
+      );
+    });
     this.totalRecords = this.fieldResult.length;
   }
 

@@ -92,6 +92,7 @@ export class InspectionReportComponent implements OnInit {
   selectedRecheckCriterial: any[] = [];
   remediationPlanInfo: any = {};
   isNameDuplicate: boolean = false;
+  disableCheckComplete: boolean = false;
 
   constructor(
     protected modalService: NgbModal,
@@ -112,10 +113,6 @@ export class InspectionReportComponent implements OnInit {
     this.convertService.query().subscribe(res => {
       this.listEvalReportBase = res.body;
     });
-    if (!this.groupCriterialError.repairDate) {
-      const today = new Date();
-      this.groupCriterialError.repairDate = today.toISOString().substring(0, 10);
-    }
     this.activatedRoute.data.pipe(take(1)).subscribe(({ report }) => {
       this.report = report;
       this.reloadRemediationTableData(report.id);
@@ -299,7 +296,16 @@ export class InspectionReportComponent implements OnInit {
       this.remediationPlanService.createRemediationPlanDetail(arrCriterialErr).subscribe(repo => {
         this.reloadRemediationTableData(this.report.id);
         this.groupCriterialError = {};
-        this.selectedCriterialError = [];
+        this.selectedlistCriterialError = [];
+        this.listCriterialError = this.listCriterialError.map(item => {
+          return {
+            ...item,
+            solution: '',
+            description: '',
+            userHandle: null,
+            planTimeComplete: null,
+          };
+        });
         this.dialogUpdateRemePlan = false;
       });
     });
@@ -507,7 +513,8 @@ export class InspectionReportComponent implements OnInit {
     this.dialogRepairCriterial = false;
   }
 
-  showDialogComplete(data: any) {
+  showDialogComplete(data: any, isView: boolean = false) {
+    this.disableCheckComplete = isView;
     this.remediationPlanInfo = data;
     this.remediationPlanService.getRemediationPlanWithFullDetails(data.id).subscribe(res => {
       this.completeRemePlan = res.body.details || [];
@@ -557,5 +564,13 @@ export class InspectionReportComponent implements OnInit {
 
   exportToExcel() {
     this.exportExcelService.exportToExcel(this.report.id);
+  }
+
+  openDialogRepair() {
+    this.dialogUpdateRemePlan = true;
+    if (!this.groupCriterialError.repairDate) {
+      const today = new Date();
+      this.groupCriterialError.repairDate = today.toISOString().substring(0, 10);
+    }
   }
 }

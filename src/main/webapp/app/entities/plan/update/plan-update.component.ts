@@ -190,6 +190,7 @@ export class PlanUpdateComponent implements OnInit {
 
     this.sampleReportService.getAllCheckTargets().subscribe(res => {
       this.sampleReport = res;
+      this.sampleReport = this.sampleReport.filter(report => report.status !== 'DEACTIVATE');
     });
 
     this.convertService.getTypes().subscribe((converts: any) => {
@@ -225,7 +226,9 @@ export class PlanUpdateComponent implements OnInit {
     this.editForm.get('name')?.valueChanges.subscribe(name => {
       if (name) {
         const code = this.generateCode(name);
-        this.editForm.patchValue({ code }, { emitEvent: false });
+        if (!this.isCopyMode) {
+          this.editForm.patchValue({ code }, { emitEvent: false });
+        }
       }
     });
     this.editForm.get('name')?.addValidators([Validators.required]);
@@ -665,7 +668,11 @@ export class PlanUpdateComponent implements OnInit {
     };
     this.reportService.getAllByPlanId(plan.id).subscribe(res => {
       this.listReports = res;
-      console.log(this.listReports);
+      if (this.isCopyMode) {
+        this.listReports = this.listReports.map(item => {
+          return { ...item, id: null };
+        });
+      }
     });
     this.editForm.patchValue(formValues);
   }
@@ -696,7 +703,10 @@ export class PlanUpdateComponent implements OnInit {
           formData.append('files', file);
         });
       });
-
+      if (this.isCopyMode) {
+        report.createdAt = dayjs(report.createdAt);
+        report.updatedAt = dayjs();
+      }
       if (report.id === null) {
         const create$ = this.reportService.create(report).pipe(
           finalize(() => {

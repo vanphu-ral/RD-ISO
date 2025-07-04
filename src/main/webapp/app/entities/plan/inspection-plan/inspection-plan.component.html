@@ -77,7 +77,7 @@
         label="Khắc phục"
         icon="pi pi-sync"
         aria-label="Complete"
-        (onClick)="dialogUpdateRemePlan = true"
+        (onClick)="openDialogRepair()"
         styleClass="complete-button p-button-rounded p-button-info p-button-sm mr-2 "
       />
     </div>
@@ -192,7 +192,13 @@
         type="button"
         styleClass="p-button-rounded p-button-info p-button-sm mr-2"
         [severity]="'success'"
-        [disabled]="!groupCriterialError.name || !groupCriterialError.createdBy || !groupCriterialError.repairDate || isNameDuplicate"
+        [disabled]="
+          !groupCriterialError.name ||
+          !groupCriterialError.createdBy ||
+          !groupCriterialError.repairDate ||
+          isNameDuplicate ||
+          selectedRows.length == 0
+        "
         (onClick)="saveRemediationPlan(groupCriterialError)"
         >Gộp</p-button
       >
@@ -230,6 +236,13 @@
             <p-tag [value]="reme.status" [severity]="reme.status == 'Đã hoàn thành' ? 'success' : 'danger'" />
           </td>
           <td class="text-center border">
+            <p-button
+              icon="pi pi-eye"
+              aria-label="Check"
+              styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+              (onClick)="showDialogComplete(reme, true)"
+              [severity]="'info'"
+            />
             <ng-container *jhiHasAnyAuthority="['ROLE_ISO_ADMIN', 'ROLE_ISO_CHECK']">
               <p-button
                 icon="pi pi-wrench"
@@ -245,7 +258,7 @@
                 aria-label="complete"
                 styleClass="p-button-rounded p-button-info p-button-sm mr-2"
                 [severity]="'success'"
-                (onClick)="completePlanRepair(reme)"
+                (onClick)="showDialogComplete(reme)"
                 title="Hoàn thành"
               />
             </ng-container>
@@ -559,6 +572,103 @@
           [raised]="true"
           severity="success"
         />
+      </div>
+    </div>
+  </p-dialog>
+
+  <p-dialog
+    header="Các tiêu chí cần khắc phục"
+    [(visible)]="completeRemeDialog"
+    [modal]="true"
+    [style]="{ width: '90%' }"
+    [baseZIndex]="1100"
+  >
+    <div class="modal-body">
+      <p-table
+        [value]="completeRemePlan"
+        [paginator]="true"
+        [rows]="10"
+        [responsive]="true"
+        styleClass="p-datatable-gridlines p-datatable-sm"
+        [(selection)]="selectedRecheckCriterial"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="text-center border">STT</th>
+            <th class="text-center border">Nhóm tiêu chí</th>
+            <th class="text-center border">Tên tiêu chí</th>
+            <th class="text-center border">Người xử lý</th>
+            <th class="text-center border">Giải pháp xử lý</th>
+            <th class="text-center border">Thời gian xử lý</th>
+            <th class="text-center border">Trạng thái</th>
+            <th class="text-center border">Kết luận</th>
+            <th class="text-center border">Ghi chú</th>
+            <th class="text-center border">Lý do</th>
+            <th class="text-center border">Hình ảnh</th>
+            <th class="text-center border" *ngIf="!disableCheckComplete">
+              <p-tableHeaderCheckbox> </p-tableHeaderCheckbox>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-cpl let-rowIndex="rowIndex">
+          <ng-container *ngIf="cpl.recheckDetails && cpl.recheckDetails.length > 0; else noRecheckDetailRow">
+            <tr *ngFor="let item of cpl.recheckDetails; let i = index">
+              <td *ngIf="i === 0" [attr.rowspan]="cpl.recheckDetails.length" class="text-center border">{{ rowIndex + 1 }}</td>
+              <td *ngIf="i === 0" [attr.rowspan]="cpl.recheckDetails.length" class="text-center border">{{ cpl.criterialGroupName }}</td>
+              <td *ngIf="i === 0" [attr.rowspan]="cpl.recheckDetails.length" class="text-center border">{{ cpl.criterialName }}</td>
+              <td *ngIf="i === 0" [attr.rowspan]="cpl.recheckDetails.length" class="text-center border">{{ cpl.userHandle }}</td>
+              <td *ngIf="i === 0" [attr.rowspan]="cpl.recheckDetails.length" class="text-center border">{{ cpl.solution }}</td>
+              <td *ngIf="i === 0" [attr.rowspan]="cpl.recheckDetails.length" class="text-center border">
+                {{ cpl.planTimeComplete | date: 'short' }}
+              </td>
+              <td *ngIf="i === 0" [attr.rowspan]="cpl.recheckDetails.length" class="text-center border">{{ cpl.status }}</td>
+              <td class="text-center border">{{ item.result }}</td>
+              <td class="text-center border">{{ item.note }}</td>
+              <td class="text-center border">{{ item.reason }}</td>
+              <td class="text-center border">
+                <p-button (onClick)="showDialogViewImg(item.image)" label="Xem ảnh" />
+              </td>
+              <td *ngIf="i === 0 && !disableCheckComplete" [attr.rowspan]="cpl.recheckDetails.length" class="text-center border">
+                <p-tableCheckbox [value]="cpl" *ngIf="cpl.status != 'Đã hoàn thành'" />
+              </td>
+            </tr>
+          </ng-container>
+          <ng-template #noRecheckDetailRow>
+            <tr>
+              <td class="text-center border">{{ rowIndex + 1 }}</td>
+              <td class="text-center border">{{ cpl.criterialGroupName }}</td>
+              <td class="text-center border">{{ cpl.criterialName }}</td>
+              <td class="text-center border">{{ cpl.userHandle }}</td>
+              <td class="text-center border">{{ cpl.solution }}</td>
+              <td class="text-center border">{{ cpl.planTimeComplete | date: 'short' }}</td>
+              <td class="text-center border">{{ cpl.status }}</td>
+              <td class="text-center border">N/A</td>
+              <td class="text-center border">N/A</td>
+              <td class="text-center border">N/A</td>
+              <td class="text-center border"><span>Không có ảnh</span></td>
+              <td class="text-center border" *ngIf="!disableCheckComplete"></td>
+            </tr>
+          </ng-template>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td [attr.colspan]="11">Không tìm thấy kế hoạch khắc phục chi tiết nào.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+    <div class="modal-footer" *ngIf="!disableCheckComplete">
+      <div class="d-flex" style="justify-content: flex-end !important">
+        <div class="custom-button-apply ms-3">
+          <p-button
+            label="Hoàn thành"
+            icon="pi pi-save"
+            (onClick)="completePlanRepair()"
+            styleClass="p-button-rounded p-button-info p-button-sm mr-2 gross-btn"
+            [raised]="true"
+            severity="success"
+          />
+        </div>
       </div>
     </div>
   </p-dialog>

@@ -526,4 +526,12 @@ export class GrossScriptComponent {
   finaEval() {
     this.modalService.dismissAll();
   }
+
+  onEvaluationToggle(item: any): void {
+    if (item.hasEvaluation === 0) {
+      item.result = null;
+      item.note = '';
+      item.image = [];
+    }
+  }
 }

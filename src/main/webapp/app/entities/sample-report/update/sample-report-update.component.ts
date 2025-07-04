@@ -104,6 +104,8 @@ export class SampleReportUpdateComponent implements OnInit {
         });
         this.lastRowIndex = maxRowIndex;
         sessionStorage.setItem('listTitlesView', JSON.stringify(data.header));
+      } else {
+        this.editForm.patchValue({ status: 'ACTIVE' });
       }
       this.editForm.get('name')?.valueChanges.subscribe(value => {
         if (value) {

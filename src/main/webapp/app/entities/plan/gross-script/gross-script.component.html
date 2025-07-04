@@ -89,32 +89,22 @@
       </tr>
       <tr>
         <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
         <th>
-          <p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter>
+          <p-columnFilter type="text" field="name" placeholder="Search "></p-columnFilter>
         </th>
         <th>
-          <p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter>
+          <p-columnFilter type="text" field="testOfObject" placeholder="Search "></p-columnFilter>
         </th>
         <th>
-          <p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter>
+          <p-columnFilter type="text" field="checker" placeholder="Search "></p-columnFilter>
         </th>
         <th>
-          <p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter>
+          <p-columnFilter type="text" field="status" placeholder="Search "></p-columnFilter>
         </th>
         <th>
           <p-tableHeaderCheckbox />
@@ -355,7 +345,13 @@
             </p-dialog>
           </td>
           <td class="text-center border">
-            <p-checkbox [binary]="true" [(ngModel)]="report.hasEvaluation" [trueValue]="0" [falseValue]="1"></p-checkbox>
+            <p-checkbox
+              [binary]="true"
+              [(ngModel)]="report.hasEvaluation"
+              [trueValue]="0"
+              [falseValue]="1"
+              (onChange)="onEvaluationToggle(report)"
+            ></p-checkbox>
           </td>
         </tr>
       </ng-template>
