@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormatMediumDatetimePipe } from 'app/shared/date';
 import { SortByDirective, SortDirective } from 'app/shared/sort';
@@ -59,6 +59,7 @@ export class SummarizePlanComponent implements OnInit {
     private convertService: ConvertService,
     private reportService: ReportService,
     private planGroupService: PlanGroupService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -125,5 +126,9 @@ export class SummarizePlanComponent implements OnInit {
   showDialogViewImg(data: any) {
     this.listImgReports = JSON.parse(data);
     this.dialogViewImage = true;
+  }
+
+  previousState(): void {
+    this.router.navigate(['/plan']);
   }
 }

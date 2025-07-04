@@ -52,50 +52,64 @@
       <tr>
         <th></th>
         <th>STT</th>
-        <th style="min-width: 150px; width: 150px">Mã kế hoạch</th>
-        <th style="min-width: 300px; width: 300px">Tên kế hoạch</th>
-        <th style="min-width: 260px; width: 260px">Đối tượng kế hoạch đánh giá</th>
-        <th style="min-width: 120px; width: 120px">Tần suất</th>
-        <th style="min-width: 240px; width: 240px">Thời gian bắt đầu</th>
-        <th style="min-width: 240px; width: 240px">Thời gian kết thúc</th>
-        <th style="min-width: 200px; width: 200px">Người tạo</th>
-        <th style="min-width: 200px; width: 200px">Người cập nhật</th>
-        <th style="min-width: 240px; width: 240px">Thời gian tạo</th>
-        <th style="min-width: 240px; width: 240px">Thời gian cập nhật</th>
-        <th style="min-width: 110px; width: 110px">Trạng thái</th>
+        <th style="min-width: 150px">Mã kế hoạch</th>
+        <th style="min-width: 300px">Tên kế hoạch</th>
+        <th style="min-width: 150px">Đối tượng KT</th>
+        <th style="min-width: 100px">Tần suất</th>
+        <th style="min-width: 180px">Thời gian bắt đầu</th>
+        <th style="min-width: 180px">Thời gian kết thúc</th>
+        <th style="min-width: 150px">Người tạo</th>
+        <th style="min-width: 200px">Người cập nhật</th>
+        <th style="min-width: 160px">Thời gian tạo</th>
+        <th style="min-width: 180px">Thời gian cập nhật</th>
+        <th style="min-width: 110px">Trạng thái</th>
         <th>Tuỳ chọn</th>
       </tr>
       <tr>
         <th></th>
         <th></th>
-        <th>
-          <p-columnFilter type="text" field="code" placeholder="Search"></p-columnFilter>
-        </th>
-        <th>
+        <th style="padding: 0"></th>
+        <th style="padding: 0">
           <p-columnFilter type="text" field="name" placeholder="Search"></p-columnFilter>
         </th>
-        <th>
+        <th style="padding: 0">
           <p-columnFilter type="text" field="subjectOfAssetmentPlan" placeholder="Search"></p-columnFilter>
         </th>
         <th></th>
-        <th>
-          <p-columnFilter type="text" field="timeStart" placeholder="Search"></p-columnFilter>
+        <th style="padding: 0">
+          <p-columnFilter type="date" field="timeStart" placeholder="Search"></p-columnFilter>
         </th>
-        <th>
-          <p-columnFilter type="text" field="timeEnd" placeholder="Search"></p-columnFilter>
+        <th style="padding: 0">
+          <p-columnFilter type="date" field="timeEnd" placeholder="Search"></p-columnFilter>
         </th>
-        <th>
+        <th style="padding: 0">
           <p-columnFilter type="text" field="createBy" placeholder="Search"></p-columnFilter>
         </th>
-        <th></th>
-        <th>
-          <p-columnFilter type="text" field="createdAt" placeholder="Search"></p-columnFilter>
+        <th style="padding: 0">
+          <p-columnFilter type="text" field="updateBy" placeholder="Search"></p-columnFilter>
+        </th>
+        <th style="padding: 0">
+          <p-columnFilter type="date" field="createdAt" placeholder="Search"></p-columnFilter>
+        </th>
+        <th style="padding: 0">
+          <p-columnFilter type="date" field="updatedAt" placeholder="Search"></p-columnFilter>
         </th>
         <th>
-          <p-columnFilter type="text" field="updatedAt" placeholder="Search"></p-columnFilter>
-        </th>
-        <th>
-          <!-- <p-columnFilter type="text" field="status" placeholder="Search"></p-columnFilter> -->
+          <p-columnFilter field="status" matchMode="equals" [showMenu]="false">
+            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+              <p-dropdown
+                [ngModel]="value"
+                [options]="statuses"
+                (onChange)="filter($event.value)"
+                placeholder="Select One"
+                [showClear]="true"
+              >
+                <ng-template let-option pTemplate="item">
+                  <p-tag [value]="option" [severity]="getSeverity(option)" />
+                </ng-template>
+              </p-dropdown>
+            </ng-template>
+          </p-columnFilter>
         </th>
         <th></th>
       </tr>
@@ -124,7 +138,7 @@
         <td>{{ rowNode.updateBy }}</td>
         <td>{{ rowNode.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
         <td>{{ rowNode.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</td>
-        <td>{{ rowNode.status }}</td>
+        <td><p-tag [value]="rowNode.status" [severity]="getSeverity(rowNode.status)" /></td>
         <td>
           <div class="action-buttons">
             <p-button
@@ -155,14 +169,6 @@
               title="Gộp"
               [routerLink]="['/plan', rowNode.id, 'gross-script']"
             />
-            <!-- <p-button
-              icon="pi pi-check"
-              aria-label="Check"
-              styleClass="p-button-rounded p-button-info p-button-sm mr-2"
-              [severity]="'success'"
-              (onClick)="showDialogCheckScript()"
-              title="Kiểm tra"
-            /> -->
             <p-button
               icon="pi pi-eye"
               aria-label="View"
@@ -237,22 +243,22 @@
             >
               <ng-template pTemplate="header">
                 <tr>
-                  <th style="min-width: 30px; width: 30px">STT</th>
-                  <th style="min-width: 200px; width: 200px">Mã BBKT</th>
-                  <th style="min-width: 400px; width: 400px">Tên BBKT</th>
-                  <th style="min-width: 200px; width: 200px">Đối tượng kiểm tra</th>
-                  <th style="min-width: 150px; width: 150px">Loại BBKT (ID)</th>
-                  <th style="min-width: 150px; width: 150px">Số lần kiểm tra</th>
-                  <th style="min-width: 150px; width: 150px">Thang điểm</th>
-                  <th style="min-width: 150px; width: 150px">Tổng điểm</th>
-                  <th style="min-width: 150px; width: 150px">Loại quy đổi</th>
-                  <th style="min-width: 30px; width: 30px">NC</th>
-                  <th style="min-width: 30px; width: 30px">LY</th>
-                  <th style="min-width: 180px; width: 180px">Số lượng không đạt</th>
-                  <th style="min-width: 150px; width: 150px">Người kiểm tra</th>
-                  <th style="min-width: 100px; width: 100px">Tần suất</th>
-                  <th style="min-width: 110px; width: 110px">Trạng thái</th>
-                  <th style="min-width: 10rem; width: 10rem">Tuỳ chọn</th>
+                  <th style="min-width: 30px">STT</th>
+                  <th style="min-width: 150px">Mã BBKT</th>
+                  <th style="min-width: 300px">Tên BBKT</th>
+                  <th style="min-width: 150px">Đối tượng KT</th>
+                  <th style="min-width: 150px">Loại BBKT (ID)</th>
+                  <th style="min-width: 100px">Số lần KT</th>
+                  <th style="min-width: 150px">Thang điểm</th>
+                  <th style="min-width: 125px">Tổng điểm</th>
+                  <th style="min-width: 150px">Loại quy đổi</th>
+                  <th style="min-width: 30px">NC</th>
+                  <th style="min-width: 30px">LY</th>
+                  <th style="min-width: 180px">SL không đạt</th>
+                  <th style="min-width: 150px">Người KT</th>
+                  <th style="min-width: 100px">Tần suất</th>
+                  <th style="min-width: 110px">Trạng thái</th>
+                  <th style="min-width: 10rem">Tuỳ chọn</th>
                 </tr>
                 <tr>
                   <th></th>
@@ -889,98 +895,6 @@
 </p-dialog>
 
 <p-dialog
-  header="Thực hiện đánh giá kế hoạch"
-  [resizable]="false"
-  [modal]="true"
-  [maximizable]="true"
-  appendTo="body"
-  [(visible)]="dialogCheckScript"
-  [style]="{ width: '80vw' }"
-  [contentStyle]="{ height: '70vh' }"
->
-  <div class="col-container">
-    <div class="col-m4-25 col-container-child">
-      <label for="">Mã Kịch bản</label>
-      <input type="text" class="inp-style" name="code" id="field_code" data-cy="code" />
-    </div>
-    <div class="col-m4-25 col-container-child">
-      <label for="">Tên Kịch bản</label>
-      <input type="text" class="inp-style" name="code" id="field_code" data-cy="code" />
-    </div>
-    <div class="col-m4-25 col-container-child">
-      <label for="">Đối tượng kế hoạch đánh giá</label>
-      <input type="text" class="inp-style" name="code" id="field_code" data-cy="code" />
-    </div>
-    <div class="col-m4-25 col-container-child">
-      <label for="">Tần suất</label>
-      <input type="text" class="inp-style" name="code" id="field_code" data-cy="code" />
-    </div>
-  </div>
-  <p-table
-    [value]="scriptEvaluations"
-    [paginator]="true"
-    [rows]="100"
-    [responsive]="true"
-    styleClass="p-datatable-gridlines"
-    [rowsPerPageOptions]="[5, 10, 20]"
-    [autoLayout]="true"
-  >
-    <ng-template pTemplate="header">
-      <tr>
-        <th class="text-center border">STT</th>
-        <th class="text-center border">Nhóm tiêu chí</th>
-        <th class="text-center border">Tiêu chí</th>
-        <th class="text-center border">Tần suất KT</th>
-        <th class="text-center border">Kết quả đánh giá</th>
-        <th class="text-center border">Nội dung đánh giá</th>
-        <th class="text-center border">Hình ảnh đánh giá</th>
-        <th class="text-center border">Tuỳ chọn</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-item let-index="rowIndex">
-      <tr>
-        <td class="text-center border">{{ index + 1 }}</td>
-        <td class="text-center border">{{ item.criteriaGroup }}</td>
-        <td class="text-center border">{{ item.criteria }}</td>
-        <td class="text-center border">{{ item.frequency }}</td>
-        <td class="text-center border">{{ item.evaluationResult }}</td>
-        <td class="text-center border">{{ item.evaluationContent }}</td>
-        <td class="text-center border">{{ item.evaluationImage }}</td>
-        <td class="text-center border">
-          <div class="action-buttons">
-            <p-button
-              icon="pi pi-reply"
-              aria-label="Delete"
-              styleClass="p-button-rounded p-button-info p-button-sm mr-2"
-              [severity]="'success'"
-              (onClick)="showDialogConclusionCretia()"
-            />
-          </div>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-  <ng-template pTemplate="footer">
-    <div class="action-buttons">
-      <p-button
-        label="Huỷ"
-        icon="pi pi-ban"
-        (onClick)="dialogCheckScript = false"
-        styleClass="p-button-rounded p-button-info p-button-sm mr-2 gross-btn"
-        severity="danger"
-      />
-      <p-button
-        label="Lưu"
-        icon="pi pi-save"
-        (onClick)="dialogCheckScript = false"
-        styleClass="p-button-rounded p-button-info p-button-sm mr-2 gross-btn"
-        severity="info"
-      />
-    </div>
-  </ng-template>
-</p-dialog>
-
-<p-dialog
   header="Kết luận tiêu chí"
   [resizable]="false"
   [modal]="true"
@@ -1172,7 +1086,7 @@
       <p-button
         label="Huỷ"
         icon="pi pi-ban"
-        (onClick)="dialogCheckPlan = false"
+        (onClick)="closeEvalReport(planParent)"
         styleClass="p-button-rounded p-button-info p-button-sm mr-2 gross-btn"
         severity="danger"
       />
@@ -1297,7 +1211,13 @@
           </p-dialog>
         </td>
         <td class="text-center border">
-          <p-checkbox [binary]="true" [(ngModel)]="item.hasEvaluation" [trueValue]="0" [falseValue]="1"></p-checkbox>
+          <p-checkbox
+            [binary]="true"
+            [(ngModel)]="item.hasEvaluation"
+            [trueValue]="0"
+            [falseValue]="1"
+            (onChange)="onEvaluationToggle(item)"
+          ></p-checkbox>
         </td>
       </tr>
     </ng-template>

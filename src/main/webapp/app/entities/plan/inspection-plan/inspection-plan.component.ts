@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormatMediumDatetimePipe } from 'app/shared/date';
 import { SortByDirective, SortDirective } from 'app/shared/sort';
@@ -72,6 +72,13 @@ export class InspectionPlanComponent implements OnInit {
   criterialSelected: any = {};
   listReCheckRemediationPlan: any[] = [];
   isNameDuplicate: boolean = false;
+  completeRemePlan: any[] = [];
+  selectedRecheckCriterial: any[] = [];
+  remediationPlanInfo: any = {};
+  completeRemeDialog: boolean = false;
+  disableCheckComplete: boolean = false;
+  listImgReports: any[] = [];
+  dialogViewImage: boolean = false;
 
   constructor(
     protected activatedRoute: ActivatedRoute,
@@ -79,6 +86,7 @@ export class InspectionPlanComponent implements OnInit {
     private evaluatorService: EvaluatorService,
     private remediationPlanService: RemediationPlanService,
     private cdr: ChangeDetectorRef,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -97,10 +105,6 @@ export class InspectionPlanComponent implements OnInit {
       // get dữ liệu table kế hoạch khắc phục
       this.reloadRemediationTableData(plan.id);
     });
-    if (!this.groupCriterialError.repairDate) {
-      const today = new Date();
-      this.groupCriterialError.repairDate = today.toISOString().substring(0, 10);
-    }
   }
 
   duplicateNameValidator(name: string | null): void {
@@ -219,6 +223,7 @@ export class InspectionPlanComponent implements OnInit {
         userHandle: item.userHandle,
         createdAt: dayjs(),
         createdBy: data.createdBy,
+        status: 'Đang xử lý',
         detail: this.listReportCriterialErrors.filter(
           rpt =>
             rpt.criterialGroupName == item.criterialGroupName &&
@@ -242,6 +247,15 @@ export class InspectionPlanComponent implements OnInit {
         this.reloadRemediationTableData(this.plan.id);
         this.groupCriterialError = {};
         this.selectedRows = [];
+        this.processedReportData = this.processedReportData.map(item => {
+          return {
+            ...item,
+            solution: '',
+            note: '',
+            userHandle: null,
+            planTimeComplete: null,
+          };
+        });
         this.dialogUpdateRemePlan = false;
       });
     });
@@ -444,10 +458,69 @@ export class InspectionPlanComponent implements OnInit {
     });
   }
 
-  completePlanRepair(data: any) {
-    data.status = 'Đã hoàn thành';
-    this.remediationPlanService.create(data).subscribe(res => {
-      this.reloadRemediationTableData(this.plan.id);
+  showDialogComplete(data: any, isView: boolean = false) {
+    this.disableCheckComplete = isView;
+    this.remediationPlanInfo = data;
+    this.remediationPlanService.getRemediationPlanWithFullDetails(data.id).subscribe(res => {
+      this.completeRemePlan = res.body.details || [];
+      this.completeRemeDialog = true;
     });
+  }
+
+  openDialogRepair() {
+    this.dialogUpdateRemePlan = true;
+    if (!this.groupCriterialError.repairDate) {
+      const today = new Date();
+      this.groupCriterialError.repairDate = today.toISOString().substring(0, 10);
+    }
+  }
+
+  showDialogViewImg(data: any) {
+    this.listImgReports = JSON.parse(data);
+    this.dialogViewImage = true;
+  }
+
+  completePlanRepair() {
+    // console.log(this.selectedRecheckCriterial);
+    if (this.selectedRecheckCriterial.length === 0) {
+      return;
+    }
+    const updateRequests: any[] = this.selectedRecheckCriterial.map(cpl => {
+      const { detail, ...rest } = cpl;
+      return {
+        ...rest,
+        status: 'Đã hoàn thành',
+        repairDate: dayjs(cpl.repairDate).toISOString(),
+      };
+    });
+    console.log(updateRequests);
+    this.remediationPlanService.createRemediationPlanDetail(updateRequests).subscribe(repo => {
+      this.selectedRecheckCriterial.forEach(selectedCpl => {
+        const index = this.completeRemePlan.findIndex(cpl => cpl.id === selectedCpl.id);
+        if (index !== -1) {
+          this.completeRemePlan[index].status = 'Đã hoàn thành';
+        }
+      });
+      this.selectedRecheckCriterial = [];
+      this.checkAndUpdateParentRemediationPlanStatus();
+      this.completeRemeDialog = false;
+    });
+  }
+
+  checkAndUpdateParentRemediationPlanStatus(): void {
+    if (!this.remediationPlanInfo || !this.completeRemePlan || this.completeRemePlan.length === 0) {
+      return;
+    }
+    const pendingDetails = this.completeRemePlan.filter(cpl => cpl.status !== 'Đã hoàn thành');
+    if (pendingDetails.length === 0) {
+      this.remediationPlanInfo.status = 'Đã hoàn thành';
+      this.remediationPlanService.create(this.remediationPlanInfo).subscribe(res => {
+        this.reloadRemediationTableData(this.plan.id);
+      });
+    }
+  }
+
+  previousState(): void {
+    this.router.navigate(['/plan']);
   }
 }

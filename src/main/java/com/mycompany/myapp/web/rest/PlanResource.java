@@ -229,7 +229,9 @@ public class PlanResource {
     @GetMapping("")
     public List<Plan> getAllPlans() {
         log.debug("REST request to get all Plans");
-        return planRepository.findAll();
+        List<Plan> plans = planRepository.findAll();
+        Collections.reverse(plans);
+        return plans;
     }
 
     /**
@@ -300,6 +302,7 @@ public class PlanResource {
             planDetailDTO.setPlanDetail(response);
             planDetailDTOS.add(planDetailDTO);
         }
+        Collections.reverse(planDetailDTOS);
         return planDetailDTOS;
     }
 

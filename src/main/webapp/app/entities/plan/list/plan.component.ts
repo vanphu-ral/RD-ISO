@@ -36,6 +36,7 @@ import HasAnyAuthorityDirective from 'app/shared/auth/has-any-authority.directiv
 import { CalendarModule } from 'primeng/calendar';
 import { CheckboxModule } from 'primeng/checkbox';
 import { AccountService } from 'app/core/auth/account.service';
+import { DropdownModule } from 'primeng/dropdown';
 
 interface CheckPlanDetail {
   id: number;
@@ -82,6 +83,7 @@ interface CriteriaSummary {
     HasAnyAuthorityDirective,
     CalendarModule,
     CheckboxModule,
+    DropdownModule,
   ],
   providers: [SummarizePlanComponent],
 })
@@ -117,144 +119,6 @@ export class PlanComponent implements OnInit {
     width: '100%',
   };
 
-  scriptEvaluations = [
-    {
-      id: 1,
-      criteriaGroup: 'An toàn lao động',
-      criteria: 'AT01 - Trang bị bảo hộ',
-      frequency: 'Hàng ngày',
-      evaluationResult: 'Đạt',
-      evaluationContent: 'Đầy đủ trang bị',
-      evaluationImage: 'at01.jpg',
-    },
-    {
-      id: 2,
-      criteriaGroup: 'An toàn lao động',
-      criteria: 'AT02 - Thiết bị bảo vệ',
-      frequency: 'Hàng tuần',
-      evaluationResult: 'Đạt',
-      evaluationContent: 'Hoạt động tốt',
-      evaluationImage: 'at02.jpg',
-    },
-    {
-      id: 3,
-      criteriaGroup: '5S',
-      criteria: '5S01 - Sàng lọc',
-      frequency: 'Hàng ngày',
-      evaluationResult: 'Không đạt',
-      evaluationContent: 'Cần cải thiện',
-      evaluationImage: '5s01.jpg',
-    },
-    {
-      id: 4,
-      criteriaGroup: '5S',
-      criteria: '5S02 - Sắp xếp',
-      frequency: 'Hàng tuần',
-      evaluationResult: 'Đạt',
-      evaluationContent: 'Ngăn nắp',
-      evaluationImage: '5s02.jpg',
-    },
-    {
-      id: 5,
-      criteriaGroup: 'Quy trình sản xuất',
-      criteria: 'QT01 - Kiểm soát',
-      frequency: 'Hàng ngày',
-      evaluationResult: 'Đạt',
-      evaluationContent: 'Tuân thủ',
-      evaluationImage: 'qt01.jpg',
-    },
-    {
-      id: 6,
-      criteriaGroup: 'Quy trình sản xuất',
-      criteria: 'QT02 - Vận hành',
-      frequency: 'Hàng tuần',
-      evaluationResult: 'Đạt',
-      evaluationContent: 'Đúng quy trình',
-      evaluationImage: 'qt02.jpg',
-    },
-    {
-      id: 7,
-      criteriaGroup: 'Môi trường',
-      criteria: 'MT01 - Xử lý rác',
-      frequency: 'Hàng ngày',
-      evaluationResult: 'Không đạt',
-      evaluationContent: 'Cần phân loại',
-      evaluationImage: 'mt01.jpg',
-    },
-    {
-      id: 8,
-      criteriaGroup: 'Môi trường',
-      criteria: 'MT02 - Tiết kiệm',
-      frequency: 'Hàng tháng',
-      evaluationResult: 'Đạt',
-      evaluationContent: 'Tiết kiệm tốt',
-      evaluationImage: 'mt02.jpg',
-    },
-    {
-      id: 9,
-      criteriaGroup: 'Chất lượng',
-      criteria: 'CL01 - KCS',
-      frequency: 'Hàng ngày',
-      evaluationResult: 'Đạt',
-      evaluationContent: 'Đạt tiêu chuẩn',
-      evaluationImage: 'cl01.jpg',
-    },
-    {
-      id: 10,
-      criteriaGroup: 'Chất lượng',
-      criteria: 'CL02 - QC',
-      frequency: 'Hàng tuần',
-      evaluationResult: 'Đạt',
-      evaluationContent: 'Kiểm soát tốt',
-      evaluationImage: 'cl02.jpg',
-    },
-    {
-      id: 11,
-      criteriaGroup: 'Thiết bị',
-      criteria: 'TB01 - Bảo trì',
-      frequency: 'Hàng tháng',
-      evaluationResult: 'Đạt',
-      evaluationContent: 'Đúng lịch',
-      evaluationImage: 'tb01.jpg',
-    },
-    {
-      id: 12,
-      criteriaGroup: 'Thiết bị',
-      criteria: 'TB02 - Hiệu chuẩn',
-      frequency: 'Hàng quý',
-      evaluationResult: 'Đạt',
-      evaluationContent: 'Định kỳ',
-      evaluationImage: 'tb02.jpg',
-    },
-    {
-      id: 13,
-      criteriaGroup: 'Nhân sự',
-      criteria: 'NS01 - Đào tạo',
-      frequency: 'Hàng quý',
-      evaluationResult: 'Đạt',
-      evaluationContent: 'Đầy đủ',
-      evaluationImage: 'ns01.jpg',
-    },
-    {
-      id: 14,
-      criteriaGroup: 'Nhân sự',
-      criteria: 'NS02 - Đánh giá',
-      frequency: '6 tháng',
-      evaluationResult: 'Đạt',
-      evaluationContent: 'Kịp thời',
-      evaluationImage: 'ns02.jpg',
-    },
-    {
-      id: 15,
-      criteriaGroup: 'Văn phòng',
-      criteria: 'VP01 - Tài liệu',
-      frequency: 'Hàng tháng',
-      evaluationResult: 'Đạt',
-      evaluationContent: 'Lưu trữ tốt',
-      evaluationImage: 'vp01.jpg',
-    },
-  ];
-
   planEvaluations: any[] = [];
   checkPlanDetails: any[] = [];
   criteriaSummaries: any = [];
@@ -265,7 +129,6 @@ export class PlanComponent implements OnInit {
   first: number = 0;
   totalRecords: number = 0;
   dialogVisible = false;
-  dialogCheckScript = false;
   dialogCheckPlan = false;
   dialogCheckPlanChild = false;
   conclusionCretia = false;
@@ -289,6 +152,7 @@ export class PlanComponent implements OnInit {
   minSelectableDate!: Date;
   maxSelectableDate!: Date;
   account: any = {};
+  statuses = ['Mới tạo', 'Đang thực hiện', 'Đã hoàn thành', 'Chưa hoàn thành'];
 
   trackId = (_index: number, item: IPlan): number => this.planService.getPlanIdentifier(item);
 
@@ -603,10 +467,6 @@ export class PlanComponent implements OnInit {
     this.dialogVisible = true;
   }
 
-  showDialogCheckScript(): void {
-    this.dialogCheckScript = true;
-  }
-
   showDialogCheckPlan(data: any, index: number): void {
     this.planParent = data;
     this.report = data.planDetail[index];
@@ -680,12 +540,14 @@ export class PlanComponent implements OnInit {
 
   getSeverity(status: string): any {
     switch (status) {
-      case 'Đạt':
+      case 'Đã hoàn thành':
         return 'success';
-      case 'Không đạt':
+      case 'Chưa hoàn thành':
         return 'danger';
-      case 'Chờ đánh giá':
+      case 'Đang thực hiện':
         return 'warning';
+      case 'Mới tạo':
+        return 'info';
     }
   }
 
@@ -1187,5 +1049,18 @@ export class PlanComponent implements OnInit {
 
   exportExcel(reportId: number) {
     this.exportExcelService.exportToExcel(reportId);
+  }
+
+  closeEvalReport(data: any) {
+    this.dialogCheckPlan = false;
+    this.loadPlanDetails(data.id);
+  }
+
+  onEvaluationToggle(item: any): void {
+    if (item.hasEvaluation === 0) {
+      item.result = null;
+      item.note = '';
+      item.image = []; // hoặc null, tùy theo kiểu dữ liệu
+    }
   }
 }
