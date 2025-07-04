@@ -534,4 +534,8 @@ export class GrossScriptComponent {
       item.image = [];
     }
   }
+
+  previousState(): void {
+    this.router.navigate(['/plan']);
+  }
 }

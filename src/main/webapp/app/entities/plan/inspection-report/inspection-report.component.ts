@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PlanGroupService } from 'app/entities/plan-group/service/plan-group.service';
 import { FormatMediumDatetimePipe } from 'app/shared/date';
@@ -104,6 +104,7 @@ export class InspectionReportComponent implements OnInit {
     private convertService: ConvertService,
     private exportExcelService: ExportExcelService,
     private cdr: ChangeDetectorRef,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -572,5 +573,9 @@ export class InspectionReportComponent implements OnInit {
       const today = new Date();
       this.groupCriterialError.repairDate = today.toISOString().substring(0, 10);
     }
+  }
+
+  previousState(): void {
+    this.router.navigate(['/plan']);
   }
 }

@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormatMediumDatetimePipe } from 'app/shared/date';
 import { SortByDirective, SortDirective } from 'app/shared/sort';
@@ -86,6 +86,7 @@ export class InspectionPlanComponent implements OnInit {
     private evaluatorService: EvaluatorService,
     private remediationPlanService: RemediationPlanService,
     private cdr: ChangeDetectorRef,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -517,5 +518,9 @@ export class InspectionPlanComponent implements OnInit {
         this.reloadRemediationTableData(this.plan.id);
       });
     }
+  }
+
+  previousState(): void {
+    this.router.navigate(['/plan']);
   }
 }
