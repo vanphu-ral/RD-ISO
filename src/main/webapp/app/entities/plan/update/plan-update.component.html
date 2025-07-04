@@ -226,10 +226,14 @@
         </button>
       </div>
       <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-danger" (click)="previousState()">
-          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.return">Quay lại</span>
-        </button>
-
+        <p-button
+          label="Quay lại"
+          icon="pi pi-arrow-left"
+          aria-label="Cancel"
+          (onClick)="previousState()"
+          styleClass="p-button-rounded p-button-info p-button-sm mr-2 gross-btn"
+          [severity]="'danger'"
+        />
         <button type="submit" id="save-entity" data-cy="entityCreateSaveButton" class="btn btn-primary" (click)="save()">
           <fa-icon icon="save"></fa-icon>&nbsp;<span>Lưu</span>
         </button>
