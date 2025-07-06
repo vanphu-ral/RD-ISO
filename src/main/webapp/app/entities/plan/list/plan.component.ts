@@ -154,6 +154,7 @@ export class PlanComponent implements OnInit {
   maxSelectableDate!: Date;
   account: any = {};
   statuses = ['Mới tạo', 'Đang thực hiện', 'Đã hoàn thành', 'Chưa hoàn thành'];
+  isNameDuplicate: { [key: string]: boolean } = {};
 
   trackId = (_index: number, item: IPlan): number => this.planService.getPlanIdentifier(item);
 
@@ -229,6 +230,25 @@ export class PlanComponent implements OnInit {
     });
     this.accountService.identity().subscribe(account => {
       this.account = account;
+    });
+  }
+
+  hasAnyAuthority(authorities: string[]): boolean {
+    return this.accountService.hasAnyAuthority(authorities);
+  }
+
+  duplicateNameValidator(name: string | null, index: number): void {
+    if (!name) {
+      this.isNameDuplicate[index] = false;
+      return;
+    }
+    this.planGrService.checkNameExists(name).subscribe({
+      next: isDuplicate => {
+        this.isNameDuplicate[index] = isDuplicate;
+      },
+      error: () => {
+        this.isNameDuplicate[index] = false;
+      },
     });
   }
 
