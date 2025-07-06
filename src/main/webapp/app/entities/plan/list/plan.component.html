@@ -75,7 +75,22 @@
         <th style="padding: 0">
           <p-columnFilter type="text" field="subjectOfAssetmentPlan" placeholder="Search"></p-columnFilter>
         </th>
-        <th></th>
+        <th style="padding: 0">
+          <p-columnFilter field="frequency" matchMode="equals" [showMenu]="false">
+            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+              <p-dropdown
+                [ngModel]="value"
+                [options]="listOfFrequency"
+                optionLabel="name"
+                optionValue="name"
+                (onChange)="filter($event.value)"
+                placeholder="Select One"
+                [showClear]="true"
+              >
+              </p-dropdown>
+            </ng-template>
+          </p-columnFilter>
+        </th>
         <th style="padding: 0">
           <p-columnFilter type="date" field="timeStart" placeholder="Search"></p-columnFilter>
         </th>
@@ -132,12 +147,12 @@
         <td>{{ rowNode.name }}</td>
         <td>{{ rowNode.subjectOfAssetmentPlan }}</td>
         <td>{{ rowNode.frequency }}</td>
-        <td>{{ rowNode.timeStart | date: 'dd/MM/yyyy HH:mm' }}</td>
-        <td>{{ rowNode.timeEnd | date: 'dd/MM/yyyy HH:mm' }}</td>
+        <td>{{ rowNode.timeStart | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ rowNode.timeEnd | date: 'dd/MM/yyyy' }}</td>
         <td>{{ rowNode.createBy }}</td>
         <td>{{ rowNode.updateBy }}</td>
-        <td>{{ rowNode.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
-        <td>{{ rowNode.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+        <td>{{ rowNode.createdAt | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ rowNode.updatedAt | date: 'dd/MM/yyyy' }}</td>
         <td><p-tag [value]="rowNode.status" [severity]="getSeverity(rowNode.status)" /></td>
         <td>
           <div class="action-buttons">
@@ -261,49 +276,67 @@
                   <th style="min-width: 10rem">Tuỳ chọn</th>
                 </tr>
                 <tr>
-                  <th></th>
-                  <th>
-                    <p-columnFilter type="text" field="code" placeholder="Search"></p-columnFilter>
-                  </th>
-                  <th>
+                  <th style="padding: 0"></th>
+                  <th style="padding: 0"></th>
+                  <th style="padding: 0">
                     <p-columnFilter type="text" field="name" placeholder="Search"></p-columnFilter>
                   </th>
-                  <th>
+                  <th style="padding: 0">
                     <p-columnFilter type="text" field="testOfObject" placeholder="Search"></p-columnFilter>
                   </th>
-                  <th>
+                  <th style="padding: 0">
                     <p-columnFilter type="text" field="reportType" placeholder="Search"></p-columnFilter>
                   </th>
-                  <th>
-                    <p-columnFilter type="text" field="numberOfCheck" placeholder="Search"></p-columnFilter>
+                  <th style="padding: 0">
+                    <p-columnFilter type="text" field="sumOfAudit" placeholder="Search"></p-columnFilter>
                   </th>
-                  <th>
-                    <p-columnFilter type="text" field="implementer" placeholder="Search"></p-columnFilter>
+                  <th style="padding: 0">
+                    <p-columnFilter type="text" field="scoreScale" placeholder="Search"></p-columnFilter>
                   </th>
-                  <th>
-                    <p-columnFilter type="text" field="paticipant" placeholder="Search"></p-columnFilter>
+                  <th style="padding: 0"></th>
+                  <th style="padding: 0">
+                    <p-columnFilter type="text" field="convertScore" placeholder="Search"></p-columnFilter>
                   </th>
-                  <th>
-                    <p-columnFilter type="text" field="checkerGroup" placeholder="Search"></p-columnFilter>
-                  </th>
-                  <th>
-                    <!-- <p-columnFilter type="text" field="checker" placeholder="Search"></p-columnFilter> -->
-                  </th>
-                  <th>
-                    <!-- <p-columnFilter type="text" field="checker" placeholder="Search"></p-columnFilter> -->
-                  </th>
-
-                  <th>
+                  <th style="padding: 0"></th>
+                  <th style="padding: 0"></th>
+                  <th style="padding: 0"></th>
+                  <th style="padding: 0">
                     <p-columnFilter type="text" field="checker" placeholder="Search"></p-columnFilter>
                   </th>
-                  <th>
-                    <p-columnFilter type="text" field="frequency" placeholder="Search"></p-columnFilter>
+                  <th style="padding: 0">
+                    <p-columnFilter field="frequency" matchMode="equals" [showMenu]="false">
+                      <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                        <p-dropdown
+                          [ngModel]="value"
+                          [options]="listOfFrequency"
+                          optionLabel="name"
+                          optionValue="name"
+                          (onChange)="filter($event.value)"
+                          placeholder="Select One"
+                          [showClear]="true"
+                        >
+                        </p-dropdown>
+                      </ng-template>
+                    </p-columnFilter>
                   </th>
-                  <th>
-                    <!-- <p-columnFilter type="text" field="status" placeholder="Search"></p-columnFilter> -->
+                  <th style="padding: 0">
+                    <p-columnFilter field="status" matchMode="equals" [showMenu]="false">
+                      <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                        <p-dropdown
+                          [ngModel]="value"
+                          [options]="statuses"
+                          (onChange)="filter($event.value)"
+                          placeholder="Select One"
+                          [showClear]="true"
+                        >
+                          <ng-template let-option pTemplate="item">
+                            <p-tag [value]="option" [severity]="getSeverity(option)" />
+                          </ng-template>
+                        </p-dropdown>
+                      </ng-template>
+                    </p-columnFilter>
                   </th>
-                  <th></th>
-                  <th></th>
+                  <th style="padding: 0"></th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-detail let-index="rowIndex">
@@ -322,7 +355,7 @@
                   <td>{{ detail.sumOfFail }}</td>
                   <td>{{ detail.checker }}</td>
                   <td>{{ detail.frequency }}</td>
-                  <td>{{ detail.status }}</td>
+                  <td><p-tag [value]="detail.status" [severity]="getSeverity(detail.status)" /></td>
                   <td>
                     <div class="action-buttons">
                       <p-button
@@ -1056,7 +1089,7 @@
             dateFormat="dd/mm/yy"
           ></p-calendar>
         </td>
-        <td class="text-center border d-flex">
+        <td class="text-center border">
           <div class="action-buttons mx-1">
             <p-button
               icon="pi pi-check"
@@ -1066,8 +1099,6 @@
               (onClick)="showDialogCheckPlanChild(item)"
               [disabled]="!item.name || !item.checkDate || disableSaveCheckDate[index]"
             />
-          </div>
-          <div class="action-buttons mx-1">
             <p-button
               icon="pi pi-trash"
               aria-label="Delete"

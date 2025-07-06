@@ -340,6 +340,15 @@ export class PlanUpdateComponent implements OnInit {
   }
 
   checkAllData(): boolean {
+    if (this.listReports.length == 0) {
+      Swal.fire({
+        title: 'Error',
+        text: `Chưa có biên bản kiểm tra`,
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+      return false;
+    }
     for (let i = 0; i < this.listReports.length; i++) {
       const r = this.listReports[i];
       if (
@@ -575,6 +584,19 @@ export class PlanUpdateComponent implements OnInit {
 
   onImageError(fileName: string) {
     this.imageLoadErrors.add(fileName);
+  }
+
+  checkValid() {
+    const checkGroupId = this.checkerGroups.find(x => x.name === this.editForm.get('subjectOfAssetmentPlan')?.value)?.id;
+    this.checkTargets = this.checkTargetBases.filter(x => x.checkGroupId === checkGroupId);
+    if (this.checkTargets.length === 0) {
+      Swal.fire({
+        title: 'Error',
+        text: `Chưa có đối tượng đánh giá thuộc nhóm đối tượng đánh giá kế hoạch này`,
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+    }
   }
 
   checkTarget() {

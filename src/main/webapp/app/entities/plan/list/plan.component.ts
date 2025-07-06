@@ -2,7 +2,7 @@ import { Component, NgZone, inject, OnInit, ViewChild, TemplateRef, ChangeDetect
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 import { combineLatest, filter, Observable, Subscription, tap } from 'rxjs';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { TreeNode } from 'primeng/api'; // Import TreeNode
+import { PrimeNGConfig, TreeNode } from 'primeng/api'; // Import TreeNode
 import Swal from 'sweetalert2';
 
 import SharedModule from 'app/shared/shared.module';
@@ -37,6 +37,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { CheckboxModule } from 'primeng/checkbox';
 import { AccountService } from 'app/core/auth/account.service';
 import { DropdownModule } from 'primeng/dropdown';
+import { FrequencyService } from 'app/entities/frequency/service/frequency.service';
 
 interface CheckPlanDetail {
   id: number;
@@ -170,9 +171,33 @@ export class PlanComponent implements OnInit {
     private exportExcelService: ExportExcelService,
     private cdr: ChangeDetectorRef,
     private accountService: AccountService,
+    private frequencyService: FrequencyService,
+    private primengConfig: PrimeNGConfig,
   ) {}
 
   ngOnInit(): void {
+    this.primengConfig.setTranslation({
+      dayNamesMin: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
+      monthNames: [
+        'Tháng 1',
+        'Tháng 2',
+        'Tháng 3',
+        'Tháng 4',
+        'Tháng 5',
+        'Tháng 6',
+        'Tháng 7',
+        'Tháng 8',
+        'Tháng 9',
+        'Tháng 10',
+        'Tháng 11',
+        'Tháng 12',
+      ],
+      monthNamesShort: ['Th1', 'Th2', 'Th3', 'Th4', 'Th5', 'Th6', 'Th7', 'Th8', 'Th9', 'Th10', 'Th11', 'Th12'],
+      today: 'Hôm nay',
+      clear: 'Xóa',
+      dateFormat: 'dd/mm/yy',
+      firstDayOfWeek: 1,
+    });
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
       .pipe(
         tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
@@ -184,7 +209,13 @@ export class PlanComponent implements OnInit {
       )
       .subscribe();
     this.planService.getPlanDetail().subscribe(res => {
-      this.planDetailResults = res;
+      this.planDetailResults = res.map((item: any) => ({
+        ...item,
+        timeStart: item.timeStart ? new Date(item.timeStart) : null,
+        timeEnd: item.timeEnd ? new Date(item.timeEnd) : null,
+        createdAt: item.createdAt ? new Date(item.createdAt) : null,
+        updatedAt: item.updatedAt ? new Date(item.updatedAt) : null,
+      }));
       this.loadTreeNodes();
     });
     this.evaluatorService.getAllCheckTargets().subscribe(res => {
@@ -192,6 +223,9 @@ export class PlanComponent implements OnInit {
     });
     this.convertService.query().subscribe(res => {
       this.listEvalReportBase = res.body;
+    });
+    this.frequencyService.getAllCheckFrequency().subscribe(res => {
+      this.listOfFrequency = res;
     });
     this.accountService.identity().subscribe(account => {
       this.account = account;
@@ -238,6 +272,14 @@ export class PlanComponent implements OnInit {
       next: res => {
         if (res.body) {
           this.planDetailResults = res.body;
+          this.planDetailResults = this.planDetailResults.map(item => {
+            return {
+              ...item,
+              timeStart: new Date(item.timeStart),
+              timeEnd: new Date(item.timeEnd),
+              createdAt: new Date(item.createdAt),
+            };
+          });
           this.totalRecords = this.planDetailResults.length;
           this.isLoading = false;
         }
