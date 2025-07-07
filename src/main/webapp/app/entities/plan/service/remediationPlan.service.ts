@@ -27,7 +27,7 @@ export class RemediationPlanService {
 
   checkNameExistsByReport(name: string, reportId: number): Observable<boolean> {
     return this.http
-      .get<IRemediationPlanGroup[]>(`${this.resourceUrl}/report-id/${reportId}`)
+      .get<IRemediationPlanGroup[]>(`${this.resourceUrl}/${reportId}`)
       .pipe(map(converts => converts.some(convert => convert.name === name)));
   }
 

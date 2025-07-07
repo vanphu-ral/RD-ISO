@@ -17,18 +17,6 @@
             </span>
           </a>
         </li>
-        <!-- <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-          <a
-            class="dropdown-item"
-            routerLink="/plan"
-            routerLinkActive="active"
-            [routerLinkActiveOptions]="{ exact: true }"
-            (click)="collapseNavbar()"
-          >
-            <fa-icon icon="asterisk" [fixedWidth]="true"></fa-icon>
-            <span class="dropdown-item-span">Kế hoạch</span>
-          </a>
-        </li> -->
         <li
           *jhiHasAnyAuthority="[
             'ROLE_ISO_ADMIN',
@@ -455,6 +443,14 @@
               </li>
             }
           </ul>
+        </li>
+        <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <a class="dropdown-item" routerLink="http://192.168.68.77:9030/" (click)="collapseNavbar()">
+            <span>
+              <i class="pi pi-mobile"></i>
+              <span class="dropdown-item-span">Mobile Web</span>
+            </span>
+          </a>
         </li>
       </ul>
     </nav>
