@@ -103,4 +103,8 @@ export default class NavbarComponent implements OnInit {
     sessionStorage.setItem('toggleSidebar', 'close');
     sessionStorage.setItem('showLogo', 'show');
   }
+
+  openMobileWeb() {
+    window.location.href = 'http://192.168.68.77:9030/';
+  }
 }
