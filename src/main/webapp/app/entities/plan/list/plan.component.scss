@@ -1,0 +1,12 @@
+@import url('../../shared.component.css');
+
+#page-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+p-table td {
+  padding: 0 !important;
+  text-align: center;
+}

@@ -28,7 +28,7 @@ type CheckLevelFormRawValue = FormValueOf<ICheckLevel>;
 
 type NewCheckLevelFormRawValue = FormValueOf<NewCheckLevel>;
 
-type CheckLevelFormDefaults = Pick<NewCheckLevel, 'id' | 'createdAt' | 'updatedAt'>;
+type CheckLevelFormDefaults = Pick<NewCheckLevel, 'id' | 'status' | 'createdAt' | 'updatedAt'>;
 
 type CheckLevelFormGroupContent = {
   id: FormControl<CheckLevelFormRawValue['id'] | NewCheckLevel['id']>;
@@ -83,6 +83,7 @@ export class CheckLevelFormService {
 
     return {
       id: null,
+      status: 'ACTIVE',
       createdAt: currentTime,
       updatedAt: currentTime,
     };

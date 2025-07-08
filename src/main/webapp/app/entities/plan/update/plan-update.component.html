@@ -89,137 +89,270 @@
           </div>
         </div>
       </div>
-      <div class="d-flex justify-content-end">
-        <button
-          id="jh-create-entity"
-          data-cy="entityCreateButton"
-          class="btn btn-primary jh-create-entity create-plan"
-          (click)="addNewRow()"
+      <ng-container *ngIf="!isMobile">
+        <div class="d-flex justify-content-end">
+          <button
+            id="jh-create-entity"
+            data-cy="entityCreateButton"
+            class="btn btn-primary jh-create-entity create-plan"
+            (click)="addNewRow()"
+          >
+            <fa-icon icon="plus"></fa-icon>
+            <span>Thêm mới</span>
+          </button>
+        </div>
+        <p-table
+          [value]="listReports"
+          [paginator]="true"
+          [rows]="100"
+          [responsive]="true"
+          [scrollable]="true"
+          styleClass="p-datatable-gridlines"
+          [rowsPerPageOptions]="[5, 10, 20]"
+          [autoLayout]="true"
         >
-          <fa-icon icon="plus"></fa-icon>
-          <span>Thêm mới</span>
-        </button>
-      </div>
-      <p-table
-        [value]="listReports"
-        [paginator]="true"
-        [rows]="100"
-        [responsive]="true"
-        [scrollable]="true"
-        styleClass="p-datatable-gridlines"
-        [rowsPerPageOptions]="[5, 10, 20]"
-        [autoLayout]="true"
-      >
-        <ng-template pTemplate="header">
-          <tr>
-            <th>STT</th>
-            <th style="min-width: 300px; width: 300px">Mẫu BBKT</th>
-            <th style="min-width: 180px; width: 180px">Mã BBKT</th>
-            <th style="min-width: 400px; width: 400px">Tên BBKT</th>
-            <th style="min-width: 200px; width: 200px">Đối tượng đánh giá</th>
-            <th style="min-width: 200px; width: 200px">Người kiểm tra</th>
-            <th style="min-width: 180px; width: 180px">Loại BBKT</th>
-            <th style="min-width: 200px; width: 200px">Tần suất kiểm tra</th>
-            <th style="min-width: 150px; width: 150px">Kiểu quy đổi</th>
-            <th style="min-width: 150px; width: 150px">Thang điểm</th>
-            <th style="min-width: 150px; width: 150px">Trạng thái</th>
-            <th style="min-width: 200px; width: 200px">Tuỳ chọn</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-index="rowIndex" let-report>
-          <tr>
-            <td>{{ index + 1 }}</td>
-            <td>
-              <select
-                [(ngModel)]="report.sampleReportId"
-                (change)="updateReportCode($event, index)"
-                [ngModelOptions]="{ standalone: true }"
-              >
-                <option *ngFor="let data of sampleReport" [value]="data.id">
-                  {{ data.name }}
-                </option>
-              </select>
-            </td>
-            <td>
-              <input type="text" class="inp-style" [value]="report.code" readonly />
-            </td>
-            <td>
-              <input type="text" [(ngModel)]="report.name" [ngModelOptions]="{ standalone: true }" />
-            </td>
-            <td>
-              <select [(ngModel)]="report.testOfObject" [ngModelOptions]="{ standalone: true }" (click)="checkTarget()">
-                <option *ngFor="let data of checkTargets" [value]="data.name">
-                  {{ data.name }}
-                </option>
-              </select>
-            </td>
-            <td>
-              <select
-                [(ngModel)]="report.checker"
-                [ngModelOptions]="{ standalone: true }"
-                (change)="updateReportName(index, report.checker)"
-              >
-                <option *ngFor="let data of evaluators" [value]="data.name">
-                  {{ data.name }}
-                </option>
-              </select>
-            </td>
-            <td>
-              <select [(ngModel)]="report.reportType" [ngModelOptions]="{ standalone: true }">
-                <option *ngFor="let data of reportTypes" [value]="data.name">
-                  {{ data.name }}
-                </option>
-              </select>
-            </td>
-            <td>
-              <select [(ngModel)]="report.frequency" [ngModelOptions]="{ standalone: true }">
-                <option *ngFor="let data of listOfFrequency" [value]="data.name">
-                  {{ data.name }}
-                </option>
-              </select>
-            </td>
-            <td>
-              <select [(ngModel)]="report.convertScore" name="report.convert" [ngModelOptions]="{ standalone: true }">
-                <option *ngFor="let item1 of listConvert" [value]="item1">{{ item1 }}</option>
-              </select>
-            </td>
-            <td>
-              <input type="text" class="inp-style" [(ngModel)]="report.scoreScale" [ngModelOptions]="{ standalone: true }" />
-            </td>
-            <td>
-              <select [(ngModel)]="report.status" name="report.status" [ngModelOptions]="{ standalone: true }">
-                <option *ngFor="let item1 of listStatusReport" [value]="item1">{{ item1 }}</option>
-              </select>
-            </td>
-            <td>
-              <div class="action-buttons">
-                <p-button
-                  icon="pi pi-pencil"
-                  aria-label="Edit"
-                  [rounded]="true"
-                  styleClass="p-button-rounded p-button-info p-button-sm mr-2"
-                  [severity]="'warning'"
-                  (onClick)="showDialogEdit(index)"
-                />
-                <p-button
-                  icon="pi pi-user-edit"
-                  aria-label="Gross"
-                  styleClass="p-button-rounded p-button-info p-button-sm mr-2"
-                  [severity]="'help'"
-                  (onClick)="openModalUser(index, report)"
-                />
-                <p-button
-                  icon="pi pi-trash"
-                  aria-label="Delete"
-                  styleClass="p-button-rounded p-button-info p-button-sm mr-2"
-                  [severity]="'danger'"
-                  (onClick)="deleteRow(index)"
-                />
-              </div>
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
+          <ng-template pTemplate="header">
+            <tr>
+              <th>STT</th>
+              <th style="min-width: 300px; width: 300px">Mẫu BBKT</th>
+              <th style="min-width: 180px; width: 180px">Mã BBKT</th>
+              <th style="min-width: 400px; width: 400px">Tên BBKT</th>
+              <th style="min-width: 200px; width: 200px">Đối tượng đánh giá</th>
+              <th style="min-width: 200px; width: 200px">Người kiểm tra</th>
+              <th style="min-width: 180px; width: 180px">Loại BBKT</th>
+              <th style="min-width: 200px; width: 200px">Tần suất kiểm tra</th>
+              <th style="min-width: 150px; width: 150px">Kiểu quy đổi</th>
+              <th style="min-width: 150px; width: 150px">Thang điểm</th>
+              <th style="min-width: 150px; width: 150px">Trạng thái</th>
+              <th style="min-width: 200px; width: 200px">Tuỳ chọn</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-index="rowIndex" let-report>
+            <tr>
+              <td>{{ index + 1 }}</td>
+              <td>
+                <select
+                  [(ngModel)]="report.sampleReportId"
+                  (change)="updateReportCode($event, index)"
+                  [ngModelOptions]="{ standalone: true }"
+                >
+                  <option *ngFor="let data of sampleReport" [value]="data.id">
+                    {{ data.name }}
+                  </option>
+                </select>
+              </td>
+              <td>
+                <input type="text" class="inp-style" [value]="report.code" readonly />
+              </td>
+              <td>
+                <input type="text" [(ngModel)]="report.name" [ngModelOptions]="{ standalone: true }" />
+              </td>
+              <td>
+                <select [(ngModel)]="report.testOfObject" [ngModelOptions]="{ standalone: true }" (click)="checkTarget()">
+                  <option *ngFor="let data of checkTargets" [value]="data.name">
+                    {{ data.name }}
+                  </option>
+                </select>
+              </td>
+              <td>
+                <select
+                  [(ngModel)]="report.checker"
+                  [ngModelOptions]="{ standalone: true }"
+                  (change)="updateReportName(index, report.checker)"
+                >
+                  <option *ngFor="let data of evaluators" [value]="data.name">
+                    {{ data.name }}
+                  </option>
+                </select>
+              </td>
+              <td>
+                <select [(ngModel)]="report.reportType" [ngModelOptions]="{ standalone: true }">
+                  <option *ngFor="let data of reportTypes" [value]="data.name">
+                    {{ data.name }}
+                  </option>
+                </select>
+              </td>
+              <td>
+                <select [(ngModel)]="report.frequency" [ngModelOptions]="{ standalone: true }">
+                  <option *ngFor="let data of listOfFrequency" [value]="data.name">
+                    {{ data.name }}
+                  </option>
+                </select>
+              </td>
+              <td>
+                <select [(ngModel)]="report.convertScore" name="report.convert" [ngModelOptions]="{ standalone: true }">
+                  <option *ngFor="let item1 of listConvert" [value]="item1">{{ item1 }}</option>
+                </select>
+              </td>
+              <td>
+                <input type="text" class="inp-style" [(ngModel)]="report.scoreScale" [ngModelOptions]="{ standalone: true }" />
+              </td>
+              <td>
+                <select [(ngModel)]="report.status" name="report.status" [ngModelOptions]="{ standalone: true }">
+                  <option *ngFor="let item1 of listStatusReport" [value]="item1">{{ item1 }}</option>
+                </select>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <p-button
+                    icon="pi pi-pencil"
+                    aria-label="Edit"
+                    [rounded]="true"
+                    styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+                    [severity]="'warning'"
+                    (onClick)="showDialogEdit(report, index)"
+                  />
+                  <p-button
+                    icon="pi pi-user-edit"
+                    aria-label="Gross"
+                    styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+                    [severity]="'help'"
+                    (onClick)="openModalUser(index, report)"
+                  />
+                  <p-button
+                    icon="pi pi-trash"
+                    aria-label="Delete"
+                    styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+                    [severity]="'danger'"
+                    (onClick)="deleteRow(index)"
+                  />
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </ng-container>
+      <ng-container *ngIf="isMobile">
+        <div class="d-flex justify-content-end">
+          <button
+            id="jh-create-entity"
+            data-cy="entityCreateButton"
+            class="btn btn-primary jh-create-entity create-plan"
+            (click)="addNewRowMobile()"
+          >
+            <fa-icon icon="plus"></fa-icon>
+            <span>Thêm mới</span>
+          </button>
+        </div>
+        <p-table
+          [value]="listReports"
+          [paginator]="true"
+          [rows]="100"
+          [responsive]="true"
+          [scrollable]="true"
+          styleClass="p-datatable-gridlines"
+          [rowsPerPageOptions]="[5, 10, 20]"
+          [autoLayout]="true"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Tuỳ chọn</th>
+              <th style="min-width: 400px; width: 400px">Tên BBKT</th>
+              <th style="min-width: 200px; width: 200px">Đối tượng đánh giá</th>
+              <th style="min-width: 200px; width: 200px">Người kiểm tra</th>
+              <th style="min-width: 180px; width: 180px">Loại BBKT</th>
+              <th style="min-width: 300px; width: 300px">Mẫu BBKT</th>
+              <th style="min-width: 180px; width: 180px">Mã BBKT</th>
+              <th style="min-width: 200px; width: 200px">Tần suất kiểm tra</th>
+              <th style="min-width: 150px; width: 150px">Kiểu quy đổi</th>
+              <th style="min-width: 150px; width: 150px">Thang điểm</th>
+              <th style="min-width: 150px; width: 150px">Trạng thái</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-index="rowIndex" let-report>
+            <tr>
+              <td>
+                <div class="action-buttons">
+                  <p-button
+                    icon="pi pi-pencil"
+                    aria-label="Edit"
+                    [rounded]="true"
+                    styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+                    [severity]="'warning'"
+                    (onClick)="showDialogEdit(report, index)"
+                  />
+                  <p-button
+                    icon="pi pi-user-edit"
+                    aria-label="Gross"
+                    styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+                    [severity]="'help'"
+                    (onClick)="openModalUser(index, report)"
+                  />
+                  <p-button
+                    icon="pi pi-trash"
+                    aria-label="Delete"
+                    styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+                    [severity]="'danger'"
+                    (onClick)="deleteRow(index)"
+                  />
+                </div>
+              </td>
+              <td>
+                <input type="text" [(ngModel)]="report.name" [ngModelOptions]="{ standalone: true }" />
+              </td>
+              <td>
+                <select [(ngModel)]="report.testOfObject" [ngModelOptions]="{ standalone: true }" (click)="checkTarget()">
+                  <option *ngFor="let data of checkTargets" [value]="data.name">
+                    {{ data.name }}
+                  </option>
+                </select>
+              </td>
+              <td>
+                <select
+                  [(ngModel)]="report.checker"
+                  [ngModelOptions]="{ standalone: true }"
+                  (change)="updateReportName(report.checker, index)"
+                >
+                  <option *ngFor="let data of evaluators" [value]="data.name">
+                    {{ data.name }}
+                  </option>
+                </select>
+              </td>
+              <td>
+                <select [(ngModel)]="report.reportType" [ngModelOptions]="{ standalone: true }">
+                  <option *ngFor="let data of reportTypes" [value]="data.name">
+                    {{ data.name }}
+                  </option>
+                </select>
+              </td>
+              <td>
+                <select
+                  [(ngModel)]="report.sampleReportId"
+                  (change)="updateReportCode($event, index)"
+                  [ngModelOptions]="{ standalone: true }"
+                >
+                  <option *ngFor="let data of sampleReport" [value]="data.id">
+                    {{ data.name }}
+                  </option>
+                </select>
+              </td>
+              <td>
+                <input type="text" class="inp-style" [value]="report.code" readonly />
+              </td>
+              <td>
+                <select [(ngModel)]="report.frequency" [ngModelOptions]="{ standalone: true }">
+                  <option *ngFor="let data of listOfFrequency" [value]="data.name">
+                    {{ data.name }}
+                  </option>
+                </select>
+              </td>
+              <td>
+                <select [(ngModel)]="report.convertScore" name="report.convert" [ngModelOptions]="{ standalone: true }">
+                  <option *ngFor="let item1 of listConvert" [value]="item1">{{ item1 }}</option>
+                </select>
+              </td>
+              <td>
+                <input type="text" class="inp-style" [(ngModel)]="report.scoreScale" [ngModelOptions]="{ standalone: true }" />
+              </td>
+              <td>
+                <select [(ngModel)]="report.status" name="report.status" [ngModelOptions]="{ standalone: true }">
+                  <option *ngFor="let item1 of listStatusReport" [value]="item1">{{ item1 }}</option>
+                </select>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </ng-container>
       <div>
         <p-button
           label="Quay lại"
@@ -316,7 +449,7 @@
           <select
             [(ngModel)]="listReports[selectedIndex].checker"
             [ngModelOptions]="{ standalone: true }"
-            (change)="updateReportName(selectedIndex, listReports[selectedIndex].checker || '')"
+            (change)="updateReportName(listReports[selectedIndex].checker || '', selectedIndex)"
           >
             <option *ngFor="let data of evaluators" [value]="data.name">
               {{ data.name }}
@@ -430,6 +563,160 @@
         label="Lưu"
         icon="pi pi-save"
         (onClick)="dialogVisible = false"
+        styleClass="p-button-rounded p-button-info p-button-sm mr-2 gross-btn"
+        severity="info"
+      />
+    </div>
+  </ng-template>
+</p-dialog>
+
+<p-dialog
+  header="Chỉnh sửa BBKT"
+  [resizable]="false"
+  [modal]="true"
+  [maximizable]="true"
+  appendTo="body"
+  [(visible)]="dialogVisibleMobile"
+  [style]="{ width: '80vw' }"
+  [contentStyle]="{ height: '70vh' }"
+>
+  <div>
+    <div class="col-container">
+      <div class="col-m4-25 col-container-child">
+        <label for="">Mẫu BBKT</label>
+        <select [(ngModel)]="selectedReport.sampleReportId" [ngModelOptions]="{ standalone: true }" (change)="selectReportSample($event)">
+          <option *ngFor="let data of sampleReport" [value]="data.id">
+            {{ data.name }}
+          </option>
+        </select>
+      </div>
+      <div class="col-m4-25 col-container-child">
+        <label for="">Tên BBKT</label>
+        <input type="text" class="inp-style" name="code" id="field_code" [(ngModel)]="selectedReport.name" />
+      </div>
+    </div>
+    <div class="col-container">
+      <div class="col-m4-25 col-container-child">
+        <label for="">Đối tượng đánh giá</label>
+        <select [(ngModel)]="selectedReport.testOfObject" [ngModelOptions]="{ standalone: true }" (click)="checkTarget()">
+          <option *ngFor="let data of checkTargets" [value]="data.name">
+            {{ data.name }}
+          </option>
+        </select>
+      </div>
+      <div class="col-m4-25 col-container-child">
+        <label for="">Người kiểm tra</label>
+        <select
+          [(ngModel)]="selectedReport.checker"
+          [ngModelOptions]="{ standalone: true }"
+          (change)="updateReportName(selectedReport.checker)"
+        >
+          <option *ngFor="let data of evaluators" [value]="data.name">
+            {{ data.name }}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div class="col-container">
+      <div class="col-m4-25 col-container-child">
+        <label for="">Loại BBKT</label>
+        <select [(ngModel)]="selectedReport.reportType" [ngModelOptions]="{ standalone: true }">
+          <option *ngFor="let data of reportTypes" [value]="data.name">
+            {{ data.name }}
+          </option>
+        </select>
+      </div>
+      <div class="col-m4-25 col-container-child">
+        <label for="">Tần suất</label>
+        <select [(ngModel)]="selectedReport.frequency" [ngModelOptions]="{ standalone: true }">
+          <option *ngFor="let data of listOfFrequency" [value]="data.name">
+            {{ data.name }}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div class="col-container">
+      <div class="col-m4-25 col-container-child">
+        <label for="">Kiểu quy đổi</label>
+        <select [(ngModel)]="selectedReport.convertScore" name="report.convert" [ngModelOptions]="{ standalone: true }">
+          <option *ngFor="let item1 of listConvert" [value]="item1">{{ item1 }}</option>
+        </select>
+      </div>
+      <div class="col-m4-25 col-container-child">
+        <label for="">Thang điểm</label>
+        <input type="text" class="inp-style" [(ngModel)]="selectedReport.scoreScale" [ngModelOptions]="{ standalone: true }" />
+      </div>
+    </div>
+    <div class="col-container">
+      <div class="col-m4-25 col-container-child">
+        <label for="">Trạng thái</label>
+        <select [(ngModel)]="selectedReport.status" name="selectedReport.status">
+          <option>{{ selectedReport.status }}</option>
+          <option *ngFor="let item1 of listStatusReport" [value]="item1">{{ item1 }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex justify-content-end">
+    <button type="button" class="btn btn-info" (click)="addNewRowBBKT(selectedReport)">
+      <span>Thêm dòng</span>
+    </button>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <table>
+      <thead>
+        <tr>
+          <th class="text-center border" *ngFor="let item of selectedReport?.detail?.header">{{ item.name }}</th>
+          <th class="text-center border">Tần suất</th>
+          <th class="text-center border">Tuỳ chọn</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of selectedReport?.detail?.body; let i = index">
+          <td class="text-center border" *ngFor="let data of item.data; let j = index">
+            <select
+              [(ngModel)]="data.value"
+              name="data.value-{{ j }}"
+              [ngModelOptions]="{ standalone: true }"
+              (click)="checkEvent(data.header, selectedIndex)"
+            >
+              <option>{{ data.value }}</option>
+              <option *ngFor="let item1 of listSuggestions" [value]="item1">{{ item1 }}</option>
+            </select>
+          </td>
+          <td class="text-center border">
+            <select [(ngModel)]="item.frequency" [ngModelOptions]="{ standalone: true }">
+              <option *ngFor="let frequency of listOfFrequency" [value]="frequency.name">{{ frequency.name }}</option>
+            </select>
+          </td>
+          <td class="text-center border">
+            <p-button
+              icon="pi pi-trash"
+              aria-label="Delete"
+              styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+              [severity]="'danger'"
+              title="Xoá"
+              (click)="deleteRowBBKTMobile(i, item)"
+            />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <ng-template pTemplate="footer">
+    <div class="action-buttons">
+      <p-button
+        label="Huỷ"
+        icon="pi pi-ban"
+        (onClick)="this.dialogVisibleMobile = false"
+        styleClass="p-button-rounded p-button-info p-button-sm mr-2 gross-btn"
+        severity="danger"
+      />
+      <p-button
+        label="Lưu"
+        icon="pi pi-save"
+        (onClick)="saveReportToPlan(selectedReport)"
         styleClass="p-button-rounded p-button-info p-button-sm mr-2 gross-btn"
         severity="info"
       />

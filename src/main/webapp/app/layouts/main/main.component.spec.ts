@@ -13,6 +13,7 @@ import { AccountService } from 'app/core/auth/account.service';
 
 import { AppPageTitleStrategy } from 'app/app-page-title-strategy';
 import MainComponent from './main.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('MainComponent', () => {
   let comp: MainComponent;
@@ -26,7 +27,7 @@ describe('MainComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [TranslateModule.forRoot(), RouterTestingModule, MainComponent],
+      imports: [TranslateModule.forRoot(), RouterTestingModule, MainComponent, HttpClientTestingModule],
       providers: [Title, AccountService, { provide: TitleStrategy, useClass: AppPageTitleStrategy }],
     })
       .overrideTemplate(MainComponent, '')

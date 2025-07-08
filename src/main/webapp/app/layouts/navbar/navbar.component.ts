@@ -14,13 +14,16 @@ import { EntityNavbarItems } from 'app/entities/entity-navbar-items';
 import ActiveMenuDirective from './active-menu.directive';
 import NavbarItem from './navbar-item.model';
 import MainComponent from '../main/main.component';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { FormsModule } from '@angular/forms';
+import { LayoutService } from '../service/layout.service';
 
 @Component({
   standalone: true,
   selector: 'jhi-navbar',
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
-  imports: [RouterModule, SharedModule, HasAnyAuthorityDirective, ActiveMenuDirective],
+  imports: [RouterModule, SharedModule, HasAnyAuthorityDirective, ActiveMenuDirective, InputSwitchModule, FormsModule],
 })
 export default class NavbarComponent implements OnInit {
   inProduction?: boolean;
@@ -31,12 +34,14 @@ export default class NavbarComponent implements OnInit {
   account = inject(AccountService).trackCurrentAccount();
   entitiesNavbarItems: NavbarItem[] = [];
   showLogo = 'false';
+  isMobile: boolean = false;
 
   private loginService = inject(LoginService);
   private translateService = inject(TranslateService);
   private stateStorageService = inject(StateStorageService);
   private profileService = inject(ProfileService);
   private router = inject(Router);
+  private layoutService = inject(LayoutService);
 
   constructor(private mainComponent: MainComponent) {
     if (VERSION) {
@@ -51,6 +56,10 @@ export default class NavbarComponent implements OnInit {
       this.inProduction = profileInfo.inProduction;
       this.openAPIEnabled = profileInfo.openAPIEnabled;
     });
+  }
+
+  onToggleMobile() {
+    // this.layoutService.setIsMobile(this.isMobile);
   }
 
   changeLanguage(languageKey: string): void {
@@ -102,9 +111,5 @@ export default class NavbarComponent implements OnInit {
     this.mainComponent.closeNav2();
     sessionStorage.setItem('toggleSidebar', 'close');
     sessionStorage.setItem('showLogo', 'show');
-  }
-
-  openMobileWeb() {
-    window.location.href = 'http://192.168.68.77:9030/';
   }
 }

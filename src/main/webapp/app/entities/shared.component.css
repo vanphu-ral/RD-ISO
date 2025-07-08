@@ -2772,3 +2772,15 @@ p-dialog {
     }
   }
 }
+
+.text-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px; /* tùy chỉnh chiều rộng phù hợp */
+  /* display: inline-block; */
+}
+
+.tooltip {
+  z-index: 99999 !important; /* Đảm bảo nó cao hơn baseZIndex của p-dialog (1100) */
+}

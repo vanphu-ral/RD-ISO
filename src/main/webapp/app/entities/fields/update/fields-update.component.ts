@@ -15,6 +15,7 @@ import { ISource } from 'app/entities/source/source.model';
 import { Account } from 'app/core/auth/account.model';
 import { AccountService } from 'app/core/auth/account.service';
 import dayjs from 'dayjs/esm';
+import Swal from 'sweetalert2';
 
 @Component({
   standalone: true,
@@ -98,9 +99,27 @@ export class FieldsUpdateComponent implements OnInit {
   }
 
   protected subscribeToSaveResponse(result: Observable<HttpResponse<IFields>>): void {
-    result.pipe(finalize(() => this.onSaveFinalize())).subscribe({
-      next: () => this.onSaveSuccess(),
-      error: () => this.onSaveError(),
+    result.subscribe({
+      next: () => {
+        Swal.fire({
+          title: 'Success',
+          text: this.fields?.id ? 'Cập nhật thành công!' : 'Thêm mới thành công!',
+          icon: 'success',
+          confirmButtonText: 'OK',
+        }).then(() => {
+          this.onSaveSuccess();
+        });
+      },
+      error: () => {
+        Swal.fire({
+          title: 'Error',
+          text: this.fields?.id ? 'Cập nhật thất bại!' : 'Thêm mới thất bại!',
+          icon: 'error',
+          confirmButtonText: 'OK',
+        }).then(() => {
+          this.onSaveError();
+        });
+      },
     });
   }
 
