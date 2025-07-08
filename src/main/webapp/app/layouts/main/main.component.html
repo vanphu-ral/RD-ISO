@@ -1,10 +1,97 @@
-<div class="main-container">
+<div class="main-container" *ngIf="!isMobile">
   <div class="sidebar">
     <router-outlet name="navbar"></router-outlet>
   </div>
 
   <div id="main" class="" style="width: 100%; overflow: hidden">
     <div class="card jh-card">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>
+
+<div class="main-container" *ngIf="isMobile">
+  <div #sidebarId id="sidebar-id" class="sidebar-mobile col-md-3">
+    <button #sidebarToggleButton class="sidebar-collapse-btn" (click)="toggleSidebar()" *ngIf="!IsShowNavbar">
+      <fa-icon icon="bars"></fa-icon>
+    </button>
+    <ul id="navbar-nav" class="navbar-nav" *ngIf="IsShowNavbar">
+      <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <a class="dropdown-item nav-link" routerLink="/">
+          <fa-icon icon="home"></fa-icon>
+          <span class="dropdown-item-span">Trang chủ</span>
+        </a>
+      </li>
+      <li
+        *jhiHasAnyAuthority="['ROLE_ISO_ADMIN', 'ROLE_ISO_CREATE_PLAN', 'ROLE_ISO_CHECK', 'ROLE_ISO_CREATE_FIX_PLAN', 'ROLE_ISO_VIEW_PLAN']"
+        class="nav-item"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <a class="dropdown-item nav-link" routerLink="/plan" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <fa-icon icon="asterisk"></fa-icon>
+          <span class="dropdown-item-span">Quản lý kế hoạch</span>
+        </a>
+      </li>
+      <li
+        *jhiHasAnyAuthority="['ROLE_ISO_ADMIN', 'ROLE_ISO_CREATE_FIX_PLAN', 'ROLE_ISO_CHECK']"
+        class="nav-item"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <a class="dropdown-item nav-link" routerLink="/plan-group" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <fa-icon icon="asterisk"></fa-icon>
+          <span class="dropdown-item-span">Quản lý kế hoạch gộp</span>
+        </a>
+      </li>
+      <li
+        ngbDropdown
+        class="nav-item dropdown pointer"
+        display="dynamic"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="account-menu" data-cy="accountMenu">
+          @if (!account()?.imageUrl) {
+            <span>
+              <fa-icon icon="user"></fa-icon>
+              <span jhiTranslate="global.menu.account.main" class="dropdown-item-span">Tài khoản</span>
+            </span>
+          } @else {
+            <span>
+              <img [src]="account()!.imageUrl" class="profile-image rounded-circle" alt="Avatar" />
+            </span>
+          }
+        </a>
+        <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="account-menu" container="body">
+          @if (account() !== null) {
+            <li>
+              <a class="dropdown-item" (click)="logout()" id="logout" data-cy="logout">
+                <fa-icon icon="sign-out-alt" [fixedWidth]="true"></fa-icon>
+                <span jhiTranslate="global.menu.account.logout">Đăng xuất</span>
+              </a>
+            </li>
+          } @else {
+            <li>
+              <a class="dropdown-item" (click)="login()" id="login" data-cy="login">
+                <fa-icon icon="sign-in-alt" [fixedWidth]="true"></fa-icon>
+                <span jhiTranslate="global.menu.account.login">Đăng nhập</span>
+              </a>
+            </li>
+          }
+        </ul>
+      </li>
+      <li class="nav-item" (click)="closeMenubar()">
+        <a class="dropdown-item nav-link">
+          <fa-icon icon="xmark"></fa-icon>
+          <span class="dropdown-item-span">Đóng</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div id="main" class="" style="width: 100%; overflow: hidden">
+    <div class="card jh-card-mobile">
       <router-outlet></router-outlet>
     </div>
   </div>

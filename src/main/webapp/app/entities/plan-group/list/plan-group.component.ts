@@ -22,6 +22,7 @@ import { PlanService } from 'app/entities/plan/service/plan.service';
 import Swal from 'sweetalert2';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { AccountService } from 'app/core/auth/account.service';
+import { LayoutService } from 'app/layouts/service/layout.service';
 // import { BrowserModule } from '@angular/platform-browser';
 
 @Component({
@@ -48,7 +49,7 @@ import { AccountService } from 'app/core/auth/account.service';
     ConfirmDialogModule,
   ],
   templateUrl: './plan-group.component.html',
-  styleUrls: ['../../shared.component.css'],
+  styleUrls: ['./plan-group.component.scss'],
   providers: [ConfirmationService],
 })
 export class PlanGroupComponent implements OnInit {
@@ -86,6 +87,11 @@ export class PlanGroupComponent implements OnInit {
   dialogViewImage: boolean = false;
   listImgReports: any[] = [];
 
+  // Mobile availible
+  isMobile: boolean = false;
+  noteDialogVisible = false;
+  selectedReport: any = null;
+
   constructor(
     protected modalService: NgbModal,
     protected ngZone: NgZone,
@@ -96,9 +102,13 @@ export class PlanGroupComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private cdr: ChangeDetectorRef,
     private accountService: AccountService,
+    private layoutService: LayoutService,
   ) {}
 
   ngOnInit(): void {
+    this.layoutService.isMobile$.subscribe(value => {
+      this.isMobile = value;
+    });
     // Lấy danh sách các kế hoạch nhóm
     this.activatedRoute.data.subscribe(({ plan }) => {
       this.listPlanGroups = Object.keys(plan)
@@ -415,5 +425,16 @@ export class PlanGroupComponent implements OnInit {
   showDialogViewImg(data: any) {
     this.listImgReports = JSON.parse(data);
     this.dialogViewImage = true;
+  }
+
+  // Mobile function
+  openNoteDialog(report: any, index: number): void {
+    if (report.hasEvaluation === 0) return;
+    this.selectedReport = report;
+    this.noteDialogVisible = true;
+  }
+  handleEnter(event: any): void {
+    event.preventDefault();
+    this.noteDialogVisible = false;
   }
 }

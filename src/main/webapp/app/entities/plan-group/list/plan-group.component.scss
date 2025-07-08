@@ -1,0 +1,20 @@
+@import url('../../shared.component.css');
+
+:host ::ng-deep .gross-btn.p-button {
+  min-width: fit-content;
+  height: 36px;
+  transition: all 0.3s ease;
+
+  .p-button-icon {
+    font-size: 1rem;
+    margin-right: 0.5rem;
+  }
+
+  .p-button-label {
+    font-size: 1rem;
+  }
+}
+
+input[type='text'] {
+  width: 100%;
+}

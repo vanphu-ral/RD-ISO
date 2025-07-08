@@ -1,0 +1,32 @@
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+
+.sidebar-mobile {
+  position: fixed;
+  z-index: 99;
+  right: 0;
+  display: flex;
+  justify-content: flex-end;
+  color: white;
+}
+
+.sidebar-collapse-btn {
+  height: 30px;
+}
+
+.jh-card-mobile {
+  width: 100%;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px #0000001a;
+  padding: 20px;
+  text-align: center;
+  margin: auto;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+.collapsed {
+  height: 100%;
+  background: #333;
+}

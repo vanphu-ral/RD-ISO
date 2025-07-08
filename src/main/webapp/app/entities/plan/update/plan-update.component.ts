@@ -38,6 +38,7 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { NewReport } from 'app/entities/report/report.model';
 import { ImageModule } from 'primeng/image';
 import { ConvertService } from 'app/entities/convert/service/convert.service';
+import { LayoutService } from 'app/layouts/service/layout.service';
 interface PlanDetail {
   id?: number | null;
   checkerName: string;
@@ -128,6 +129,12 @@ export class PlanUpdateComponent implements OnInit {
   imageLoadErrors = new Set<string>();
   userTester: any = {};
 
+  // Mobile availible
+  isMobile: boolean = false;
+  selectedReport: any = {};
+  isEditReport: boolean = false;
+  dialogVisibleMobile: boolean = false;
+
   protected planService = inject(PlanService);
   protected planFormService = inject(PlanFormService);
   protected activatedRoute = inject(ActivatedRoute);
@@ -146,6 +153,7 @@ export class PlanUpdateComponent implements OnInit {
   protected sourceService = inject(SourceService);
   protected convertService = inject(ConvertService);
   protected router = inject(Router);
+  protected layoutService = inject(LayoutService);
 
   editForm: PlanFormGroup = this.planFormService.createPlanFormGroup();
 
@@ -159,6 +167,9 @@ export class PlanUpdateComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.layoutService.isMobile$.subscribe(value => {
+      this.isMobile = value;
+    });
     this.reportService
       .getAllWherePlanIdIsNull()
       .pipe(take(1))
@@ -466,11 +477,14 @@ export class PlanUpdateComponent implements OnInit {
       );
   }
 
-  showDialogEdit(index: number): void {
+  showDialogEdit(data: any, index: number): void {
+    this.isEditReport = true;
     this.selectedIndex = index;
+    this.selectedReport = data;
     this.dialogVisible = true;
     if (typeof this.listReports[index].detail === 'string') {
       this.listReports[index].detail = JSON.parse(this.listReports[index].detail);
+      this.selectedReport.detail = JSON.parse(this.listReports[index].detail);
     }
   }
 
@@ -502,11 +516,19 @@ export class PlanUpdateComponent implements OnInit {
     };
   }
 
-  updateReportName(index: number, name: string) {
-    if (name === '' || name === null) {
-      this.listReports[index].name = `${this.removeVietnameseAndSpaces(this.listReports[index].checker)}-${this.listReports[index].code}`;
+  updateReportName(name: any, index?: number) {
+    if (index) {
+      if (name === '' || name === null) {
+        this.listReports[index].name = `${this.removeVietnameseAndSpaces(this.listReports[index].checker)}-${this.listReports[index].code}`;
+      } else {
+        this.listReports[index].name = `${this.removeVietnameseAndSpaces(name)}-${this.listReports[index].code}`;
+      }
     } else {
-      this.listReports[index].name = `${this.removeVietnameseAndSpaces(name)}-${this.listReports[index].code}`;
+      if (name === '' || name === null) {
+        this.selectedReport.name = `${this.removeVietnameseAndSpaces(this.selectedReport.checker)}-${this.selectedReport.code}`;
+      } else {
+        this.selectedReport.name = `${this.removeVietnameseAndSpaces(name)}-${this.selectedReport.code}`;
+      }
     }
   }
 
@@ -626,7 +648,7 @@ export class PlanUpdateComponent implements OnInit {
   }
 
   checkEvent(header: string, selectedIndex: number): void {
-    const data = this.listReports[selectedIndex]?.detail?.header.find((element: any) => element.name === header);
+    const data = this.selectedReport?.detail?.header.find((element: any) => element.name === header);
     this.sourceService.getListTable().subscribe(tables => {
       this.sourceService.getListColumns().subscribe(columns => {
         const column = columns.find((element: any) => element[2] === data.field_name);
@@ -758,6 +780,74 @@ export class PlanUpdateComponent implements OnInit {
     });
     forkJoin(requestSaves).subscribe(() => {
       this.onSaveSuccess();
+    });
+  }
+
+  // Mobile funcition
+  selectReportSample(data: any) {
+    const selectedId = +data.target.value;
+    const evaluatorName = this.evaluators[0]?.name ?? '';
+    this.selectedReport.code = `${this.sampleReport.find(r => r.id === selectedId).code}-${dayjs().format('DDMMYYYYHHmmssSSS')}`;
+    this.selectedReport.name = `${this.removeVietnameseAndSpaces(evaluatorName)}-${this.selectedReport.code}`;
+    this.selectedReport.frequency = this.sampleReport.find(r => r.id === selectedId).frequency;
+    this.selectedReport.reportType = this.sampleReport.find(r => r.id === selectedId).reportType;
+    this.selectedReport.checker = this.evaluators[0].name;
+    this.selectedReport.detail = this.sampleReport.find(r => r.id === selectedId).detail;
+    this.listTitleBody = JSON.parse(this.selectedReport.detail).body;
+    this.listTitleHeaders = JSON.parse(this.selectedReport.detail).header;
+    this.selectedReport.detail = {
+      header: this.listTitleHeaders,
+      body: this.listTitleBody,
+    };
+  }
+
+  saveReportToPlan(data: any) {
+    if (!this.isEditReport) {
+      this.listReports.push(data);
+    } else {
+      this.listReports[this.selectedIndex] = data;
+    }
+    this.dialogVisibleMobile = false;
+    this.isEditReport = false;
+  }
+
+  addNewRowMobile(): void {
+    this.dialogVisibleMobile = true;
+    this.selectedReport = {
+      id: null,
+      name: '',
+      code: '',
+      sampleReportId: null,
+      testOfObject: '',
+      checker: '',
+      status: 'Mới tạo',
+      frequency: '',
+      reportType: '',
+      reportTypeId: null,
+      groupReport: 0,
+      createdAt: dayjs(),
+      updatedAt: dayjs(),
+      updateBy: this.account?.login,
+      scoreScale: '',
+      convertScore: '',
+      planId: null,
+      user: '',
+      detail: '',
+    };
+    // this.listReports.push(newRow);
+  }
+
+  deleteRowBBKTMobile(index: number, data: any): void {
+    Swal.fire({
+      title: 'Are you sure you want to delete this row?',
+      showCancelButton: true,
+      confirmButtonText: `Delete`,
+      cancelButtonText: `Cancel`,
+    }).then(result => {
+      if (result.value) {
+        // this.listReports[this.selectedIndex].detail.body.splice(index, 1);
+        this.selectedReport.detail.body.splice(index, 1);
+      }
     });
   }
 }

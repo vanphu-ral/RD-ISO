@@ -27,6 +27,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { DropdownModule } from 'primeng/dropdown';
 import { CheckTargetService } from 'app/entities/check-target/service/check-target.service';
 import { AccountService } from 'app/core/auth/account.service';
+import { LayoutService } from 'app/layouts/service/layout.service';
 
 interface GroupReport {
   code: string | null;
@@ -113,6 +114,11 @@ export class GrossScriptComponent {
   account: any = {};
   isNameDuplicate: boolean = false;
 
+  // Mobile Availible
+  isMobile: boolean = false;
+  noteDialogVisible = false;
+  selectedReport: any = null;
+
   constructor(
     protected modalService: NgbModal,
     protected ngZone: NgZone,
@@ -127,9 +133,13 @@ export class GrossScriptComponent {
     private cdr: ChangeDetectorRef,
     protected checkTargetService: CheckTargetService,
     private accountService: AccountService,
+    private layoutService: LayoutService,
   ) {}
 
   ngOnInit(): void {
+    this.layoutService.isMobile$.subscribe(value => {
+      this.isMobile = value;
+    });
     this.activatedRoute.data.subscribe(({ plan }) => {
       this.plan = plan;
       this.reportService.getAllByPlanId(plan.id).subscribe(grossScripts => {
@@ -537,5 +547,17 @@ export class GrossScriptComponent {
 
   previousState(): void {
     this.router.navigate(['/plan']);
+  }
+
+  // Mobile function
+  openNoteDialog(report: any, index: number): void {
+    if (report.hasEvaluation === 0) return;
+    this.selectedReport = report;
+    this.noteDialogVisible = true;
+  }
+
+  handleEnter(event: any): void {
+    event.preventDefault();
+    this.noteDialogVisible = false;
   }
 }

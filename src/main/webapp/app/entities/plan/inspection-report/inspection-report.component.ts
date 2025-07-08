@@ -27,6 +27,7 @@ import { CheckTargetService } from 'app/entities/check-target/service/check-targ
 import { CheckerGroupService } from 'app/entities/checker-group/service/checker-group.service';
 import { ExportExcelService } from '../service/export-excel.service';
 import HasAnyAuthorityDirective from 'app/shared/auth/has-any-authority.directive';
+import { LayoutService } from 'app/layouts/service/layout.service';
 
 @Component({
   selector: 'jhi-inspection-report',
@@ -94,6 +95,15 @@ export class InspectionReportComponent implements OnInit {
   isNameDuplicate: boolean = false;
   disableCheckComplete: boolean = false;
 
+  // Mobile Availible
+  isMobile: boolean = false;
+  editDialogVisible = false;
+  selectedRow: any = null;
+  editField: 'solution' | 'description' | null = null;
+  editDialogVisibleRepair = false;
+  selectedRowRepair: any = null;
+  editFieldRepair: 'note' | 'reason' | null = null;
+
   constructor(
     protected modalService: NgbModal,
     protected activatedRoute: ActivatedRoute,
@@ -105,9 +115,13 @@ export class InspectionReportComponent implements OnInit {
     private exportExcelService: ExportExcelService,
     private cdr: ChangeDetectorRef,
     private router: Router,
+    private layoutService: LayoutService,
   ) {}
 
   ngOnInit(): void {
+    this.layoutService.isMobile$.subscribe(value => {
+      this.isMobile = value;
+    });
     this.evaluatorService.getAllCheckTargets().subscribe(res => {
       this.evaluator = res;
     });
@@ -577,5 +591,30 @@ export class InspectionReportComponent implements OnInit {
 
   previousState(): void {
     this.router.navigate(['/plan']);
+  }
+
+  // Mobile function
+  openEditDialog(row: any, field: 'solution' | 'description') {
+    if (!row || row.hasEvaluation === 0) return;
+    this.selectedRow = row;
+    this.editField = field;
+    this.editDialogVisible = true;
+  }
+
+  openEditRepairDialog(row: any, field: 'note' | 'reason') {
+    if (!row || row.hasEvaluation === 0) return;
+    this.selectedRowRepair = row;
+    this.editFieldRepair = field;
+    this.editDialogVisibleRepair = true;
+  }
+
+  handleEnterForEditDialog(event: any): void {
+    event.preventDefault();
+    this.editDialogVisible = false;
+  }
+
+  handleEnterForRepairDialog(event: any): void {
+    event.preventDefault();
+    this.editDialogVisibleRepair = false;
   }
 }

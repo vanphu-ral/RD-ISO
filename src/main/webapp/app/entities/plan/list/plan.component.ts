@@ -2,7 +2,7 @@ import { Component, NgZone, inject, OnInit, ViewChild, TemplateRef, ChangeDetect
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 import { combineLatest, filter, Observable, Subscription, tap } from 'rxjs';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { PrimeNGConfig, TreeNode } from 'primeng/api'; // Import TreeNode
+import { ConfirmationService, PrimeNGConfig, TreeNode } from 'primeng/api'; // Import TreeNode
 import Swal from 'sweetalert2';
 
 import SharedModule from 'app/shared/shared.module';
@@ -29,8 +29,6 @@ import { FileUploadModule } from 'primeng/fileupload';
 import dayjs from 'dayjs/esm';
 import { PlanGroupService } from 'app/entities/plan-group/service/plan-group.service';
 import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
-import { HttpResponse } from '@angular/common/http';
 import { ExportExcelService } from '../service/export-excel.service';
 import HasAnyAuthorityDirective from 'app/shared/auth/has-any-authority.directive';
 import { CalendarModule } from 'primeng/calendar';
@@ -38,32 +36,14 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { AccountService } from 'app/core/auth/account.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { FrequencyService } from 'app/entities/frequency/service/frequency.service';
-
-interface CheckPlanDetail {
-  id: number;
-  score: number;
-  reportName: string;
-  checkDate: string;
-  nc: number;
-  ly: number;
-  notPass: number;
-}
-
-interface CriteriaSummary {
-  id: number;
-  criteriaGroup: string;
-  criteriaName: string;
-  conclusion: string;
-  evaluationContent: string;
-  evaluationImage: string;
-  status: 'Đạt' | 'Không đạt' | 'Chờ đánh giá';
-}
+import { LayoutService } from 'app/layouts/service/layout.service';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   standalone: true,
   selector: 'jhi-plan',
   templateUrl: './plan.component.html',
-  styleUrls: ['../../shared.component.css'],
+  styleUrls: ['./plan.component.scss'],
   imports: [
     RouterModule,
     FormsModule,
@@ -85,41 +65,26 @@ interface CriteriaSummary {
     CalendarModule,
     CheckboxModule,
     DropdownModule,
+    ConfirmDialogModule,
   ],
-  providers: [SummarizePlanComponent],
+  providers: [SummarizePlanComponent, ConfirmationService],
 })
 export class PlanComponent implements OnInit {
   subscription: Subscription | null = null;
   plans?: IPlan[];
   isLoading = false;
   treeNodes!: TreeNode[];
-  columnDefinitions?: IPlan[];
   sortState = sortStateSignal({});
   files?: TreeNode[];
   expandedRows: { [key: string]: boolean } = {};
   @ViewChild('dt2') dt2!: any;
   planDetailResults: any[] = [];
-  sampleReportName: any[] = [];
   planParent: any = {};
-  checkLevels: any[] = [];
   listOfFrequency: any[] = [];
-  checkTargets: any[] = [];
-  reportTypes: any[] = [];
-  sampleReport: any[] = [];
-  // userTesting: any;
-  @ViewChild('userTesting') userTesting!: TemplateRef<any>;
-  @ViewChild('gross') gross!: TemplateRef<any>;
-  @ViewChild('evaluationResult') evaluationResult!: TemplateRef<any>;
-  @ViewChild('inspectionData') inspectionData!: TemplateRef<any>;
-  @ViewChild('detailInspectionData') detailInspectionData!: TemplateRef<any>;
-  @ViewChild('criteriaConclusion') criteriaConclusion!: TemplateRef<any>;
-  protected reportService = inject(ReportService);
-
   columnWidths = {
     'min-width': '960px',
     width: '100%',
   };
-
   planEvaluations: any[] = [];
   checkPlanDetails: any[] = [];
   criteriaSummaries: any = [];
@@ -129,14 +94,11 @@ export class PlanComponent implements OnInit {
   selectedPageSize: number = 10;
   first: number = 0;
   totalRecords: number = 0;
-  dialogVisible = false;
   dialogCheckPlan = false;
   dialogCheckPlanChild = false;
-  conclusionCretia = false;
   dialogGeneralCheckPlan = false;
   dialogSummaryOfCriteriaConclusion = false;
   dialogViewImage = false;
-  groupReportData: any = {};
   evaluators: any[] = [];
   planGrDetail: any[] = [];
   listEvalReports: any = [];
@@ -144,7 +106,6 @@ export class PlanComponent implements OnInit {
   planGroup: any = {};
   selectedData: any = null;
   dialogVisibility: { [key: string]: boolean } = {};
-  disableSaveCheckDate: { [key: string]: boolean } = {};
   selectedFiles: { dataKey: string; files: File[] }[] = [];
   imageLoadErrors = new Set<string>();
   report: any = {};
@@ -155,6 +116,13 @@ export class PlanComponent implements OnInit {
   account: any = {};
   statuses = ['Mới tạo', 'Đang thực hiện', 'Đã hoàn thành', 'Chưa hoàn thành'];
   isNameDuplicate: { [key: string]: boolean } = {};
+  // Mobile availible
+  isMobile: boolean = false;
+  dialogListReportByPlan: boolean = false;
+  selectedPlan: any = {};
+  listReportByPlan: any = [];
+  noteDialogVisible = false;
+  selectedReport: any = null;
 
   trackId = (_index: number, item: IPlan): number => this.planService.getPlanIdentifier(item);
 
@@ -174,9 +142,14 @@ export class PlanComponent implements OnInit {
     private accountService: AccountService,
     private frequencyService: FrequencyService,
     private primengConfig: PrimeNGConfig,
+    private layoutService: LayoutService,
+    protected reportService: ReportService,
   ) {}
 
   ngOnInit(): void {
+    this.layoutService.isMobile$.subscribe(value => {
+      this.isMobile = value;
+    });
     this.primengConfig.setTranslation({
       dayNamesMin: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
       monthNames: [
@@ -316,45 +289,6 @@ export class PlanComponent implements OnInit {
     });
   }
 
-  // Phân quyền thực hiện kiểm tra
-  openModal(): void {
-    this.modalService
-      .open(this.userTesting, {
-        ariaLabelledBy: 'modal-basic-title',
-        size: 'lg',
-        backdrop: 'static',
-      })
-      .result.then(
-        result => {
-          // console.log('Modal closed');
-        },
-        reason => {
-          // console.log('Modal dismissed');
-        },
-      );
-  }
-
-  // Gộp BBKT
-  openModalGross(): void {
-    this.modalService
-      .open(this.gross, {
-        ariaLabelledBy: 'modal-gross-title',
-        // size: 'xl',
-        // fullscreen: true,
-        backdrop: 'static',
-        windowClass: 'gross-modal',
-        centered: true,
-      })
-      .result.then(
-        result => {
-          // console.log('Modal closed');
-        },
-        reason => {
-          // console.log('Modal dismissed');
-        },
-      );
-  }
-
   navigateToInspectionReport(): void {
     // modal.dismiss();
     this.router.navigate(['inspection-report']);
@@ -370,74 +304,6 @@ export class PlanComponent implements OnInit {
 
   navigateToSummarizePlan(): void {
     this.router.navigate(['summarize-plan']);
-  }
-
-  openModalEvaluation(): void {
-    this.modalService
-      .open(this.evaluationResult, {
-        ariaLabelledBy: 'modal-inspection-data-title',
-        size: 'xl',
-        backdrop: 'static',
-      })
-      .result.then(
-        result => {
-          // console.log('Modal closed');
-        },
-        reason => {
-          // console.log('Modal dismissed');
-        },
-      );
-  }
-
-  openModalInspectionData(): void {
-    this.modalService
-      .open(this.inspectionData, {
-        ariaLabelledBy: 'modal-inspection-data-itle',
-        size: 'xl',
-        backdrop: 'static',
-      })
-      .result.then(
-        result => {
-          console.log('Modal closed');
-        },
-        reason => {
-          console.log('Modal dismissed');
-        },
-      );
-  }
-
-  openModalDeltailInspectionData(): void {
-    this.modalService
-      .open(this.detailInspectionData, {
-        ariaLabelledBy: 'modal-detail-inspection-data-title',
-        size: 'xl',
-        backdrop: 'static',
-      })
-      .result.then(
-        result => {
-          console.log('Modal closed');
-        },
-        reason => {
-          console.log('Modal dismissed');
-        },
-      );
-  }
-
-  openModalCriteriaConclusion(): void {
-    this.modalService
-      .open(this.criteriaConclusion, {
-        ariaDescribedBy: 'modal-criteria-conclusion-title',
-        size: 'xl',
-        backdrop: 'static',
-      })
-      .result.then(
-        result => {
-          console.log('Modal closed');
-        },
-        reason => {
-          console.log('Modal dismissed');
-        },
-      );
   }
 
   onRowExpand(event: any): void {
@@ -525,10 +391,6 @@ export class PlanComponent implements OnInit {
     this.dt2.filterGlobal(event.target.value, 'contains');
   }
 
-  showDialogExcel(): void {
-    this.dialogVisible = true;
-  }
-
   showDialogCheckPlan(data: any, index: number): void {
     this.planParent = data;
     this.report = data.planDetail[index];
@@ -570,14 +432,6 @@ export class PlanComponent implements OnInit {
       this.planGrDetail.sort((a, b) => a.criterialGroupName.localeCompare(b.criterialGroupName));
     }
     this.dialogCheckPlanChild = true;
-  }
-
-  showDialogConclusionCretia(): void {
-    this.conclusionCretia = true;
-  }
-
-  showSummarizeDialog(): void {
-    this.summarizePlanDiaglog.dialogGeneralCheckPlan = true;
   }
 
   showDialogGeneralCheckPlan(Parentdata: any, data: any): void {
@@ -1124,5 +978,26 @@ export class PlanComponent implements OnInit {
       item.note = '';
       item.image = []; // hoặc null, tùy theo kiểu dữ liệu
     }
+  }
+
+  // Mobile funcition
+  showListReport(plan: any) {
+    this.dialogListReportByPlan = true;
+    this.selectedPlan = plan;
+    this.planService.getAllStatisReportByPlanId(plan.id).subscribe(res => {
+      console.log(res);
+      this.listReportByPlan = res.body;
+    });
+  }
+
+  openNoteDialog(report: any, index: number): void {
+    if (report.hasEvaluation === 0) return;
+    this.selectedReport = report;
+    this.noteDialogVisible = true;
+  }
+
+  handleEnter(event: any): void {
+    event.preventDefault();
+    this.noteDialogVisible = false;
   }
 }
