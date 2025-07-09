@@ -1,17 +1,9 @@
-<div class="main-container" *ngIf="!isMobile">
-  <div class="sidebar">
+<div class="main-container">
+  <div class="sidebar" *ngIf="!isMobile">
     <router-outlet name="navbar"></router-outlet>
   </div>
 
-  <div id="main" class="" style="width: 100%; overflow: hidden">
-    <div class="card jh-card">
-      <router-outlet></router-outlet>
-    </div>
-  </div>
-</div>
-
-<div class="main-container" *ngIf="isMobile">
-  <div #sidebarId id="sidebar-id" class="sidebar-mobile col-md-3">
+  <div *ngIf="isMobile" #sidebarId id="sidebar-id" class="sidebar-mobile col-md-3">
     <button #sidebarToggleButton class="sidebar-collapse-btn" (click)="toggleSidebar()" *ngIf="!IsShowNavbar">
       <fa-icon icon="bars"></fa-icon>
     </button>
@@ -90,8 +82,8 @@
     </ul>
   </div>
 
-  <div id="main" class="" style="width: 100%; overflow: hidden">
-    <div class="card jh-card-mobile">
+  <div id="main" class="" style="width: 100%; overflow: hidden" [ngStyle]="isMobile ? { margin: '0' } : {}">
+    <div class="card" [ngClass]="[isMobile ? 'jh-card-mobile' : 'jh-card']">
       <router-outlet></router-outlet>
     </div>
   </div>

@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { catchError, finalize, map } from 'rxjs/operators';
 import Swal from 'sweetalert2';
@@ -67,6 +67,7 @@ export class SampleReportUpdateComponent implements OnInit {
   protected sourceService = inject(SourceService);
   protected convertService = inject(ConvertService);
   protected frequencyService = inject(FrequencyService);
+  protected router = inject(Router);
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   editForm: SampleReportFormGroup = this.sampleReportFormService.createSampleReportFormGroup();
@@ -129,7 +130,7 @@ export class SampleReportUpdateComponent implements OnInit {
   }
 
   previousState(): void {
-    window.history.back();
+    this.router.navigate(['/sample-report']);
   }
 
   duplicateNameValidator(control: AbstractControl): Observable<ValidationErrors | null> {
@@ -145,7 +146,40 @@ export class SampleReportUpdateComponent implements OnInit {
     );
   }
 
+  validData(): boolean {
+    let message = '';
+    if (this.listTitleHeaders.length === 0) {
+      message = 'Chưa có dữ liệu tiêu đề';
+    } else if (this.listTitleBody.length === 0) {
+      message = 'Chưa có dữ liệu danh mục';
+    } else {
+      const invalidIndexes = this.listTitleBody
+        .map((item, index) => {
+          const hasEmptyValue = item.data.some((d: any) => d.value === '');
+          const missingFrequency = !item.frequency;
+          return hasEmptyValue || missingFrequency ? index : -1;
+        })
+        .filter(index => index !== -1);
+      if (invalidIndexes.length > 0) {
+        message = `Dòng ${invalidIndexes.join(', ')} đang có trường thông tin bị bỏ trống`;
+      }
+    }
+    if (message) {
+      Swal.fire({
+        title: 'Error',
+        text: message,
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+      return false;
+    }
+    return true;
+  }
+
   save(): void {
+    if (!this.validData()) {
+      return;
+    }
     this.isSaving = true;
     const sampleReport = this.sampleReportFormService.getSampleReport(this.editForm);
     if (this.editForm.invalid) {

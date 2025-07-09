@@ -84,15 +84,10 @@
 
         <div class="mb-8">
           <label class="form-label" for="field_frequency">Tần suất</label>
-          <!-- <input type="text" class="form-control" name="frequency" id="field_frequency" data-cy="frequency" formControlName="frequency" /> -->
           <select class="form-control form-select" name="frequency" id="field_frequency" data-cy="frequency" formControlName="frequency">
             <option [value]="">-- Chọn Tần suất --</option>
             <option *ngFor="let frequency of listOfFrequency" [value]="frequency.name">{{ frequency.name }}</option>
           </select>
-        </div>
-        <div class="mb-8">
-          <label class="form-label" for="field_frequency">Thang điểm</label>
-          <input type="text" class="form-control" name="frequency" id="field_frequency" data-cy="frequency" formControlName="frequency" />
         </div>
       </div>
 

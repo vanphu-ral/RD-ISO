@@ -52,17 +52,7 @@
         </div>
         <div class="col-container">
           <div class="col-m4-25 col-container-child">
-            <label for="field_frequency">Tần suất</label>
-            <select class="inp-style" name="frequency" id="field_frequency" data-cy="frequency" formControlName="frequency" required>
-              <option *ngFor="let freq of listOfFrequency" [value]="freq.name">
-                {{ freq.name }}
-              </option>
-            </select>
-          </div>
-
-          <div class="col-m4-25 col-container-child">
             <label for="field_timeStart">Thời gian bắt đầu</label>
-
             <input
               id="field_timeStart"
               data-cy="timeStart"
@@ -73,10 +63,8 @@
               placeholder="YYYY-MM-DD HH:mm"
             />
           </div>
-
           <div class="col-m4-25 col-container-child">
             <label for="field_timeEnd">Thời gian kết thúc</label>
-
             <input
               id="field_timeEnd"
               data-cy="timeEnd"
@@ -86,6 +74,14 @@
               formControlName="timeEnd"
               placeholder="YYYY-MM-DD HH:mm"
             />
+          </div>
+          <div class="col-m4-25 col-container-child">
+            <label for="field_frequency">Tần suất</label>
+            <select class="inp-style" name="frequency" id="field_frequency" data-cy="frequency" formControlName="frequency" required>
+              <option *ngFor="let freq of listOfFrequency" [value]="freq.name">
+                {{ freq.name }}
+              </option>
+            </select>
           </div>
         </div>
       </div>
@@ -158,7 +154,7 @@
                 <select
                   [(ngModel)]="report.checker"
                   [ngModelOptions]="{ standalone: true }"
-                  (change)="updateReportName(index, report.checker)"
+                  (change)="updateReportName(report.checker, index)"
                 >
                   <option *ngFor="let data of evaluators" [value]="data.name">
                     {{ data.name }}
@@ -387,7 +383,12 @@
     <div class="col-md-12">
       <div class="col-md-6">
         <label for="checkerGroups">Nhóm người dùng</label>
-        <select class="inp-style" [(ngModel)]="userTester.checkerGroup" name="checkerGroups">
+        <select
+          class="inp-style"
+          [(ngModel)]="userTester.checkerGroup"
+          name="checkerGroups"
+          (ngModelChange)="checkEvaluator(userTester.checkerGroup)"
+        >
           <option *ngFor="let data of checkerGroups" [ngValue]="data">
             {{ data.name }}
           </option>
@@ -395,7 +396,7 @@
       </div>
       <div class="col-md-6">
         <label for="">Người dùng</label>
-        <select class="inp-style" [(ngModel)]="userTester.name" (click)="checkEvaluator()">
+        <select class="inp-style" [(ngModel)]="userTester.name">
           <option *ngFor="let data of evaluator" [value]="data.name">
             {{ data.name }}
           </option>

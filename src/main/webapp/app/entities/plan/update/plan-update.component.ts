@@ -115,7 +115,7 @@ export class PlanUpdateComponent implements OnInit {
   listTitleHeaders: any[] = [];
   listTitleBody: any[] = [];
   listSuggestions: any[] = [];
-  listStatusReport: any[] = ['Đang thực hiện', 'Mới tạo', 'Đã hoàn thành'];
+  listStatusReport: any[] = ['Đang thực hiện', 'Mới tạo', 'Đã hoàn thành', 'Chưa hoàn thành'];
   listConvert: any[] = [];
   listReports: NewReport[] = [];
   helpDialogVisible = false;
@@ -462,6 +462,7 @@ export class PlanUpdateComponent implements OnInit {
 
   openModalUser(index: number, data: any): void {
     // this.currentReport = data;
+    this.userTester = {};
     this.modalService
       .open(this.userTesting, {
         ariaLabelledBy: 'modal-basic-title',
@@ -471,7 +472,7 @@ export class PlanUpdateComponent implements OnInit {
       .result.then(
         result => {
           data.checker = this.userTester.name;
-          this.updateReportName(index, this.userTester.name);
+          this.updateReportName(this.userTester.name, index);
         },
         reason => {},
       );
@@ -517,7 +518,7 @@ export class PlanUpdateComponent implements OnInit {
   }
 
   updateReportName(name: any, index?: number) {
-    if (index) {
+    if (index !== undefined) {
       if (name === '' || name === null) {
         this.listReports[index].name = `${this.removeVietnameseAndSpaces(this.listReports[index].checker)}-${this.listReports[index].code}`;
       } else {
@@ -634,13 +635,14 @@ export class PlanUpdateComponent implements OnInit {
     }
   }
 
-  checkEvaluator() {
-    const checkGroupId = this.userTester.checkerGroup.id;
+  checkEvaluator(data: any) {
+    const checkGroupId = data.id;
     this.evaluator = this.evaluators.filter(x => x.userGroupId === checkGroupId);
+    this.userTester.name = null;
     if (this.evaluator.length === 0) {
       Swal.fire({
         title: 'Error',
-        text: `Không có dữ liệu người dùng thuộc nhóm đối tượng đánh giá ${this.userTester.checkerGroup.name}`,
+        text: `Không có dữ liệu người dùng thuộc nhóm đối tượng đánh giá ${data.name}`,
         icon: 'error',
         confirmButtonText: 'OK',
       });

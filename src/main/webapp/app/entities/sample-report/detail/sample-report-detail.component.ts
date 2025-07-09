@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 import SharedModule from 'app/shared/shared.module';
 import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'app/shared/date';
@@ -17,6 +17,8 @@ export class SampleReportDetailComponent implements OnInit {
   listSuggestions: any[] = [];
   listTitleBody: any[] = [];
 
+  constructor(private router: Router) {}
+
   ngOnInit(): void {
     if (this.sampleReport?.detail) {
       const data = JSON.parse(this.sampleReport.detail);
@@ -26,6 +28,6 @@ export class SampleReportDetailComponent implements OnInit {
     }
   }
   previousState(): void {
-    window.history.back();
+    this.router.navigate(['/sample-report']);
   }
 }

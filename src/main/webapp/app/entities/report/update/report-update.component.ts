@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, of } from 'rxjs';
@@ -27,17 +27,6 @@ import Swal from 'sweetalert2';
 export class ReportUpdateComponent implements OnInit {
   isSaving = false;
   report: IReport | null = null;
-  // chuẩn bị thông tin kết quả
-  headerDefault = [
-    { id: null, name: 'Kết quả đánh giá', field: null, data_type: null, source_table: null, field_name: null, index: 0 },
-    { id: null, name: 'Nội dung đánh giá', field: null, data_type: null, source_table: null, field_name: null, index: 0 },
-    { id: null, name: 'Hình ảnh đánh giá', field: null, data_type: null, source_table: null, field_name: null, index: 0 },
-  ];
-  bodyDefault = [
-    { header: 'Kết quả đánh giá', index: 0, value: '' },
-    { header: 'Nội dung đánh giá', index: 0, value: '' },
-    { header: 'Hình ảnh đánh giá', index: 0, value: '' },
-  ];
   sampleReports: any[] = [];
   sampleReport: string = '';
   listTitleHeaders: any[] = []; // list of headers and source, table information
@@ -51,6 +40,7 @@ export class ReportUpdateComponent implements OnInit {
   protected sourceService = inject(SourceService);
   protected fieldsService = inject(FieldsService);
   protected accountService = inject(AccountService);
+  protected cdr = inject(ChangeDetectorRef);
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   editForm: ReportFormGroup = this.reportFormService.createReportFormGroup();
@@ -62,16 +52,18 @@ export class ReportUpdateComponent implements OnInit {
     this.sampleReportService.getListSampleReports().subscribe(result => {
       this.sampleReports = result.body;
       console.log('check report code :: ', this.sampleReports);
-    });
-    this.activatedRoute.data.subscribe(({ report }) => {
-      this.report = report;
-      if (report) {
-        this.updateForm(report);
-        const data = JSON.parse(report.detail);
-        this.listTitleHeaders = data.header;
-        this.listTitleBody = data.body;
-        console.log(this.listTitleBody);
-      }
+      this.activatedRoute.data.subscribe(({ report }) => {
+        this.report = report;
+        if (report) {
+          this.updateForm(report);
+          const data = JSON.parse(report.detail);
+          this.listTitleHeaders = data.header;
+          this.listTitleBody = data.body;
+          this.sampleReport = this.sampleReports.find(x => x[0] == report.sampleReportId)[1];
+          this.cdr.detectChanges();
+          console.log(this.listTitleBody);
+        }
+      });
     });
     this.editForm.get('name')?.valueChanges.subscribe(value => {
       if (value) {
@@ -176,17 +168,6 @@ export class ReportUpdateComponent implements OnInit {
     this.sampleReportService.getSampleReportDetail(this.sampleReport).subscribe(detail => {
       this.listTitleBody = detail.body.body;
       this.listTitleHeaders = detail.body.header;
-      console.log('detail::', detail);
-      this.headerDefault.forEach(x => {
-        x.index = this.listTitleHeaders.length + 1;
-        this.listTitleHeaders.push(x);
-      });
-      this.listTitleBody.forEach(element => {
-        this.bodyDefault.forEach(x => {
-          x.index = element.data.lenght + 1;
-          element.data.push(x);
-        });
-      });
     });
   }
   addNewRow(): void {
