@@ -270,6 +270,7 @@ export class InspectionPlanComponent implements OnInit {
             planTimeComplete: null,
           };
         });
+        this.toastMessageSaveSucess();
         this.dialogUpdateRemePlan = false;
       });
     });
@@ -394,6 +395,7 @@ export class InspectionPlanComponent implements OnInit {
         }),
       ),
     );
+    this.toastMessageSaveSucess();
     this.dialogRepairCriterial = false;
   }
 
@@ -445,6 +447,7 @@ export class InspectionPlanComponent implements OnInit {
         ),
       );
       this.dialogCheckCriterial = false;
+      this.toastMessageSaveSucess();
       this.LoadlistCriterialRepairTable(this.remediationPlanSelected.id);
     } catch (error) {
       console.error('Có lỗi xảy ra:', error);
@@ -529,6 +532,21 @@ export class InspectionPlanComponent implements OnInit {
     if (pendingDetails.length === 0) {
       this.remediationPlanInfo.status = 'Đã hoàn thành';
       this.remediationPlanService.create(this.remediationPlanInfo).subscribe(res => {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'center-end',
+          showConfirmButton: false,
+          timer: 1500,
+          timerProgressBar: true,
+          didOpen(toast) {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          },
+        });
+        Toast.fire({
+          icon: 'success',
+          title: 'Đã hoàn thành kế hoạch',
+        });
         this.reloadRemediationTableData(this.plan.id);
       });
     }
@@ -536,6 +554,24 @@ export class InspectionPlanComponent implements OnInit {
 
   previousState(): void {
     this.router.navigate(['/plan']);
+  }
+
+  toastMessageSaveSucess() {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'center-end',
+      showConfirmButton: false,
+      timer: 1500,
+      timerProgressBar: true,
+      didOpen(toast) {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      },
+    });
+    Toast.fire({
+      icon: 'success',
+      title: 'Lưu thành công',
+    });
   }
 
   // Mobile function

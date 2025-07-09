@@ -265,7 +265,7 @@
         </td>
         <td class="text-center border">{{ row.criterialName }}</td>
         <td class="text-center border">{{ row.frequency }}</td>
-        <td class="text-center border">{{ row.status }}</td>
+        <td class="text-center border"><p-tag [value]="row.status" [severity]="getSeverity(row.status)" /></td>
         <td class="text-center border">
           <p-button
             label="Chọn"
@@ -351,7 +351,7 @@
                   [url]="''"
                   [multiple]="true"
                   accept="image/*"
-                  maxFileSize="1000000"
+                  maxFileSize="10000000"
                   mode="advanced"
                   [auto]="false"
                   [customUpload]="true"
@@ -466,7 +466,7 @@
                   [url]="''"
                   [multiple]="true"
                   accept="image/*"
-                  maxFileSize="100000000"
+                  maxFileSize="10000000"
                   mode="advanced"
                   [auto]="false"
                   [customUpload]="true"

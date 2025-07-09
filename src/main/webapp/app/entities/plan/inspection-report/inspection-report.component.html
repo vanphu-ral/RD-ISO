@@ -349,7 +349,7 @@
         </p-table>
       </div>
     </div>
-    <div class="modal-footer">
+    <ng-template pTemplate="footer">
       <p-button
         data-dismiss="modal"
         type="button"
@@ -365,7 +365,7 @@
         (onClick)="saveRemediationPlan(groupCriterialError)"
         >Gộp</p-button
       >
-    </div>
+    </ng-template>
   </p-dialog>
 </div>
 
@@ -480,7 +480,9 @@
             <td class="text-center border">{{ criterial.userHandle }}</td>
             <td class="text-center border">{{ criterial.solution }}</td>
             <td class="text-center border">{{ criterial.planTimeComplete }}</td>
-            <td class="text-center border">{{ criterial.status }}</td>
+            <td class="text-center border">
+              <p-tag [value]="criterial.status" [severity]="criterial.status == 'Đã hoàn thành' ? 'success' : 'danger'" />
+            </td>
             <td class="text-center border">
               <select [(ngModel)]="criterial.result" name="recheck.result" required>
                 <option value="Đạt">Đạt</option>
@@ -509,7 +511,7 @@
                     [url]="''"
                     [multiple]="true"
                     accept="image/*"
-                    maxFileSize="1000000"
+                    maxFileSize="10000000"
                     mode="advanced"
                     [auto]="false"
                     [customUpload]="true"
@@ -605,7 +607,9 @@
             <td class="text-center border" style="padding: 0">{{ criterial.userHandle }}</td>
             <td class="text-center border" style="padding: 0">{{ criterial.solution }}</td>
             <td class="text-center border" style="padding: 0">{{ criterial.planTimeComplete | date: 'dd/MM/yyyy' }}</td>
-            <td class="text-center border" style="padding: 0">{{ criterial.status }}</td>
+            <td class="text-center border" style="padding: 0">
+              <p-tag [value]="criterial.status" [severity]="criterial.status == 'Đã hoàn thành' ? 'success' : 'danger'" />
+            </td>
             <td class="text-center border" style="padding: 0">
               <p-button
                 icon="pi pi-check"
@@ -708,7 +712,7 @@
                     [url]="''"
                     [multiple]="true"
                     accept="image/*"
-                    maxFileSize="1000000"
+                    maxFileSize="10000000"
                     mode="advanced"
                     [auto]="false"
                     [customUpload]="true"
@@ -826,7 +830,7 @@
                     [url]="''"
                     [multiple]="true"
                     accept="image/*"
-                    maxFileSize="1000000"
+                    maxFileSize="10000000"
                     mode="advanced"
                     [auto]="false"
                     [customUpload]="true"
@@ -913,7 +917,7 @@
   </p-dialog>
 
   <p-dialog
-    header="Các tiêu chí cần khắc phục"
+    header="Hoàn thành đợt khắc phục"
     [(visible)]="completeRemeDialog"
     [modal]="true"
     [style]="{ width: '90%' }"
@@ -957,7 +961,9 @@
               <td *ngIf="i === 0" [attr.rowspan]="cpl.recheckDetails.length" class="text-center border">
                 {{ cpl.planTimeComplete | date: 'short' }}
               </td>
-              <td *ngIf="i === 0" [attr.rowspan]="cpl.recheckDetails.length" class="text-center border">{{ cpl.status }}</td>
+              <td *ngIf="i === 0" [attr.rowspan]="cpl.recheckDetails.length" class="text-center border">
+                <p-tag [value]="cpl.status" [severity]="cpl.status == 'Đã hoàn thành' ? 'success' : 'danger'" />
+              </td>
               <td class="text-center border">{{ item.result }}</td>
               <td class="text-center border">{{ item.note }}</td>
               <td class="text-center border">{{ item.reason }}</td>
@@ -977,7 +983,9 @@
               <td class="text-center border">{{ cpl.userHandle }}</td>
               <td class="text-center border">{{ cpl.solution }}</td>
               <td class="text-center border">{{ cpl.planTimeComplete | date: 'short' }}</td>
-              <td class="text-center border">{{ cpl.status }}</td>
+              <td class="text-center border">
+                <p-tag [value]="cpl.status" [severity]="cpl.status == 'Đã hoàn thành' ? 'success' : 'danger'" />
+              </td>
               <td class="text-center border">N/A</td>
               <td class="text-center border">N/A</td>
               <td class="text-center border">N/A</td>
@@ -1002,6 +1010,7 @@
             (onClick)="completePlanRepair()"
             styleClass="p-button-rounded p-button-info p-button-sm mr-2 gross-btn"
             [raised]="true"
+            [disabled]="selectedRecheckCriterial.length == 0"
             severity="success"
           />
         </div>

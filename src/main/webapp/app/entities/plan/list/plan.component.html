@@ -789,7 +789,7 @@
                 [url]="''"
                 [multiple]="true"
                 accept="image/*"
-                maxFileSize="1000000"
+                maxFileSize="10000000"
                 mode="advanced"
                 [auto]="false"
                 [customUpload]="true"
@@ -904,7 +904,7 @@
                 [url]="''"
                 [multiple]="true"
                 accept="image/*"
-                maxFileSize="1000000"
+                maxFileSize="10000000"
                 mode="advanced"
                 [auto]="false"
                 [customUpload]="true"
@@ -1039,16 +1039,6 @@
         </ng-template>
         <th class="text-center border">Tuỳ chọn</th>
       </tr>
-      <tr>
-        <th class="text-center border"></th>
-        <th class="text-center border"><p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter></th>
-        <th class="text-center border"><p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter></th>
-        <th class="text-center border"><p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter></th>
-        <th class="text-center border"><p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter></th>
-        <th class="text-center border"><p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter></th>
-        <th class="text-center border"><p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter></th>
-        <th class="text-center border" *ngIf="reportSelected.convertScore == 'Tính điểm'"></th>
-      </tr>
     </ng-template>
     <ng-template pTemplate="body" let-reportSum let-index="rowIndex">
       <tr>
@@ -1108,14 +1098,6 @@
         <th class="text-center border">Kết luận</th>
         <th class="text-center border">Nội dung đánh giá</th>
         <th class="text-center border">Hình ảnh đánh giá</th>
-      </tr>
-      <tr>
-        <th class="text-center border"></th>
-        <th class="text-center border"><p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter></th>
-        <th class="text-center border"><p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter></th>
-        <th class="text-center border"><p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter></th>
-        <th class="text-center border"><p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter></th>
-        <th class="text-center border"><p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter></th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-criteria let-index="rowIndex">

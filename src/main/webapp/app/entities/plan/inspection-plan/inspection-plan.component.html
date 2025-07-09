@@ -279,7 +279,7 @@
         </p-table>
       </div>
     </div>
-    <div class="modal-footer">
+    <ng-template pTemplate="footer">
       <p-button
         data-dismiss="modal"
         type="button"
@@ -293,9 +293,10 @@
           selectedRows.length == 0
         "
         (onClick)="saveRemediationPlan(groupCriterialError)"
-        >Gộp</p-button
       >
-    </div>
+        Gộp
+      </p-button>
+    </ng-template>
   </p-dialog>
 </div>
 
@@ -497,7 +498,7 @@
                     [url]="''"
                     [multiple]="true"
                     accept="image/*"
-                    maxFileSize="1000000"
+                    maxFileSize="10000000"
                     mode="advanced"
                     [auto]="false"
                     [customUpload]="true"
@@ -696,7 +697,7 @@
                     [url]="''"
                     [multiple]="true"
                     accept="image/*"
-                    maxFileSize="1000000"
+                    maxFileSize="10000000"
                     mode="advanced"
                     [auto]="false"
                     [customUpload]="true"
@@ -814,7 +815,7 @@
                     [url]="''"
                     [multiple]="true"
                     accept="image/*"
-                    maxFileSize="1000000"
+                    maxFileSize="10000000"
                     mode="advanced"
                     [auto]="false"
                     [customUpload]="true"
@@ -901,7 +902,7 @@
   </p-dialog>
 
   <p-dialog
-    header="Các tiêu chí cần khắc phục"
+    header="Hoàn thành đợt khắc phục"
     [(visible)]="completeRemeDialog"
     [modal]="true"
     [style]="{ width: '90%' }"
@@ -945,7 +946,9 @@
               <td *ngIf="i === 0" [attr.rowspan]="cpl.recheckDetails.length" class="text-center border">
                 {{ cpl.planTimeComplete | date: 'short' }}
               </td>
-              <td *ngIf="i === 0" [attr.rowspan]="cpl.recheckDetails.length" class="text-center border">{{ cpl.status }}</td>
+              <td *ngIf="i === 0" [attr.rowspan]="cpl.recheckDetails.length" class="text-center border">
+                <p-tag [value]="cpl.status" [severity]="cpl.status == 'Đã hoàn thành' ? 'success' : 'danger'" />
+              </td>
               <td class="text-center border">{{ item.result }}</td>
               <td class="text-center border">{{ item.note }}</td>
               <td class="text-center border">{{ item.reason }}</td>
@@ -990,6 +993,7 @@
             (onClick)="completePlanRepair()"
             styleClass="p-button-rounded p-button-info p-button-sm mr-2 gross-btn"
             [raised]="true"
+            [disabled]="selectedRecheckCriterial.length == 0"
             severity="success"
           />
         </div>

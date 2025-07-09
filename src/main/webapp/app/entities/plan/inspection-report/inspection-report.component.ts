@@ -321,6 +321,7 @@ export class InspectionReportComponent implements OnInit {
             planTimeComplete: null,
           };
         });
+        this.toastMessageSaveSucess();
         this.dialogUpdateRemePlan = false;
       });
     });
@@ -490,6 +491,7 @@ export class InspectionReportComponent implements OnInit {
         ),
       );
       this.dialogCheckCriterial = false;
+      this.toastMessageSaveSucess();
       this.LoadlistCriterialRepairTable(this.remediationPlanSelected.id);
     } catch (error) {
       console.error('Có lỗi xảy ra:', error);
@@ -525,6 +527,7 @@ export class InspectionReportComponent implements OnInit {
         }),
       ),
     );
+    this.toastMessageSaveSucess();
     this.dialogRepairCriterial = false;
   }
 
@@ -538,7 +541,6 @@ export class InspectionReportComponent implements OnInit {
   }
 
   completePlanRepair() {
-    // console.log(this.selectedRecheckCriterial);
     if (this.selectedRecheckCriterial.length === 0) {
       return;
     }
@@ -550,7 +552,6 @@ export class InspectionReportComponent implements OnInit {
         repairDate: dayjs(cpl.repairDate).toISOString(),
       };
     });
-    console.log(updateRequests);
     this.remediationPlanService.createRemediationPlanDetail(updateRequests).subscribe(repo => {
       this.selectedRecheckCriterial.forEach(selectedCpl => {
         const index = this.completeRemePlan.findIndex(cpl => cpl.id === selectedCpl.id);
@@ -572,6 +573,21 @@ export class InspectionReportComponent implements OnInit {
     if (pendingDetails.length === 0) {
       this.remediationPlanInfo.status = 'Đã hoàn thành';
       this.remediationPlanService.create(this.remediationPlanInfo).subscribe(res => {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'center-end',
+          showConfirmButton: false,
+          timer: 1500,
+          timerProgressBar: true,
+          didOpen(toast) {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          },
+        });
+        Toast.fire({
+          icon: 'success',
+          title: 'Đã hoàn thành kế hoạch',
+        });
         this.reloadRemediationTableData(this.report.id);
       });
     }
@@ -591,6 +607,24 @@ export class InspectionReportComponent implements OnInit {
 
   previousState(): void {
     this.router.navigate(['/plan']);
+  }
+
+  toastMessageSaveSucess() {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'center-end',
+      showConfirmButton: false,
+      timer: 1500,
+      timerProgressBar: true,
+      didOpen(toast) {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      },
+    });
+    Toast.fire({
+      icon: 'success',
+      title: 'Lưu thành công',
+    });
   }
 
   // Mobile function
