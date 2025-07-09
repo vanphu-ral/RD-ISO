@@ -238,10 +238,12 @@ export class PlanGroupComponent implements OnInit {
     switch (status) {
       case 'Đã hoàn thành':
         return 'success';
-      case 'Mới tạo':
+      case 'Chưa hoàn thành':
         return 'danger';
       case 'Đang thực hiện':
-        return 'waring';
+        return 'warning';
+      case 'Mới tạo':
+        return 'info';
     }
   }
 
@@ -359,6 +361,21 @@ export class PlanGroupComponent implements OnInit {
       console.log(err);
     } finally {
       this.dialogVisible = false;
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'center-end',
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
+        didOpen(toast) {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+        },
+      });
+      Toast.fire({
+        icon: 'success',
+        title: 'Lưu thành công',
+      });
       this.loadCriteria(this.selectedPlan.id);
     }
   }

@@ -85,6 +85,11 @@
         </td>
       </tr>
     </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td class="text-center border" colspan="12">Chưa có dữ liệu đánh giá</td>
+      </tr>
+    </ng-template>
   </p-table>
   <div class="d-flex justify-content-end">
     <p-button
@@ -154,16 +159,6 @@
         </ng-template>
         <th class="text-center border">Tuỳ chọn</th>
       </tr>
-      <tr>
-        <th class="text-center border"></th>
-        <th class="text-center border"><p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter></th>
-        <th class="text-center border"><p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter></th>
-        <th class="text-center border"><p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter></th>
-        <th class="text-center border"><p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter></th>
-        <th class="text-center border"><p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter></th>
-        <th class="text-center border"><p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter></th>
-        <th class="text-center border" *ngIf="report.convertScore == 'Tính điểm'"></th>
-      </tr>
     </ng-template>
     <ng-template pTemplate="body" let-reportSum let-index="rowIndex">
       <tr>
@@ -206,17 +201,6 @@
   [style]="{ width: '80vw' }"
   [contentStyle]="{ height: '70vh' }"
 >
-  <!-- <div class="col-container">
-    <div class="col-m4-25 col-container-child">
-      <label for="">Ngày kiểm tra</label>
-      <input type="text" class="inp-style" name="code" id="field_code" data-cy="code" />
-    </div>
-
-    <div class="col-m4-25 col-container-child">
-      <label for="">Tên BBKT</label>
-      <input type="text" class="inp-style" name="code" id="field_code" data-cy="code" />
-    </div>
-  </div> -->
   <p-table [value]="criteriaSummaries">
     <ng-template
       pTemplate="header"
@@ -234,14 +218,6 @@
         <th class="text-center border">Kết luận</th>
         <th class="text-center border">Nội dung đánh giá</th>
         <th class="text-center border">Hình ảnh đánh giá</th>
-      </tr>
-      <tr>
-        <th class="text-center border"></th>
-        <th class="text-center border"><p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter></th>
-        <th class="text-center border"><p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter></th>
-        <th class="text-center border"><p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter></th>
-        <th class="text-center border"><p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter></th>
-        <th class="text-center border"><p-columnFilter type="text" placeholder="Search " ariaLabel="Filter Country"></p-columnFilter></th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-criteria let-index="rowIndex">

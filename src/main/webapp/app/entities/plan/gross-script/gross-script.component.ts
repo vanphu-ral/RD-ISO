@@ -230,12 +230,14 @@ export class GrossScriptComponent {
 
   getSeverity(status: string): any {
     switch (status) {
-      case 'Đã kiểm tra':
+      case 'Đã hoàn thành':
         return 'success';
-      case 'Mới tạo':
+      case 'Chưa hoàn thành':
         return 'danger';
-      case 'Chưa kiểm tra':
-        return 'waring';
+      case 'Đang thực hiện':
+        return 'warning';
+      case 'Mới tạo':
+        return 'info';
     }
   }
 
@@ -529,6 +531,7 @@ export class GrossScriptComponent {
       console.log(err);
     } finally {
       this.dialogVisible = false;
+      this.toastMessageSaveSucess();
       this.loadCriteria(this.selectedPlan.id as number);
     }
   }
@@ -547,6 +550,24 @@ export class GrossScriptComponent {
 
   previousState(): void {
     this.router.navigate(['/plan']);
+  }
+
+  toastMessageSaveSucess() {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'center-end',
+      showConfirmButton: false,
+      timer: 1500,
+      timerProgressBar: true,
+      didOpen(toast) {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      },
+    });
+    Toast.fire({
+      icon: 'success',
+      title: 'Lưu thành công',
+    });
   }
 
   // Mobile function

@@ -147,6 +147,10 @@ spring:
       thread-name-prefix: iso-scheduling-
       pool:
         size: 2
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 50MB
   thymeleaf:
     mode: HTML
   output:

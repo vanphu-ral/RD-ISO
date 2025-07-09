@@ -125,13 +125,6 @@
         <td>{{ script.checker }}</td>
         <td><p-tag [value]="script.status" [severity]="getSeverity(script.status)"></p-tag></td>
         <td>
-          <!-- <p-checkbox
-            [(ngModel)]="script.groupReport"
-            [binary]="true"
-            [trueValue]="1"
-            [falseValue]="0"
-            (onChange)="checkGroupSelected()"
-          ></p-checkbox> -->
           <p-tableCheckbox [value]="script" *ngIf="script.checker == account.login || hasAnyAuthority(['ROLE_ISO_ADMIN'])" />
         </td>
       </tr>
@@ -220,7 +213,9 @@
           </td>
           <td class="text-center border">{{ row.criterialName }}</td>
           <td class="text-center border">{{ row.frequency }}</td>
-          <td class="text-center border">{{ row.status }}</td>
+          <td class="text-center border">
+            <p-tag [value]="row.status" [severity]="row.status == 'Mới tạo' ? 'info' : 'warning'" />
+          </td>
           <td class="text-center border">
             <p-button
               label="Chọn"
@@ -315,7 +310,7 @@
                   [url]="''"
                   [multiple]="true"
                   accept="image/*"
-                  maxFileSize="1000000"
+                  maxFileSize="10000000"
                   mode="advanced"
                   [auto]="false"
                   [customUpload]="true"
@@ -435,7 +430,7 @@
                   [url]="''"
                   [multiple]="true"
                   accept="image/*"
-                  maxFileSize="100000000"
+                  maxFileSize="10000000"
                   mode="advanced"
                   [auto]="false"
                   [customUpload]="true"
