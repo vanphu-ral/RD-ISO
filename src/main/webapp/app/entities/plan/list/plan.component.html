@@ -151,21 +151,21 @@
               (onClick)="copyPlan(rowNode.id)"
             />
             <p-button
-              *jhiHasAnyAuthority="['ROLE_ISO_ADMIN', 'ROLE_ISO_CREATE_PLAN']"
               icon="pi pi-pencil"
               aria-label="Edit"
               [rounded]="true"
               styleClass="p-button-rounded p-button-info p-button-sm mr-2"
               [severity]="'warning'"
+              *ngIf="validDisplayButton(rowNode, ['ROLE_ISO_ADMIN', 'ROLE_ISO_CREATE_PLAN'])"
               [routerLink]="['/plan', rowNode.id, 'edit']"
               title="Chỉnh sửa"
             />
             <p-button
-              *jhiHasAnyAuthority="['ROLE_ISO_ADMIN', 'ROLE_ISO_CHECK']"
               icon="pi pi-file-plus"
               aria-label="Gross"
               styleClass="p-button-rounded p-button-info p-button-sm mr-2"
               [severity]="'help'"
+              *ngIf="validDisplayButton(rowNode, ['ROLE_ISO_ADMIN', 'ROLE_ISO_CHECK'])"
               title="Gộp"
               [routerLink]="['/plan', rowNode.id, 'gross-script']"
             />
@@ -178,12 +178,12 @@
               [routerLink]="['/plan', rowNode.id, 'summarize-plan']"
             />
             <p-button
-              *jhiHasAnyAuthority="['ROLE_ISO_ADMIN', 'ROLE_ISO_CREATE_FIX_PLAN', 'ROLE_ISO_CHECK']"
               icon="pi pi-wrench"
               aria-label="Report"
               [rounded]="true"
               [routerLink]="['/plan', rowNode.id, 'inspection-plan']"
               styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+              *ngIf="validDisplayButton(rowNode, ['ROLE_ISO_ADMIN', 'ROLE_ISO_CREATE_FIX_PLAN', 'ROLE_ISO_CHECK'])"
               [severity]="'danger'"
               title="Khai báo kế hoạch khắc phục"
             />
@@ -196,11 +196,11 @@
               title="Xuất excel"
             />
             <p-button
-              *jhiHasAnyAuthority="['ROLE_ISO_ADMIN', 'ROLE_ISO_CREATE_PLAN']"
               icon="pi pi-trash"
               aria-label="Delete"
               styleClass="p-button-rounded p-button-info p-button-sm mr-2"
               [severity]="'danger'"
+              *ngIf="validDisplayButton(rowNode, ['ROLE_ISO_ADMIN', 'ROLE_ISO_CREATE_PLAN'])"
               (onClick)="delete(rowNode)"
               title="Xoá"
             />
@@ -337,11 +337,11 @@
                   <td>
                     <div class="action-buttons">
                       <p-button
-                        *jhiHasAnyAuthority="['ROLE_ISO_ADMIN', 'ROLE_ISO_CHECK']"
                         icon="pi pi-check"
                         aria-label="Check"
                         styleClass="p-button-rounded p-button-info p-button-sm mr-2"
                         [severity]="'success'"
+                        *ngIf="validDisplayButton(detail, ['ROLE_ISO_ADMIN', 'ROLE_ISO_CHECK'])"
                         title="Đánh giá"
                         (onClick)="showDialogCheckPlan(rowNode, index)"
                       />
@@ -354,12 +354,12 @@
                         (onClick)="showDialogGeneralCheckPlan(rowNode, detail)"
                       />
                       <p-button
-                        *jhiHasAnyAuthority="['ROLE_ISO_ADMIN', 'ROLE_ISO_CREATE_FIX_PLAN', 'ROLE_ISO_CHECK']"
                         icon="pi pi-wrench"
                         aria-label="Report"
                         [rounded]="true"
                         [routerLink]="['/plan', detail.id, 'inspection-report']"
                         styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+                        *ngIf="validDisplayButton(detail, ['ROLE_ISO_ADMIN', 'ROLE_ISO_CREATE_FIX_PLAN', 'ROLE_ISO_CHECK'])"
                         [severity]="'danger'"
                         title="Khai báo kế hoạch khắc phục"
                       />
@@ -372,10 +372,10 @@
                         title="Xuất excel"
                       />
                       <p-button
-                        *jhiHasAnyAuthority="['ROLE_ISO_ADMIN', 'ROLE_ISO_CREATE_PLAN']"
                         icon="pi pi-trash"
                         aria-label="Delete"
                         styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+                        *ngIf="validDisplayButton(detail, ['ROLE_ISO_ADMIN', 'ROLE_ISO_CREATE_PLAN'])"
                         [severity]="'danger'"
                         title="Xoá"
                       />

@@ -210,6 +210,14 @@ export class PlanComponent implements OnInit {
     return this.accountService.hasAnyAuthority(authorities);
   }
 
+  validDisplayButton(data: any, role: any[]) {
+    if (data.status === 'Đã hoàn thành') {
+      return false;
+    }
+    const isAdmin = this.hasAnyAuthority(role);
+    return isAdmin;
+  }
+
   duplicateNameValidator(name: string | null, index: number): void {
     if (!name) {
       this.isNameDuplicate[index] = false;

@@ -130,6 +130,15 @@ export class PlanGroupComponent implements OnInit {
     return this.accountService.hasAnyAuthority(authorities);
   }
 
+  validDisplayButton(data: any) {
+    if (data.status === 'Đã hoàn thành') {
+      return false;
+    }
+    const isAdmin = this.hasAnyAuthority(['ROLE_ISO_ADMIN']);
+    const isGroupChecker = data.checker === this.account.login;
+    return isAdmin || isGroupChecker;
+  }
+
   toggleSelectAll(): void {
     this.selectAll = !this.selectAll;
   }
