@@ -257,13 +257,13 @@
       <tr>
         <td class="text-center border">{{ rowIndex + 1 }}</td>
         <td
-          class="text-center border"
+          class="text-start border"
           *ngIf="rowIndex == 0 || this.criterialData[rowIndex].criterialGroupName !== this.criterialData[rowIndex - 1].criterialGroupName"
           [attr.rowspan]="getRowSpan(row.criterialGroupName)"
         >
           {{ row.criterialGroupName }}
         </td>
-        <td class="text-center border">{{ row.criterialName }}</td>
+        <td class="text-start border">{{ row.criterialName }}</td>
         <td class="text-center border">{{ row.frequency }}</td>
         <td class="text-center border"><p-tag [value]="row.status" [severity]="getSeverity(row.status)" /></td>
         <td class="text-center border">
@@ -323,7 +323,7 @@
         <tr>
           <td class="text-center border">{{ index + 1 }}</td>
           <td class="text-center border">{{ report.reportId }}</td>
-          <td class="text-center border">{{ report.reportName }}</td>
+          <td class="text-start border">{{ report.reportName }}</td>
           <td class="text-center border">{{ report.createdBy }}</td>
           <td class="text-center border">{{ report.convertScore }}</td>
           <td class="text-center border">
