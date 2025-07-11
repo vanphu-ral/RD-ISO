@@ -32,8 +32,8 @@
       <p-table [value]="groupedRows" [scrollable]="true" scrollHeight="600px">
         <ng-template pTemplate="header">
           <tr>
-            <th rowspan="2" class="text-center border" style="min-width: 150px">Nhóm tiêu chí</th>
-            <th rowspan="2" class="text-center border" style="min-width: 150px">Tiêu chí</th>
+            <th rowspan="2" class="text-center border" style="min-width: 250px">Nhóm tiêu chí</th>
+            <th rowspan="2" class="text-center border" style="min-width: 250px">Tiêu chí</th>
             <th rowspan="2" class="text-center border" style="min-width: 150px">Tần suất</th>
             <ng-container *ngFor="let month of months">
               <th [attr.colspan]="31" class="text-center border">{{ month }}</th>

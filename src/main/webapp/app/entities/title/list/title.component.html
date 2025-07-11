@@ -316,9 +316,9 @@
     <ng-template pTemplate="body" let-title let-index="rowIndex">
       <tr>
         <td class="text-center border">{{ index + 1 }}</td>
-        <td class="text-center border">{{ title.name }}</td>
-        <td class="text-center border">{{ title.source }}</td>
-        <td class="text-center border">{{ title.field }}</td>
+        <td class="text-start border">{{ title.name }}</td>
+        <td class="text-start border">{{ title.source }}</td>
+        <td class="text-start border">{{ title.field }}</td>
         <td class="text-center border">{{ title.createdAt | formatMediumDatetime }}</td>
         <td class="text-center border">{{ title.updatedAt | formatMediumDatetime }}</td>
         <td class="text-center border">{{ title.dataType }}</td>

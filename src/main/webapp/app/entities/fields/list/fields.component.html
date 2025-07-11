@@ -93,14 +93,14 @@
     </ng-template>
     <ng-template pTemplate="body" let-fields let-index="rowIndex">
       <tr>
-        <td class="text-center border">{{ index + 1 }}</td>
-        <td class="text-center border">{{ fields.name }}</td>
-        <td class="text-center border">{{ fields.fieldName }}</td>
-        <td class="text-center border">{{ fields.source }}</td>
-        <td class="text-center border">{{ fields.createdAt | formatMediumDatetime }}</td>
-        <td class="text-center border">{{ fields.updatedAt | formatMediumDatetime }}</td>
-        <td class="text-center border">{{ fields.createBy }}</td>
-        <td class="text-center border">
+        <td class="border">{{ index + 1 }}</td>
+        <td class="text-start border">{{ fields.name }}</td>
+        <td class="text-start border">{{ fields.fieldName }}</td>
+        <td class="text-start border">{{ fields.source }}</td>
+        <td class="border">{{ fields.createdAt | formatMediumDatetime }}</td>
+        <td class="border">{{ fields.updatedAt | formatMediumDatetime }}</td>
+        <td class="border">{{ fields.createBy }}</td>
+        <td class="border">
           <div class="btn-group action-buttons">
             <a [routerLink]="[fields.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton" style="border-radius: 8px">
               <fa-icon icon="eye"></fa-icon>

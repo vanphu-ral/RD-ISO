@@ -422,6 +422,7 @@ export class PlanComponent implements OnInit {
           return {
             ...item,
             image: JSON.parse(item.image),
+            result: item.result ?? (this.report.convertScore === 'Tính điểm' ? 'PASS' : 'Đạt'),
           };
         });
       });
@@ -435,6 +436,7 @@ export class PlanComponent implements OnInit {
           criterialName: criterial,
           createdBy: data.createdBy,
           frequency: row.frequency,
+          result: row.result ?? (this.report.convertScore === 'Tính điểm' ? 'PASS' : 'Đạt'),
         };
       });
       this.planGrDetail.sort((a, b) => a.criterialGroupName.localeCompare(b.criterialGroupName));

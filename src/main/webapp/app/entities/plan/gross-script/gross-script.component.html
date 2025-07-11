@@ -190,7 +190,7 @@
     <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')" aria-label="Close"></button>
   </div>
   <div class="modal-body">
-    <p-table [value]="criterialData" [paginator]="true" [rows]="10" [responsive]="true" styleClass="p-datatable-gridlines">
+    <p-table [value]="criterialData" [responsive]="true" styleClass="p-datatable-gridlines">
       <ng-template pTemplate="header">
         <tr>
           <th class="text-center border">STT</th>
@@ -282,11 +282,7 @@
           <td class="text-center border">{{ report.convertScore }}</td>
           <td class="text-center border">
             <select [(ngModel)]="report.result" name="report.result" [disabled]="report.hasEvaluation == 0">
-              <option
-                *ngFor="let item1 of listEvalReports[index]"
-                [value]="item1.name"
-                [selected]="!report.result && item1.name === (report.convertScore == 'Tính điểm' ? 'PASS' : 'Đạt')"
-              >
+              <option *ngFor="let item1 of listEvalReports[index]" [value]="item1.name">
                 {{ item1.name }}
               </option>
             </select>
@@ -402,11 +398,7 @@
           <td class="text-center border" style="padding: 0">{{ report.convertScore }}</td>
           <td class="text-center border" style="padding: 0">
             <select [(ngModel)]="report.result" name="report.result" [disabled]="report.hasEvaluation == 0">
-              <option
-                *ngFor="let item1 of listEvalReports[index]"
-                [value]="item1.name"
-                [selected]="!report.result && item1.name === (report.convertScore == 'Tính điểm' ? 'PASS' : 'Đạt')"
-              >
+              <option *ngFor="let item1 of listEvalReports[index]" [value]="item1.name">
                 {{ item1.name }}
               </option>
             </select>
