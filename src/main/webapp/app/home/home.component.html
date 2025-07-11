@@ -1,7 +1,7 @@
 <div class="new-layout">
   <div class="content-container">
     <h1 class="display-4">
-      <span>Chào mừng bạn đến với hệ thống đánh giá ISO Online</span>
+      <span>Chào mừng bạn đến với hệ thống đánh giá ISO</span>
       <small>(ISO)</small>
     </h1>
 
@@ -9,19 +9,25 @@
 
     <div>
       @if (account() !== null) {
-      <div class="alert alert-success">
-        @if (account()) {
-        <span id="home-logged-message" jhiTranslate="home.logged.message"
-          [translateValues]="{ username: account()!.login }">
-          Xin chào, {{ account()!.login }}! Chúc bạn có một ngày làm việc hiệu quả.
-        </span>
-        }
-      </div>
+        <div class="alert alert-success">
+          @if (account()) {
+            <span id="home-logged-message" jhiTranslate="home.logged.message" [translateValues]="{ username: account()!.login }">
+              Xin chào, {{ account()!.login }}! Chúc bạn có một ngày làm việc hiệu quả.
+            </span>
+          }
+        </div>
       } @else {
-      <div>
-        <button class="alert-link" (click)="login()">Đăng nhập</button>
-      </div>
+        <div>
+          <button class="alert-link" (click)="login()">Đăng nhập</button>
+        </div>
       }
     </div>
   </div>
 </div>
+<footer
+  style="text-align: center; padding: 0 25px 10px 25px; margin-top: -8px; font-size: 20px; font-family: system-ui"
+  class="ant-layout-footer"
+>
+  ©Copyright <a style="text-decoration: none" href="https://rangdong.com.vn/">Rang Dong</a>. All Rights Reserved. Designed by
+  <a style="text-decoration: none" href="https://rangdong.com.vn/">Rang Dong</a>
+</footer>

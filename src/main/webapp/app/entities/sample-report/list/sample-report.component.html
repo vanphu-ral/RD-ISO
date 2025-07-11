@@ -250,8 +250,8 @@
     <ng-template pTemplate="header">
       <tr>
         <th class="text-center border">STT</th>
-        <th class="text-center border">Tên</th>
         <th class="text-center border">Mã mẫu BBKT</th>
+        <th class="text-center border">Tên</th>
         <th class="text-center border">Loại BBKT</th>
         <!-- <th class="text-center border">Tần suất</th> -->
         <th class="text-center border">Trạng thái</th>
@@ -325,8 +325,8 @@
     <ng-template pTemplate="body" let-sampleReport let-index="rowIndex">
       <tr>
         <td class="text-center border">{{ index + 1 }}</td>
-        <td class="text-center border">{{ sampleReport.name }}</td>
-        <td class="text-center border">{{ sampleReport.code }}</td>
+        <td class="text-start border">{{ sampleReport.code }}</td>
+        <td class="text-start border">{{ sampleReport.name }}</td>
         <td class="text-center border">{{ sampleReport.reportType }}</td>
         <!-- <td class="text-center border">{{ sampleReport.frequency }}</td> -->
         <td class="text-center border"><p-tag [value]="sampleReport.status" [severity]="getSeverity(sampleReport.status)" /></td>

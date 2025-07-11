@@ -281,8 +281,8 @@
     <ng-template pTemplate="body" let-reportType let-index="rowIndex">
       <tr>
         <td class="text-center border">{{ index + 1 }}</td>
-        <td class="text-center border">{{ reportType.code }}</td>
-        <td class="text-center border">{{ reportType.name }}</td>
+        <td class="text-start border">{{ reportType.code }}</td>
+        <td class="text-start border">{{ reportType.name }}</td>
         <td class="text-center border"><p-tag [value]="reportType.status" [severity]="getSeverity(reportType.status)" /></td>
         <td class="text-center border">{{ reportType.createdAt | formatMediumDatetime }}</td>
         <td class="text-center border">{{ reportType.updatedAt | formatMediumDatetime }}</td>

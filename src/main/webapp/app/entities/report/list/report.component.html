@@ -185,8 +185,8 @@
     <ng-template pTemplate="header">
       <tr>
         <th class="text-center border">STT</th>
-        <th class="text-center border">Tên BBKT</th>
         <th class="text-center border">Mã mẫu BBKT</th>
+        <th class="text-center border">Tên BBKT</th>
         <th class="text-center border">Loại BBKT</th>
         <th class="text-center border">Đối tượng kiểm tra</th>
         <th class="text-center border">Người kiểm tra</th>
@@ -277,23 +277,23 @@
     </ng-template>
     <ng-template pTemplate="body" let-report let-index="rowIndex">
       <tr>
-        <td class="text-center border">{{ index + 1 }}</td>
-        <td class="text-center border">{{ report.name }}</td>
-        <td class="text-center border">{{ report.code }}</td>
-        <td class="text-center border">{{ report.sampleReportId }}</td>
-        <td class="text-center border">{{ report.testOfObject }}</td>
-        <td class="text-center border">{{ report.checker }}</td>
-        <td class="text-center border">
+        <td class="border">{{ index + 1 }}</td>
+        <td class="text-start border">{{ report.code }}</td>
+        <td class="text-start border">{{ report.name }}</td>
+        <td class="border">{{ report.sampleReportId }}</td>
+        <td class="border">{{ report.testOfObject }}</td>
+        <td class="border">{{ report.checker }}</td>
+        <td class="border">
           <p-tag [value]="report.status" [severity]="getSeverity(report.status)" />
         </td>
-        <td class="text-center border">{{ report.scoreScale }}</td>
-        <!-- <td class="text-center border">{{ report.reportType }}</td> -->
-        <!-- <td class="text-center border">{{ report.frequency }}</td> -->
-        <!-- <td class="text-center border">{{ report.user }}</td> -->
-        <td class="text-center border">{{ report.createdAt | formatMediumDatetime }}</td>
-        <td class="text-center border">{{ report.updatedAt | formatMediumDatetime }}</td>
-        <td class="text-center border">{{ report.updateBy }}</td>
-        <td class="text-center border">
+        <td class="border">{{ report.scoreScale }}</td>
+        <!-- <td class="border">{{ report.reportType }}</td> -->
+        <!-- <td class="border">{{ report.frequency }}</td> -->
+        <!-- <td class="border">{{ report.user }}</td> -->
+        <td class="border">{{ report.createdAt | formatMediumDatetime }}</td>
+        <td class="border">{{ report.updatedAt | formatMediumDatetime }}</td>
+        <td class="border">{{ report.updateBy }}</td>
+        <td class="border">
           <div class="btn-group action-buttons">
             <a
               [routerLink]="['/report', report.id, 'view']"

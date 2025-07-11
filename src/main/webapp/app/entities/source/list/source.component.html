@@ -203,13 +203,13 @@
     </ng-template>
     <ng-template pTemplate="body" let-source let-index="rowIndex">
       <tr>
-        <td class="text-center border">{{ index + 1 }}</td>
-        <td class="text-center border">{{ source.name }}</td>
-        <td class="text-center border">{{ source.source }}</td>
-        <td class="text-center border">{{ source.createdAt | formatMediumDatetime }}</td>
-        <td class="text-center border">{{ source.updatedAt | formatMediumDatetime }}</td>
-        <td class="text-center border">{{ source.createBy }}</td>
-        <td class="text-center border">
+        <td class="border">{{ index + 1 }}</td>
+        <td class="border">{{ source.name }}</td>
+        <td class="border">{{ source.source }}</td>
+        <td class="border">{{ source.createdAt | formatMediumDatetime }}</td>
+        <td class="border">{{ source.updatedAt | formatMediumDatetime }}</td>
+        <td class="border">{{ source.createBy }}</td>
+        <td class="border">
           <div class="btn-group action-buttons">
             <a
               [routerLink]="['/source', source.id, 'view']"

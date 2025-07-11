@@ -267,6 +267,12 @@ export class PlanGroupComponent implements OnInit {
         return this.listEvalReportsBase.filter((item2: any) => item2.type === report.convertScore);
       });
     });
+    this.planGrEvals = this.planGrEvals.map(item => {
+      return {
+        ...item,
+        result: item.result ?? (item.convertScore === 'Tính điểm' ? 'PASS' : 'Đạt'),
+      };
+    });
     this.dialogVisible = true;
   }
 

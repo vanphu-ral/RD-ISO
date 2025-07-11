@@ -128,8 +128,8 @@
           ></p-button>
         </td>
         <td>{{ index + 1 }}</td>
-        <td>{{ rowNode.code }}</td>
-        <td>{{ rowNode.name }}</td>
+        <td class="text-start">{{ rowNode.code }}</td>
+        <td class="text-start">{{ rowNode.name }}</td>
         <td>{{ rowNode.subjectOfAssetmentPlan }}</td>
         <td>{{ rowNode.frequency }}</td>
         <td>{{ rowNode.timeStart | date: 'dd/MM/yyyy' }}</td>
@@ -320,8 +320,8 @@
               <ng-template pTemplate="body" let-detail let-index="rowIndex">
                 <tr>
                   <td>{{ index + 1 }}</td>
-                  <td>{{ detail.code }}</td>
-                  <td>{{ detail.name }}</td>
+                  <td class="text-start">{{ detail.code }}</td>
+                  <td class="text-start">{{ detail.name }}</td>
                   <td>{{ detail.testOfObject }}</td>
                   <td>{{ detail.reportType }}</td>
                   <td>{{ detail.sumOfAudit }}</td>
@@ -510,7 +510,7 @@
             />
           </div>
         </td>
-        <td class="text-ellipsis" [ngbTooltip]="rowNode.name" container="body" placement="top-start">{{ rowNode.name }}</td>
+        <td class="text-ellipsis text-start" [ngbTooltip]="rowNode.name" container="body" placement="top-start">{{ rowNode.name }}</td>
         <td>{{ rowNode.frequency }}</td>
         <td>{{ rowNode.timeStart | date: 'dd/MM/yyyy' }}</td>
         <td>{{ rowNode.timeEnd | date: 'dd/MM/yyyy' }}</td>
