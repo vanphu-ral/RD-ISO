@@ -270,7 +270,7 @@ export class PlanGroupComponent implements OnInit {
     this.planGrEvals = this.planGrEvals.map(item => {
       return {
         ...item,
-        result: item.result ?? (item.convertScore === 'Tính điểm' ? 'PASS' : 'Đạt'),
+        result: item.hasEvaluation == 0 ? item.result : item.result ?? (item.convertScore === 'Tính điểm' ? 'PASS' : 'Đạt'),
       };
     });
     this.dialogVisible = true;

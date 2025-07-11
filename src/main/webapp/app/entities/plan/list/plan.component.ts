@@ -211,7 +211,7 @@ export class PlanComponent implements OnInit {
   }
 
   validDisplayButton(data: any, role: any[]) {
-    if (data.status === 'Đã hoàn thành') {
+    if (data.status === 'Đã hoàn thành' || data.status === 'Chưa hoàn thành') {
       return false;
     }
     const isAdmin = this.hasAnyAuthority(role);
@@ -422,7 +422,7 @@ export class PlanComponent implements OnInit {
           return {
             ...item,
             image: JSON.parse(item.image),
-            result: item.result ?? (this.report.convertScore === 'Tính điểm' ? 'PASS' : 'Đạt'),
+            result: item.hasEvaluation == 0 ? item.result : item.result ?? (this.report.convertScore === 'Tính điểm' ? 'PASS' : 'Đạt'),
           };
         });
       });
@@ -436,7 +436,7 @@ export class PlanComponent implements OnInit {
           criterialName: criterial,
           createdBy: data.createdBy,
           frequency: row.frequency,
-          result: row.result ?? (this.report.convertScore === 'Tính điểm' ? 'PASS' : 'Đạt'),
+          result: row.hasEvaluation == 0 ? row.result : row.result ?? (this.report.convertScore === 'Tính điểm' ? 'PASS' : 'Đạt'),
         };
       });
       this.planGrDetail.sort((a, b) => a.criterialGroupName.localeCompare(b.criterialGroupName));
