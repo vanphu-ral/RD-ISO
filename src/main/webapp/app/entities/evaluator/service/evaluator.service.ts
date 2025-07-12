@@ -107,11 +107,7 @@ export class EvaluatorService {
   }
 
   getToken(): Observable<string> {
-    const body = new HttpParams()
-      .set('grant_type', 'password')
-      .set('client_id', 'iso_test')
-      .set('username', 'admin')
-      .set('password', '123321');
+    const body = new HttpParams().set('grant_type', 'password').set('client_id', 'iso').set('username', 'admin').set('password', '123321');
 
     return this.http
       .post<any>(this.tokenUrl, body.toString(), {

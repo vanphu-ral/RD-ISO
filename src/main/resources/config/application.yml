@@ -171,8 +171,8 @@ spring:
             issuer-uri: http://192.168.68.90:8080/auth/realms/QLSX
         registration:
           oidc:
-            client-id: iso_test
-            client-secret: iso_test
+            client-id: iso
+            client-secret: iso
             scope: openid, profile, email, jhipster # last one for refresh tokens
 
 server:
