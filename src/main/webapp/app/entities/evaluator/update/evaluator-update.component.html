@@ -2,7 +2,7 @@
   <div class="col-8">
     <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
       <h2 id="jhi-evaluator-heading" data-cy="EvaluatorCreateUpdateHeading">
-        {{ editForm.controls.id.value ? 'Cập nhật người đánh giá' : 'Thêm mới người đánh giá' }}
+        {{ editForm.controls.id.value ? 'Cập nhật Người kiểm tra' : 'Thêm mới Người kiểm tra' }}
       </h2>
 
       <div>
@@ -35,7 +35,41 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label" for="field_checkerGroup">Nhóm người dùng </label>
+          <label class="form-label" for="field_username">Người dùng</label>
+          <p-dropdown
+            [options]="listUser"
+            formControlName="username"
+            optionLabel="name"
+            [filter]="true"
+            placeholder="Chọn người dùng"
+            [style]="{ width: '100%' }"
+            optionValue="username"
+          >
+          </p-dropdown>
+          <div
+            class="error-message"
+            *ngIf="editForm.get('username')?.invalid && (editForm.get('username')?.touched || editForm.get('username')?.dirty)"
+          >
+            <span *ngIf="editForm.get('username')?.errors?.['required']">Người dùng không được để trống </span>
+            <span *ngIf="editForm.get('username')?.errors?.['duplicate']">Người dùng này đã tồn tại</span>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_evaluationLevelId">Cấp độ đánh giá</label>
+          <select
+            class="form-control form-select"
+            id="field_evaluationLevelId"
+            data-cy="evaluationLevelId"
+            formControlName="evaluationLevelId"
+            name="evaluationLevelId"
+          >
+            <option *ngFor="let item of checkLevels" [value]="item.id">{{ item.name }}</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_checkerGroup">Bộ phận kiểm tra</label>
           <select
             class="form-control form-select"
             name="source"
@@ -50,7 +84,7 @@
             <option *ngFor="let item of checkerGroups" [value]="item.name">{{ item.name }}</option>
           </select>
           <div class="error-message" *ngIf="editForm.get('userGroupId')?.invalid && editForm.get('userGroupId')?.touched">
-            <span *ngIf="editForm.get('userGroupId')?.errors?.['required']">Nhóm người dùng không được để trống</span>
+            <span *ngIf="editForm.get('userGroupId')?.errors?.['required']">Bộ phận kiểm trakhông được để trống</span>
           </div>
         </div>
 

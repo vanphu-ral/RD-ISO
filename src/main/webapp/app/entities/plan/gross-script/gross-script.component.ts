@@ -143,8 +143,15 @@ export class GrossScriptComponent {
     this.activatedRoute.data.subscribe(({ plan }) => {
       this.plan = plan;
       this.reportService.getAllByPlanId(plan.id).subscribe(grossScripts => {
-        this.grossScripts = grossScripts.map((s: any) => ({ ...s, detail: JSON.parse(s.detail) }));
-        this.originalGrossScripts = [...this.grossScripts];
+        this.evaluatorService.getAllCheckTargets().subscribe(res => {
+          this.evaluator = res;
+          this.grossScripts = grossScripts.map((s: any) => ({
+            ...s,
+            detail: JSON.parse(s.detail),
+            reviewer: this.evaluator.find(evalua => evalua.username == s.checker).name,
+          }));
+          this.originalGrossScripts = [...this.grossScripts];
+        });
       });
       this.minSelectableDate = new Date(this.plan.timeStart);
       this.maxSelectableDate = new Date(this.plan.timeEnd);
@@ -156,9 +163,6 @@ export class GrossScriptComponent {
     });
     this.convertService.query().subscribe(res => {
       this.listEvalReportsBase = res.body;
-    });
-    this.evaluatorService.getAllCheckTargets().subscribe(res => {
-      this.evaluator = res;
     });
     this.checkTargetService.getAllCheckTargets().subscribe(res => {
       this.testObjects = res;
@@ -255,7 +259,7 @@ export class GrossScriptComponent {
     this.planGrEvals = this.planGrEvals.map(item => {
       return {
         ...item,
-        result: item.result ?? (item.convertScore === 'Tính điểm' ? 'PASS' : 'Đạt'),
+        result: item.hasEvaluation == 0 ? item.result : item.result ?? (item.convertScore === 'Tính điểm' ? 'PASS' : 'Đạt'),
       };
     });
     console.log(this.planGrEvals);

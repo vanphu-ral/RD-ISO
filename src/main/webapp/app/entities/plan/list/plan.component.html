@@ -46,7 +46,7 @@
         <th>STT</th>
         <th style="min-width: 150px">Mã kế hoạch</th>
         <th style="min-width: 300px">Tên kế hoạch</th>
-        <th style="min-width: 150px">Đối tượng KT</th>
+        <th style="min-width: 150px">Bộ phận được KT</th>
         <th style="min-width: 100px">Tần suất</th>
         <th style="min-width: 180px">Thời gian bắt đầu</th>
         <th style="min-width: 180px">Thời gian kết thúc</th>
@@ -246,7 +246,7 @@
                   <th style="min-width: 30px">STT</th>
                   <th style="min-width: 150px">Mã BBKT</th>
                   <th style="min-width: 300px">Tên BBKT</th>
-                  <th style="min-width: 150px">Đối tượng KT</th>
+                  <th style="min-width: 150px">Người được KT</th>
                   <th style="min-width: 150px">Loại BBKT (ID)</th>
                   <th style="min-width: 100px">Số lần KT</th>
                   <th style="min-width: 150px">Thang điểm</th>
@@ -331,7 +331,7 @@
                   <td>{{ detail.sumOfNc }}</td>
                   <td>{{ detail.sumOfLy }}</td>
                   <td>{{ detail.sumOfFail }}</td>
-                  <td>{{ detail.checker }}</td>
+                  <td>{{ detail.reviewer }}</td>
                   <td>{{ detail.frequency }}</td>
                   <td><p-tag [value]="detail.status" [severity]="getSeverity(detail.status)" /></td>
                   <td>
@@ -572,8 +572,8 @@
     <ng-template pTemplate="body" let-item let-index="rowIndex">
       <tr>
         <td class="text-center border">{{ index + 1 }}</td>
-        <td class="text-center border">{{ planParent.code }}</td>
-        <td class="text-center border">{{ planParent.name }}</td>
+        <td class="text-start border">{{ planParent.code }}</td>
+        <td class="text-start border">{{ planParent.name }}</td>
         <td class="text-center border">{{ report.testOfObject }}</td>
         <td class="text-center border">{{ report.reportType }}</td>
         <td class="text-center border">{{ report.convertScore }}</td>
@@ -593,7 +593,7 @@
           </div>
         </td>
         <td class="text-center border">
-          {{ report.checker }}
+          {{ report.reviewer }}
         </td>
         <td class="text-center border">
           <p-calendar
@@ -670,7 +670,7 @@
           </div>
         </td>
         <td class="text-center border">
-          {{ report.checker }}
+          {{ report.reviewer }}
         </td>
         <td class="text-center border">
           <p-calendar
@@ -751,7 +751,7 @@
         <th class="text-center border">Nhóm tiêu chí</th>
         <th class="text-center border">Tên tiêu chí</th>
         <th class="text-center border">Tần suất</th>
-        <th class="text-center border">Đối tượng đánh giá</th>
+        <th class="text-center border">Người kiểm tra</th>
         <th class="text-center border">Đánh giá</th>
         <th class="text-center border">Nội dung đánh giá</th>
         <th class="text-center border">Hình ảnh đánh giá</th>
@@ -761,8 +761,8 @@
     <ng-template pTemplate="body" let-item let-index="rowIndex">
       <tr>
         <td class="text-center border">{{ index + 1 }}</td>
-        <td class="text-center border">{{ item.criterialGroupName }}</td>
-        <td class="text-center border">{{ item.criterialName }}</td>
+        <td class="text-start border">{{ item.criterialGroupName }}</td>
+        <td class="text-start border">{{ item.criterialName }}</td>
         <td class="text-center border">{{ item.frequency }}</td>
         <td class="text-center border">{{ item.createdBy }}</td>
         <td class="text-center border">
@@ -1157,7 +1157,7 @@
       <tr>
         <th class="border text-center">Tuỳ chọn</th>
         <th class="border text-center" style="padding: 0; min-width: 150px">Tên BBKT</th>
-        <th class="border text-center" style="padding: 0; min-width: 150px">Đối tượng KT</th>
+        <th class="border text-center" style="padding: 0; min-width: 150px">Người được KT</th>
         <th class="border text-center" style="padding: 0; min-width: 90px">Số lần KT</th>
         <th class="border text-center" style="padding: 0; min-width: 40px">Điểm</th>
         <th class="border text-center" style="padding: 0; min-width: 90px">Tổng điểm</th>
@@ -1214,7 +1214,7 @@
         <td class="border text-center">{{ detail.sumOfNc }}</td>
         <td class="border text-center">{{ detail.sumOfLy }}</td>
         <td class="border text-center">{{ detail.sumOfFail }}</td>
-        <td class="border text-center">{{ detail.checker }}</td>
+        <td class="border text-center">{{ detail.reviewer }}</td>
         <td class="border text-center"><p-tag [value]="detail.status" [severity]="getSeverity(detail.status)" /></td>
       </tr>
     </ng-template>

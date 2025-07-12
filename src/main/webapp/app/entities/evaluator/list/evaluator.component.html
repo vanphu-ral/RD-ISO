@@ -1,6 +1,6 @@
 <div>
   <h2 id="page-heading" data-cy="EvaluatorHeading">
-    <span>Người đánh giá</span>
+    <span>Người kiểm tra</span>
 
     <div class="d-flex justify-content-end">
       <!-- <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
@@ -35,6 +35,7 @@
       <tr>
         <th class="text-center border">STT</th>
         <th class="text-center border">Tên</th>
+        <th class="text-center border">Cấp độ đánh giá</th>
         <th class="text-center border">Nhóm người dùng</th>
         <th class="text-center border">Thời gian tạo</th>
         <th class="text-center border">Thời gian cập nhật</th>
@@ -50,6 +51,14 @@
               <i class="pi pi-search"></i>
             </p-inputIcon>
             <input pInputText type="text" placeholder="Search" style="padding-left: 30px" (input)="onSearch('name', $event)" />
+          </p-iconField>
+        </th>
+        <th class="text-center border">
+          <p-iconField iconPosition="left" class="ml-auto">
+            <p-inputIcon>
+              <i class="pi pi-search"></i>
+            </p-inputIcon>
+            <input pInputText type="text" placeholder="Search" style="padding-left: 30px" (input)="onSearch('evaluationLevelId', $event)" />
           </p-iconField>
         </th>
         <th class="text-center border">
@@ -99,6 +108,7 @@
       <tr>
         <td class="text-center border">{{ index + 1 }}</td>
         <td class="text-center border">{{ evaluator.name }}</td>
+        <td class="text-center border">{{ evaluator.evaluationLevel }}</td>
         <td class="text-center border">{{ evaluator.checkerGroup }}</td>
         <td class="text-center border">{{ evaluator.createdAt | formatMediumDatetime }}</td>
         <td class="text-center border">{{ evaluator.updatedAt | formatMediumDatetime }}</td>

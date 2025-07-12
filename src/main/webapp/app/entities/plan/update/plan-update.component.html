@@ -34,7 +34,7 @@
           </div>
 
           <div class="col-m4-25 col-container-child">
-            <label for="field_subjectOfAssetmentPlan">Nhóm đối tượng kế hoạch đánh giá</label>
+            <label for="field_subjectOfAssetmentPlan">Bộ phận được kiểm tra</label>
             <select
               required
               class="inp-style"
@@ -113,7 +113,7 @@
               <th style="min-width: 300px; width: 300px">Mẫu BBKT</th>
               <th style="min-width: 180px; width: 180px">Mã BBKT</th>
               <th style="min-width: 400px; width: 400px">Tên BBKT</th>
-              <th style="min-width: 200px; width: 200px">Đối tượng đánh giá</th>
+              <th style="min-width: 200px; width: 200px">Người được kiểm tra</th>
               <th style="min-width: 200px; width: 200px">Người kiểm tra</th>
               <th style="min-width: 180px; width: 180px">Loại BBKT</th>
               <th style="min-width: 200px; width: 200px">Tần suất kiểm tra</th>
@@ -156,7 +156,7 @@
                   [ngModelOptions]="{ standalone: true }"
                   (change)="updateReportName(report.checker, index)"
                 >
-                  <option *ngFor="let data of evaluators" [value]="data.name">
+                  <option *ngFor="let data of evaluators" [value]="data.username">
                     {{ data.name }}
                   </option>
                 </select>
@@ -244,7 +244,7 @@
             <tr>
               <th>Tuỳ chọn</th>
               <th style="min-width: 400px; width: 400px">Tên BBKT</th>
-              <th style="min-width: 200px; width: 200px">Đối tượng đánh giá</th>
+              <th style="min-width: 200px; width: 200px">Người được kiểm tra</th>
               <th style="min-width: 200px; width: 200px">Người kiểm tra</th>
               <th style="min-width: 180px; width: 180px">Loại BBKT</th>
               <th style="min-width: 300px; width: 300px">Mẫu BBKT</th>
@@ -299,7 +299,7 @@
                   [ngModelOptions]="{ standalone: true }"
                   (change)="updateReportName(report.checker, index)"
                 >
-                  <option *ngFor="let data of evaluators" [value]="data.name">
+                  <option *ngFor="let data of evaluators" [value]="data.username">
                     {{ data.name }}
                   </option>
                 </select>
@@ -397,7 +397,7 @@
       <div class="col-md-6">
         <label for="">Người dùng</label>
         <select class="inp-style" [(ngModel)]="userTester.name">
-          <option *ngFor="let data of evaluator" [value]="data.name">
+          <option *ngFor="let data of evaluator" [value]="data.username">
             {{ data.name }}
           </option>
         </select>
@@ -436,7 +436,7 @@
         </div>
 
         <div class="col-m4-25 col-container-child">
-          <label for="">Đối tượng đánh giá</label>
+          <label for="">Người được kiểm tra</label>
           <select [(ngModel)]="listReports[selectedIndex].testOfObject" [ngModelOptions]="{ standalone: true }" (click)="checkTarget()">
             <option *ngFor="let data of checkTargets" [value]="data.name">
               {{ data.name }}
@@ -452,7 +452,7 @@
             [ngModelOptions]="{ standalone: true }"
             (change)="updateReportName(listReports[selectedIndex].checker || '', selectedIndex)"
           >
-            <option *ngFor="let data of evaluators" [value]="data.name">
+            <option *ngFor="let data of evaluators" [value]="data.username">
               {{ data.name }}
             </option>
           </select>
@@ -598,7 +598,7 @@
     </div>
     <div class="col-container">
       <div class="col-m4-25 col-container-child">
-        <label for="">Đối tượng đánh giá</label>
+        <label for="">Người được kiểm tra</label>
         <select [(ngModel)]="selectedReport.testOfObject" [ngModelOptions]="{ standalone: true }" (click)="checkTarget()">
           <option *ngFor="let data of checkTargets" [value]="data.name">
             {{ data.name }}
@@ -612,7 +612,7 @@
           [ngModelOptions]="{ standalone: true }"
           (change)="updateReportName(selectedReport.checker)"
         >
-          <option *ngFor="let data of evaluators" [value]="data.name">
+          <option *ngFor="let data of evaluators" [value]="data.username">
             {{ data.name }}
           </option>
         </select>

@@ -39,7 +39,7 @@ import { CheckerGroupService } from 'app/entities/checker-group/service/checker-
 })
 export class CheckTargetComponent implements OnInit {
   subscription: Subscription | null = null;
-  checkTargets?: ICheckTarget[];
+  checkTargets?: any[];
   isLoading = false;
 
   sortState = sortStateSignal({});
@@ -55,8 +55,7 @@ export class CheckTargetComponent implements OnInit {
     inspectionTarget: '',
     createdAt: '',
     updatedAt: '',
-    evaluationLevelId: '',
-    checkGroupId: '',
+    evalCheckGroup: '',
     status: '',
     updateBy: '',
   };
@@ -108,13 +107,6 @@ export class CheckTargetComponent implements OnInit {
         if (res.body) {
           this.checkTargets = res.body;
           this.checkTargetResult = [...this.checkTargets];
-          this.checkLevelService.query().subscribe(res1 => {
-            if (res1.body) {
-              this.checkTargetResult?.forEach(checkTarget => {
-                checkTarget.evaluationLevel = res1.body!.find(checkLevel => checkLevel.id === checkTarget.evaluationLevelId)?.name;
-              });
-            }
-          });
           this.checkGroupService.query().subscribe(res1 => {
             if (res1.body) {
               this.checkTargetResult?.forEach(checkTarget => {
@@ -150,8 +142,7 @@ export class CheckTargetComponent implements OnInit {
         (!this.filters.inspectionTarget || checkTarget.inspectionTarget?.toString().includes(this.filters.inspectionTarget)) &&
         (!this.filters.createdAt || createdDate === searchCreatedDate) &&
         (!this.filters.updatedAt || updatedDate === searchUpdatedDate) &&
-        (!this.filters.evaluationLevelId || checkTarget.evaluationLevelId?.toString().includes(this.filters.evaluationLevelId)) &&
-        (!this.filters.checkGroupId || checkTarget.checkGroupId?.toString().includes(this.filters.checkGroupId)) &&
+        (!this.filters.evalCheckGroup || checkTarget.evalCheckGroup?.toLowerCase().includes(this.filters.evalCheckGroup.toLowerCase())) &&
         (!this.filters.status || checkTarget.status?.toString().includes(this.filters.status)) &&
         (!this.filters.updateBy || checkTarget.updateBy?.toLowerCase().includes(this.filters.updateBy.toLowerCase()))
       );

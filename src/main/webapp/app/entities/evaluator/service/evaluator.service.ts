@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
+import { map, Observable, switchMap } from 'rxjs';
 
 import dayjs from 'dayjs/esm';
 
@@ -31,6 +31,9 @@ export class EvaluatorService {
   protected applicationConfigService = inject(ApplicationConfigService);
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/evaluators');
+  protected keycloakUrl = this.applicationConfigService.getEndpointFor('api/keycloak');
+  private tokenUrl = 'http://192.168.68.90:8080/auth/realms/QLSX/protocol/openid-connect/token';
+  private usersUrl = 'http://192.168.68.90:8080/auth/admin/realms/QLSX/users';
 
   checkNameExists(name: string): Observable<boolean> {
     return this.http.get<IEvaluator[]>(this.resourceUrl).pipe(map(converts => converts.some(convert => convert.name === name)));
@@ -101,6 +104,30 @@ export class EvaluatorService {
 
   compareEvaluator(o1: Pick<IEvaluator, 'id'> | null, o2: Pick<IEvaluator, 'id'> | null): boolean {
     return o1 && o2 ? this.getEvaluatorIdentifier(o1) === this.getEvaluatorIdentifier(o2) : o1 === o2;
+  }
+
+  getToken(): Observable<string> {
+    const body = new HttpParams()
+      .set('grant_type', 'password')
+      .set('client_id', 'iso_test')
+      .set('username', 'admin')
+      .set('password', '123321');
+
+    return this.http
+      .post<any>(this.tokenUrl, body.toString(), {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      })
+      .pipe(map(res => res.access_token));
+  }
+
+  getUsers(): Observable<any[]> {
+    return this.getToken().pipe(
+      switchMap(token =>
+        this.http.get<any[]>(this.usersUrl, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ),
+    );
   }
 
   addEvaluatorToCollectionIfMissing<Type extends Pick<IEvaluator, 'id'>>(

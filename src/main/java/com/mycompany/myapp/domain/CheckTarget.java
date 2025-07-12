@@ -23,12 +23,6 @@ public class CheckTarget implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "inspection_target")
-    private String inspectionTarget;
-
-    @Column(name = "evaluation_level_id")
-    private Long evaluationLevelId;
-
     @Column(name = "check_group_id")
     private Long checkGroupId;
 
@@ -70,32 +64,6 @@ public class CheckTarget implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getInspectionTarget() {
-        return this.inspectionTarget;
-    }
-
-    public CheckTarget inspectionTarget(String inspectionTarget) {
-        this.setInspectionTarget(inspectionTarget);
-        return this;
-    }
-
-    public void setInspectionTarget(String inspectionTarget) {
-        this.inspectionTarget = inspectionTarget;
-    }
-
-    public Long getEvaluationLevelId() {
-        return this.evaluationLevelId;
-    }
-
-    public CheckTarget evaluationLevelId(Long evaluationLevelId) {
-        this.setEvaluationLevelId(evaluationLevelId);
-        return this;
-    }
-
-    public void setEvaluationLevelId(Long evaluationLevelId) {
-        this.evaluationLevelId = evaluationLevelId;
     }
 
     public Long getCheckGroupId() {
@@ -183,8 +151,6 @@ public class CheckTarget implements Serializable {
         return "CheckTarget{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-            ", inspectionTarget='" + getInspectionTarget() + "'" +
-            ", evaluationLevelId=" + getEvaluationLevelId() +
             ", status='" + getStatus() + "'" +
             ", createdAt='" + getCreatedAt() + "'" +
             ", updatedAt='" + getUpdatedAt() + "'" +

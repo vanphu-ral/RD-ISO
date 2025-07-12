@@ -41,7 +41,7 @@
             <p-inputIcon>
               <i class="pi pi-search"></i>
             </p-inputIcon>
-            <input pInputText type="text" placeholder="Search" style="padding-left: 30px" (input)="onSearch('checker', $event)" />
+            <input pInputText type="text" placeholder="Search" style="padding-left: 30px" (input)="onSearch('reviewer', $event)" />
           </p-iconField>
         </th>
         <th>
@@ -76,7 +76,7 @@
         <td>{{ index + 1 }}</td>
         <td>{{ group.code }}</td>
         <td>{{ group.name }}</td>
-        <td>{{ group.checker }}</td>
+        <td>{{ group.reviewer }}</td>
         <td>{{ group.type }}</td>
         <td>{{ group.checkDate | formatMediumDatetime }}</td>
         <td>
@@ -257,13 +257,13 @@
       <tr>
         <td class="text-center border">{{ rowIndex + 1 }}</td>
         <td
-          class="text-center border"
+          class="text-start border"
           *ngIf="rowIndex == 0 || this.criterialData[rowIndex].criterialGroupName !== this.criterialData[rowIndex - 1].criterialGroupName"
           [attr.rowspan]="getRowSpan(row.criterialGroupName)"
         >
           {{ row.criterialGroupName }}
         </td>
-        <td class="text-center border">{{ row.criterialName }}</td>
+        <td class="text-start border">{{ row.criterialName }}</td>
         <td class="text-center border">{{ row.frequency }}</td>
         <td class="text-center border"><p-tag [value]="row.status" [severity]="getSeverity(row.status)" /></td>
         <td class="text-center border">
@@ -323,7 +323,7 @@
         <tr>
           <td class="text-center border">{{ index + 1 }}</td>
           <td class="text-center border">{{ report.reportId }}</td>
-          <td class="text-center border">{{ report.reportName }}</td>
+          <td class="text-start border">{{ report.reportName }}</td>
           <td class="text-center border">{{ report.createdBy }}</td>
           <td class="text-center border">{{ report.convertScore }}</td>
           <td class="text-center border">

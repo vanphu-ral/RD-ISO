@@ -18,6 +18,7 @@ import { InputIconModule } from 'primeng/inputicon';
 
 import { CheckerGroupService } from 'app/entities/checker-group/service/checker-group.service';
 import { TagModule } from 'primeng/tag';
+import { CheckLevelService } from 'app/entities/check-level/service/check-level.service';
 
 @Component({
   standalone: true,
@@ -53,6 +54,7 @@ export class EvaluatorComponent implements OnInit {
   totalRecords: number = 0;
   filters = {
     name: '',
+    evaluationLevelId: '',
     userGroupId: '',
     createdAt: '',
     updatedAt: '',
@@ -67,6 +69,7 @@ export class EvaluatorComponent implements OnInit {
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
   protected checkerGroupService = inject(CheckerGroupService);
+  protected checkLevelService = inject(CheckLevelService);
   trackId = (_index: number, item: IEvaluator): number => this.evaluatorService.getEvaluatorIdentifier(item);
 
   ngOnInit(): void {
@@ -101,6 +104,13 @@ export class EvaluatorComponent implements OnInit {
         if (res.body) {
           this.evaluators = res.body;
           this.evaluatorResult = [...this.evaluators];
+          this.checkLevelService.query().subscribe(res1 => {
+            if (res1.body) {
+              this.evaluatorResult?.forEach(checkTarget => {
+                checkTarget.evaluationLevel = res1.body!.find(checkLevel => checkLevel.id === checkTarget.evaluationLevelId)?.name;
+              });
+            }
+          });
           this.checkerGroupService.query().subscribe(res1 => {
             if (res1.body) {
               this.evaluators?.forEach(evaluator => {
@@ -137,6 +147,7 @@ export class EvaluatorComponent implements OnInit {
 
       return (
         (!this.filters.name || evaluator.name?.toLowerCase().includes(this.filters.name.toLowerCase())) &&
+        (!this.filters.evaluationLevelId || evaluator.evaluationLevelId?.toString().includes(this.filters.evaluationLevelId)) &&
         (!this.filters.userGroupId || evaluator.userGroupId?.toString().toLowerCase().includes(this.filters.userGroupId.toLowerCase())) &&
         (!this.filters.createdAt || createdDate === searchCreatedDate) &&
         (!this.filters.updatedAt || updatedDate === searchUpdatedDate) &&

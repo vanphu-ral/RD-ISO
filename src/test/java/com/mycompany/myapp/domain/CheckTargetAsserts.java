@@ -49,8 +49,6 @@ public class CheckTargetAsserts {
         assertThat(expected)
             .as("Verify CheckTarget relevant properties")
             .satisfies(e -> assertThat(e.getName()).as("check name").isEqualTo(actual.getName()))
-            .satisfies(e -> assertThat(e.getInspectionTarget()).as("check inspectionTarget").isEqualTo(actual.getInspectionTarget()))
-            .satisfies(e -> assertThat(e.getEvaluationLevelId()).as("check evaluationLevelId").isEqualTo(actual.getEvaluationLevelId()))
             .satisfies(e -> assertThat(e.getStatus()).as("check status").isEqualTo(actual.getStatus()))
             .satisfies(
                 e ->

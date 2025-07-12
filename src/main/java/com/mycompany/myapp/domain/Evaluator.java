@@ -25,8 +25,14 @@ public class Evaluator implements Serializable {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "evaluation_level_id")
+    private Long evaluationLevelId;
+
     @Column(name = "user_group_id")
     private Long userGroupId;
+
+    @Column(name = "username")
+    private String username;
 
     @Column(name = "created_at")
     private ZonedDateTime createdAt;
@@ -70,6 +76,22 @@ public class Evaluator implements Serializable {
 
     public Long getUserGroupId() {
         return this.userGroupId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Long getEvaluationLevelId() {
+        return evaluationLevelId;
+    }
+
+    public void setEvaluationLevelId(Long evaluationLevelId) {
+        this.evaluationLevelId = evaluationLevelId;
     }
 
     public Evaluator userGroupId(Long userGroupId) {

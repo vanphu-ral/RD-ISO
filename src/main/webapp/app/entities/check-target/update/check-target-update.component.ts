@@ -182,7 +182,7 @@ export class CheckTargetUpdateComponent implements OnInit {
   protected updateCheckLevel(): void {
     const checkLevel = this.checkLevels.find((s: any) => s.name === this.name);
     if (checkLevel) {
-      this.editForm.patchValue({ evaluationLevelId: checkLevel.id });
+      this.editForm.patchValue({});
     }
   }
 

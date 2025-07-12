@@ -185,10 +185,6 @@ export class PlanUpdateComponent implements OnInit {
       this.listOfFrequency = res;
     });
 
-    this.checkTargetService.getAllCheckTargets().subscribe(res => {
-      this.checkTargetBases = res;
-    });
-
     this.checkerGroupService.getAllCheckerGroups().subscribe(res => {
       this.checkerGroups = res;
       const checkGroupId = this.checkerGroups.find(x => x.name === this.plan?.subjectOfAssetmentPlan)?.id;
@@ -227,11 +223,15 @@ export class PlanUpdateComponent implements OnInit {
 
     this.isCopyMode = history.state.mode === 'COPY' ? true : false;
     this.activatedRoute.data.pipe(take(1)).subscribe(({ plan }) => {
-      if (this.isCopyMode) plan.code = `PLAN-COPY-${plan.code}`;
-      this.plan = plan;
-      if (plan) {
-        this.updateForm(plan);
-      }
+      this.checkTargetService.getAllCheckTargets().subscribe(res => {
+        this.checkTargetBases = res;
+        if (this.isCopyMode) plan.code = `PLAN-COPY-${plan.code}`;
+        this.plan = plan;
+        this.checkTargets = [...this.checkTargetBases];
+        if (plan) {
+          this.updateForm(plan);
+        }
+      });
     });
 
     this.editForm.get('name')?.valueChanges.subscribe(name => {
@@ -247,7 +247,7 @@ export class PlanUpdateComponent implements OnInit {
     this.editForm.get('name')?.updateValueAndValidity();
     this.accountService.identity().subscribe(account => {
       this.account = account;
-
+      console.log(this.account);
       if (account) {
         this.editForm.patchValue({
           updateBy: account.login,
@@ -502,12 +502,11 @@ export class PlanUpdateComponent implements OnInit {
 
   updateReportCode(data: any, index: number): void {
     const selectedId = +data.target.value;
-    const evaluatorName = this.evaluators[index]?.name ?? '';
+    const evaluatorName = this.evaluators[index]?.username ?? '';
     this.listReports[index].code = `${this.sampleReport.find(r => r.id === selectedId).code}-${dayjs().format('DDMMYYYYHHmmssSSS')}`;
     this.listReports[index].name = `${this.removeVietnameseAndSpaces(evaluatorName)}-${this.listReports[index].code}`;
     this.listReports[index].frequency = this.sampleReport.find(r => r.id === selectedId).frequency;
     this.listReports[index].reportType = this.sampleReport.find(r => r.id === selectedId).reportType;
-    this.listReports[index].checker = this.evaluators[index].name;
     this.listReports[index].detail = this.sampleReport.find(r => r.id === selectedId).detail;
     this.listTitleBody = JSON.parse(this.listReports[index].detail).body;
     this.listTitleHeaders = JSON.parse(this.listReports[index].detail).header;
@@ -612,6 +611,12 @@ export class PlanUpdateComponent implements OnInit {
   checkValid() {
     const checkGroupId = this.checkerGroups.find(x => x.name === this.editForm.get('subjectOfAssetmentPlan')?.value)?.id;
     this.checkTargets = this.checkTargetBases.filter(x => x.checkGroupId === checkGroupId);
+    this.listReports.forEach(report => {
+      const found = this.checkTargets.find(x => x.name === report.testOfObject);
+      if (!found) {
+        report.testOfObject = ''; // hoặc null
+      }
+    });
     if (this.checkTargets.length === 0) {
       Swal.fire({
         title: 'Error',
