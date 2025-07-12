@@ -33,8 +33,6 @@ type CheckTargetFormDefaults = Pick<NewCheckTarget, 'id' | 'createdAt' | 'update
 type CheckTargetFormGroupContent = {
   id: FormControl<CheckTargetFormRawValue['id'] | NewCheckTarget['id']>;
   name: FormControl<CheckTargetFormRawValue['name']>;
-  inspectionTarget: FormControl<CheckTargetFormRawValue['inspectionTarget']>;
-  evaluationLevelId: FormControl<CheckTargetFormRawValue['evaluationLevelId']>;
   checkGroupId: FormControl<CheckTargetFormRawValue['checkGroupId']>;
   status: FormControl<CheckTargetFormRawValue['status']>;
   createdAt: FormControl<CheckTargetFormRawValue['createdAt']>;
@@ -63,8 +61,6 @@ export class CheckTargetFormService {
       name: new FormControl(checkTargetRawValue.name, {
         validators: [Validators.required],
       }),
-      inspectionTarget: new FormControl(checkTargetRawValue.inspectionTarget),
-      evaluationLevelId: new FormControl(checkTargetRawValue.evaluationLevelId), // ✅ kiểu number
       checkGroupId: new FormControl(checkTargetRawValue.checkGroupId), // ✅ kiểu number
       status: new FormControl(checkTargetRawValue.status ?? 'ACTIVE'),
       createdAt: new FormControl(checkTargetRawValue.createdAt),
@@ -112,7 +108,6 @@ export class CheckTargetFormService {
   ): CheckTargetFormRawValue | PartialWithRequiredKeyOf<NewCheckTargetFormRawValue> {
     return {
       ...checkTarget,
-      evaluationLevelId: checkTarget.evaluationLevelId != null ? +checkTarget.evaluationLevelId : null,
       checkGroupId: checkTarget.checkGroupId != null ? +checkTarget.checkGroupId : null,
       createdAt: checkTarget.createdAt ? checkTarget.createdAt.format(DATE_TIME_FORMAT) : undefined,
       updatedAt: checkTarget.updatedAt ? checkTarget.updatedAt.format(DATE_TIME_FORMAT) : undefined,

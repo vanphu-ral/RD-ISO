@@ -122,7 +122,7 @@
         <td>{{ script.code }}</td>
         <td>{{ script.name }}</td>
         <td>{{ script.testOfObject }}</td>
-        <td>{{ script.checker }}</td>
+        <td>{{ script.reviewer }}</td>
         <td><p-tag [value]="script.status" [severity]="getSeverity(script.status)"></p-tag></td>
         <td>
           <p-tableCheckbox [value]="script" *ngIf="script.checker == account.login || hasAnyAuthority(['ROLE_ISO_ADMIN'])" />
@@ -155,7 +155,7 @@
       <tr>
         <td class="text-ellipsis" [ngbTooltip]="script.name" container="body" placement="top-start">{{ script.name }}</td>
         <td>{{ script.testOfObject }}</td>
-        <td>{{ script.checker }}</td>
+        <td>{{ script.reviewer }}</td>
         <td><p-tag [value]="script.status" [severity]="getSeverity(script.status)"></p-tag></td>
         <td>
           <p-tableCheckbox [value]="script" *ngIf="script.checker == account.login || hasAnyAuthority(['ROLE_ISO_ADMIN'])" />
@@ -546,7 +546,7 @@
         <div class="col-md-6">
           <label for="checker">Người kiểm tra</label>
           <select name="checker" [(ngModel)]="groupReportData.checker" required class="form-control">
-            <option *ngFor="let data of evaluator" [value]="data.name">
+            <option *ngFor="let data of evaluator" [value]="data.username">
               {{ data.name }}
             </option>
           </select>

@@ -3,6 +3,8 @@ import dayjs from 'dayjs/esm';
 export interface IEvaluator {
   id: number;
   name?: string | null;
+  username?: string | null;
+  evaluationLevelId?: number | null;
   userGroupId?: number | null;
   createdAt?: dayjs.Dayjs | null;
   updatedAt?: dayjs.Dayjs | null;

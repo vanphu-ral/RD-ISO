@@ -24,6 +24,13 @@ springdoc:
   api-docs:
     enabled: false
 ---
+keycloak:
+  admin:
+    server-url: http://192.168.68.90:8080
+    realm: QLSX
+    username: admin
+    password: 123321
+    client-id: tem_in_test
 management:
   endpoints:
     web:

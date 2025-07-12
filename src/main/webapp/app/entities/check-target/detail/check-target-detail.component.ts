@@ -15,17 +15,7 @@ import { CheckLevelService } from 'app/entities/check-level/service/check-level.
 export class CheckTargetDetailComponent implements OnInit {
   @Input() checkTarget: ICheckTarget | null = null;
   protected checkLevelService = inject(CheckLevelService);
-  ngOnInit(): void {
-    this.checkLevelService.query().subscribe((res: any) => {
-      if (res.body) {
-        res.body.forEach((checkLevel: any) => {
-          if (this.checkTarget?.evaluationLevelId === checkLevel.id) {
-            this.checkTarget!.evaluationLevel = checkLevel.name;
-          }
-        });
-      }
-    });
-  }
+  ngOnInit(): void {}
   previousState(): void {
     window.history.back();
   }

@@ -41,7 +41,7 @@
             <p-inputIcon>
               <i class="pi pi-search"></i>
             </p-inputIcon>
-            <input pInputText type="text" placeholder="Search" style="padding-left: 30px" (input)="onSearch('checker', $event)" />
+            <input pInputText type="text" placeholder="Search" style="padding-left: 30px" (input)="onSearch('reviewer', $event)" />
           </p-iconField>
         </th>
         <th>
@@ -76,7 +76,7 @@
         <td>{{ index + 1 }}</td>
         <td>{{ group.code }}</td>
         <td>{{ group.name }}</td>
-        <td>{{ group.checker }}</td>
+        <td>{{ group.reviewer }}</td>
         <td>{{ group.type }}</td>
         <td>{{ group.checkDate | formatMediumDatetime }}</td>
         <td>

@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { catchError, finalize, map } from 'rxjs/operators';
 
 import SharedModule from 'app/shared/shared.module';
-import { AbstractControl, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 
 import { IEvaluator } from '../evaluator.model';
 import { EvaluatorService } from '../service/evaluator.service';
@@ -15,6 +15,8 @@ import { AccountService } from 'app/core/auth/account.service';
 import dayjs from 'dayjs/esm';
 import { CheckerGroupService } from 'app/entities/checker-group/service/checker-group.service';
 import Swal from 'sweetalert2';
+import { CheckLevelService } from 'app/entities/check-level/service/check-level.service';
+import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
   standalone: true,
@@ -22,23 +24,39 @@ import Swal from 'sweetalert2';
   templateUrl: './evaluator-update.component.html',
   styleUrls: ['../../shared.component.css'],
 
-  imports: [SharedModule, FormsModule, ReactiveFormsModule],
+  imports: [SharedModule, FormsModule, ReactiveFormsModule, DropdownModule],
 })
 export class EvaluatorUpdateComponent implements OnInit {
   isSaving = false;
   evaluator: IEvaluator | null = null;
   account: Account | null = null;
   checkerGroups: any[] = [];
+  checkLevels: any[] = [];
   name = '';
+  listUser: any[] = [];
   protected evaluatorService = inject(EvaluatorService);
   protected evaluatorFormService = inject(EvaluatorFormService);
   protected activatedRoute = inject(ActivatedRoute);
   protected accountService = inject(AccountService);
   protected checkerGroupService = inject(CheckerGroupService);
+  protected checkLevelService = inject(CheckLevelService);
   // eslint-disable-next-line @typescript-eslint/member-ordering
   editForm: EvaluatorFormGroup = this.evaluatorFormService.createEvaluatorFormGroup();
+  usernameControl!: FormControl;
 
   ngOnInit(): void {
+    this.usernameControl = this.editForm.get('username') as FormControl;
+    this.checkLevelService.getAllCheckLevels().subscribe(data => {
+      this.checkLevels = data;
+    });
+    this.evaluatorService.getUsers().subscribe(res => {
+      this.listUser = res
+        .filter(user => user.firstName && user.lastName)
+        .map(user => ({
+          name: `${user.firstName} ${user.lastName}`,
+          username: user.username,
+        }));
+    });
     this.activatedRoute.data.subscribe(({ evaluator }) => {
       this.evaluator = evaluator;
       if (evaluator) {
@@ -61,6 +79,9 @@ export class EvaluatorUpdateComponent implements OnInit {
     this.editForm.get('name')?.addValidators([Validators.required]);
     this.editForm.get('name')?.setAsyncValidators([this.duplicateNameValidator.bind(this)]);
     this.editForm.get('name')?.updateValueAndValidity();
+    this.editForm.get('username')?.addValidators([Validators.required]);
+    this.editForm.get('username')?.setAsyncValidators([this.duplicateNameValidator.bind(this)]);
+    this.editForm.get('username')?.updateValueAndValidity();
     this.loadCheckerGroups();
   }
 

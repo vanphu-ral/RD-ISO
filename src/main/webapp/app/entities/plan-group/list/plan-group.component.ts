@@ -23,6 +23,7 @@ import Swal from 'sweetalert2';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { AccountService } from 'app/core/auth/account.service';
 import { LayoutService } from 'app/layouts/service/layout.service';
+import { EvaluatorService } from 'app/entities/evaluator/service/evaluator.service';
 // import { BrowserModule } from '@angular/platform-browser';
 
 @Component({
@@ -73,6 +74,7 @@ export class PlanGroupComponent implements OnInit {
   filters = {
     name: '',
     checker: '',
+    reviewer: '',
     type: '',
     checkDate: '',
     status: '',
@@ -103,6 +105,7 @@ export class PlanGroupComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private accountService: AccountService,
     private layoutService: LayoutService,
+    private evaluatorService: EvaluatorService,
   ) {}
 
   ngOnInit(): void {
@@ -115,7 +118,12 @@ export class PlanGroupComponent implements OnInit {
         .filter(key => !isNaN(+key) && typeof plan[key] === 'object' && plan[key] !== null)
         .map(key => plan[key])
         .sort((a, b) => new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime());
-      this.plantGroupResult = [...this.listPlanGroups];
+      this.evaluatorService.getAllCheckTargets().subscribe(res => {
+        this.listPlanGroups = this.listPlanGroups.map(item => {
+          return { ...item, reviewer: res.find(review => review.username == item.checker)?.name };
+        });
+        this.plantGroupResult = [...this.listPlanGroups];
+      });
     });
     // lấy kiểu đánh giá
     this.convertService.query().subscribe((res: any) => {
@@ -155,6 +163,7 @@ export class PlanGroupComponent implements OnInit {
       return (
         (!this.filters.name || planGr.name?.toLowerCase().includes(this.filters.name.toLowerCase())) &&
         (!this.filters.checker || planGr.checker?.toLowerCase().includes(this.filters.checker.toLowerCase())) &&
+        (!this.filters.reviewer || planGr.reviewer?.toLowerCase().includes(this.filters.reviewer.toLowerCase())) &&
         (!this.filters.type || planGr.type?.toLowerCase().includes(this.filters.type.toLowerCase())) &&
         (!this.filters.checkDate || checkDateStr === filterDateStr) &&
         (!this.filters.status || planGr.status?.toString().includes(this.filters.status))

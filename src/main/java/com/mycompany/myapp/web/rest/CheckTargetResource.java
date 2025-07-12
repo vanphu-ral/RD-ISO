@@ -124,12 +124,6 @@ public class CheckTargetResource {
                 if (checkTarget.getName() != null) {
                     existingCheckTarget.setName(checkTarget.getName());
                 }
-                if (checkTarget.getInspectionTarget() != null) {
-                    existingCheckTarget.setInspectionTarget(checkTarget.getInspectionTarget());
-                }
-                if (checkTarget.getEvaluationLevelId() != null) {
-                    existingCheckTarget.setEvaluationLevelId(checkTarget.getEvaluationLevelId());
-                }
                 if (checkTarget.getStatus() != null) {
                     existingCheckTarget.setStatus(checkTarget.getStatus());
                 }

@@ -189,6 +189,7 @@ export class PlanComponent implements OnInit {
         timeEnd: item.timeEnd ? new Date(item.timeEnd) : null,
         createdAt: item.createdAt ? new Date(item.createdAt) : null,
         updatedAt: item.updatedAt ? new Date(item.updatedAt) : null,
+        // planDetail: item.planDetail.map((detail: any) => { return {...detail, reviewer: this.evaluators.find(evalua => evalua.username == detail.checker).name}})
       }));
       this.loadTreeNodes();
     });
@@ -279,6 +280,7 @@ export class PlanComponent implements OnInit {
               timeStart: new Date(item.timeStart),
               timeEnd: new Date(item.timeEnd),
               createdAt: new Date(item.createdAt),
+              // planDetail: item.planDetail.map((detail: any) => { return {...detail, reviewer: this.evaluators.find(evalua => evalua.username == detail.checker).name}})
             };
           });
           this.totalRecords = this.planDetailResults.length;
@@ -342,6 +344,14 @@ export class PlanComponent implements OnInit {
   loadPlanDetails(planId: number): void {
     this.planService.getPlanDetail().subscribe(res => {
       this.planDetailResults = res;
+      this.planDetailResults.forEach(item => {
+        item.planDetail = item.planDetail.map((detail: any) => {
+          return {
+            ...detail,
+            reviewer: this.evaluators.find(evalua => evalua.username == detail.checker).name,
+          };
+        });
+      });
       setTimeout(() => {
         this.restorePaginatorState();
       }, 0);
@@ -995,8 +1005,10 @@ export class PlanComponent implements OnInit {
     this.dialogListReportByPlan = true;
     this.selectedPlan = plan;
     this.planService.getAllStatisReportByPlanId(plan.id).subscribe(res => {
-      console.log(res);
       this.listReportByPlan = res.body;
+      this.listReportByPlan = this.listReportByPlan.map((item: any) => {
+        return { ...item, reviewer: this.evaluators.find(evalua => evalua.username == item.checker).name };
+      });
     });
   }
 

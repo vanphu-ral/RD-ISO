@@ -33,6 +33,8 @@ type EvaluatorFormDefaults = Pick<NewEvaluator, 'id' | 'createdAt' | 'updatedAt'
 type EvaluatorFormGroupContent = {
   id: FormControl<EvaluatorFormRawValue['id'] | NewEvaluator['id']>;
   name: FormControl<EvaluatorFormRawValue['name']>;
+  username: FormControl<EvaluatorFormRawValue['username']>;
+  evaluationLevelId: FormControl<EvaluatorFormRawValue['evaluationLevelId']>;
   userGroupId: FormControl<EvaluatorFormRawValue['userGroupId']>;
   createdAt: FormControl<EvaluatorFormRawValue['createdAt']>;
   updatedAt: FormControl<EvaluatorFormRawValue['updatedAt']>;
@@ -59,6 +61,8 @@ export class EvaluatorFormService {
         },
       ),
       name: new FormControl(evaluatorRawValue.name),
+      username: new FormControl(evaluatorRawValue.username),
+      evaluationLevelId: new FormControl(evaluatorRawValue.evaluationLevelId),
       userGroupId: new FormControl(evaluatorRawValue.userGroupId),
       createdAt: new FormControl(evaluatorRawValue.createdAt),
       updatedAt: new FormControl(evaluatorRawValue.updatedAt),

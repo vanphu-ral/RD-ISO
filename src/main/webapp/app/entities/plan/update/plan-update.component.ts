@@ -247,7 +247,7 @@ export class PlanUpdateComponent implements OnInit {
     this.editForm.get('name')?.updateValueAndValidity();
     this.accountService.identity().subscribe(account => {
       this.account = account;
-
+      console.log(this.account);
       if (account) {
         this.editForm.patchValue({
           updateBy: account.login,
@@ -502,13 +502,11 @@ export class PlanUpdateComponent implements OnInit {
 
   updateReportCode(data: any, index: number): void {
     const selectedId = +data.target.value;
-    const evaluatorName = this.evaluators[index]?.name ?? '';
+    const evaluatorName = this.evaluators[index]?.username ?? '';
     this.listReports[index].code = `${this.sampleReport.find(r => r.id === selectedId).code}-${dayjs().format('DDMMYYYYHHmmssSSS')}`;
     this.listReports[index].name = `${this.removeVietnameseAndSpaces(evaluatorName)}-${this.listReports[index].code}`;
-    this.listReports[index].testOfObject = this.checkTargets.length != 0 ? this.checkTargets[index].name : '';
     this.listReports[index].frequency = this.sampleReport.find(r => r.id === selectedId).frequency;
     this.listReports[index].reportType = this.sampleReport.find(r => r.id === selectedId).reportType;
-    this.listReports[index].checker = this.evaluators[index].name;
     this.listReports[index].detail = this.sampleReport.find(r => r.id === selectedId).detail;
     this.listTitleBody = JSON.parse(this.listReports[index].detail).body;
     this.listTitleHeaders = JSON.parse(this.listReports[index].detail).header;
