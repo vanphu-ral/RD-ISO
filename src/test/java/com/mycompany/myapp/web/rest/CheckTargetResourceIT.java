@@ -87,8 +87,6 @@ class CheckTargetResourceIT {
     public static CheckTarget createEntity(EntityManager em) {
         CheckTarget checkTarget = new CheckTarget()
             .name(DEFAULT_NAME)
-            .inspectionTarget(DEFAULT_INSPECTION_TARGET)
-            .evaluationLevelId(DEFAULT_EVALUATION_LEVEL_ID)
             .status(DEFAULT_STATUS)
             .createdAt(DEFAULT_CREATED_AT)
             .updatedAt(DEFAULT_UPDATED_AT)
@@ -105,8 +103,6 @@ class CheckTargetResourceIT {
     public static CheckTarget createUpdatedEntity(EntityManager em) {
         CheckTarget checkTarget = new CheckTarget()
             .name(UPDATED_NAME)
-            .inspectionTarget(UPDATED_INSPECTION_TARGET)
-            .evaluationLevelId(UPDATED_EVALUATION_LEVEL_ID)
             .status(UPDATED_STATUS)
             .createdAt(UPDATED_CREATED_AT)
             .updatedAt(UPDATED_UPDATED_AT)
@@ -221,8 +217,6 @@ class CheckTargetResourceIT {
         em.detach(updatedCheckTarget);
         updatedCheckTarget
             .name(UPDATED_NAME)
-            .inspectionTarget(UPDATED_INSPECTION_TARGET)
-            .evaluationLevelId(UPDATED_EVALUATION_LEVEL_ID)
             .status(UPDATED_STATUS)
             .createdAt(UPDATED_CREATED_AT)
             .updatedAt(UPDATED_UPDATED_AT)
@@ -309,11 +303,7 @@ class CheckTargetResourceIT {
         CheckTarget partialUpdatedCheckTarget = new CheckTarget();
         partialUpdatedCheckTarget.setId(checkTarget.getId());
 
-        partialUpdatedCheckTarget
-            .evaluationLevelId(UPDATED_EVALUATION_LEVEL_ID)
-            .status(UPDATED_STATUS)
-            .createdAt(UPDATED_CREATED_AT)
-            .updateBy(UPDATED_UPDATE_BY);
+        partialUpdatedCheckTarget.status(UPDATED_STATUS).createdAt(UPDATED_CREATED_AT).updateBy(UPDATED_UPDATE_BY);
 
         restCheckTargetMockMvc
             .perform(
@@ -347,8 +337,6 @@ class CheckTargetResourceIT {
 
         partialUpdatedCheckTarget
             .name(UPDATED_NAME)
-            .inspectionTarget(UPDATED_INSPECTION_TARGET)
-            .evaluationLevelId(UPDATED_EVALUATION_LEVEL_ID)
             .status(UPDATED_STATUS)
             .createdAt(UPDATED_CREATED_AT)
             .updatedAt(UPDATED_UPDATED_AT)
