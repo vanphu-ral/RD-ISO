@@ -115,7 +115,7 @@
             <tr pDraggable="item" (onDragStart)="draggedItemIndex = index" (dragover)="onDragOver($event)" (drop)="drop(index)">
               <td class="text-center border">{{ index + 1 }}</td>
               <td class="text-center border" *ngFor="let data of item.data">
-                <select [(ngModel)]="data.value" [ngModelOptions]="{ standalone: true }" (click)="checkEvent(data.header)">
+                <select [(ngModel)]="data.value" [ngModelOptions]="{ standalone: true }" (click)="checkEvent(data.header, index)">
                   <option>{{ data.value }}</option>
                   <option *ngFor="let item1 of listSuggestions" [value]="item1">
                     {{ item1 }}
