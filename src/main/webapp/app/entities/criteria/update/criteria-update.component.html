@@ -35,25 +35,17 @@
 
         <div class="mb-3">
           <label class="form-label" for="field_criterialGroupId">Nhóm tiêu chí</label>
-          <select
-            class="form-control form-select"
-            name="criterialGroupId"
-            id="field_criterialGroupId"
-            data-cy="criterialGroupId"
-            [(ngModel)]="name"
-            [ngModelOptions]="{ standalone: true }"
-            (change)="updateCritetiaGroup()"
-          >
-            <option *ngFor="let item of criteriaGroups" [value]="item.name">{{ item.name }}</option>
-          </select>
-          <!-- <input
-            type="text"
-            class="form-control"
-            name="criterialGroupId"
-            id="field_criterialGroupId"
-            data-cy="criterialGroupId"
+          <p-dropdown
+            [options]="criteriaGroups"
             formControlName="criterialGroupId"
-          /> -->
+            optionLabel="name"
+            [filter]="true"
+            [appendTo]="'body'"
+            placeholder="Chọn người dùng"
+            [style]="{ width: '100%' }"
+            optionValue="id"
+          >
+          </p-dropdown>
         </div>
 
         <div class="mb-3">

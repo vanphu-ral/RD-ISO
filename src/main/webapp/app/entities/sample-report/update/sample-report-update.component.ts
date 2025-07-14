@@ -26,6 +26,8 @@ import { SourceService } from 'app/entities/source/service/source.service';
 import { ConvertService } from 'app/entities/convert/service/convert.service';
 import { FrequencyService } from 'app/entities/frequency/service/frequency.service';
 import { DragDropModule } from 'primeng/dragdrop';
+import { CriteriaService } from 'app/entities/criteria/service/criteria.service';
+import { CriteriaGroupService } from 'app/entities/criteria-group/service/criteria-group.service';
 
 @Component({
   standalone: true,
@@ -58,6 +60,8 @@ export class SampleReportUpdateComponent implements OnInit {
   listOfFrequency: any[] = [];
   draggedItemIndex: number | null = null;
   lastRowIndex = 0;
+  listCriterias: any[] = [];
+  listCriteriaGroups: any[] = [];
   protected sampleReportService = inject(SampleReportService);
   protected sampleReportFormService = inject(SampleReportFormService);
   protected activatedRoute = inject(ActivatedRoute);
@@ -68,6 +72,8 @@ export class SampleReportUpdateComponent implements OnInit {
   protected convertService = inject(ConvertService);
   protected frequencyService = inject(FrequencyService);
   protected router = inject(Router);
+  protected criteriaService = inject(CriteriaService);
+  protected criteriaGroupService = inject(CriteriaGroupService);
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   editForm: SampleReportFormGroup = this.sampleReportFormService.createSampleReportFormGroup();
@@ -85,6 +91,12 @@ export class SampleReportUpdateComponent implements OnInit {
       });
       this.listTitles = res.body;
       console.log(this.listTitles);
+    });
+    this.criteriaGroupService.query().subscribe((res: any) => {
+      this.listCriteriaGroups = res.body;
+    });
+    this.criteriaService.query().subscribe((res: any) => {
+      this.listCriterias = res.body;
     });
     this.activatedRoute.data.subscribe(({ sampleReport }) => {
       this.sampleReport = sampleReport;
@@ -415,31 +427,45 @@ export class SampleReportUpdateComponent implements OnInit {
     });
   }
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  checkEvent(header: string): void {
-    console.log('check event', this.listTitleHeaders);
-    const data = this.listTitleHeaders.find((element: any) => element.name === header);
-    this.sourceService.getListTable().subscribe(tables => {
-      this.sourceService.getListColumns().subscribe(columns => {
-        const column = columns.find((element: any) => element[2] === data.field_name);
-        const table = tables.find(x => x[2] === data.source_table);
-        console.log('check column and table :: ', column, table); // column and table
-        if (data) {
-          console.log('data::', data);
-          const body = { field_name: column[1], source_table: table[1] };
-          this.sampleReportService.getListSuggestions(body).subscribe((res: any) => {
-            this.listSuggestions = res.body;
-            console.log('suggestions::', this.listSuggestions);
-          });
-        } else {
-          Swal.fire({
-            title: 'Error',
-            text: 'No data found',
-            icon: 'error',
-            confirmButtonText: 'OK',
-          });
-        }
+  checkEvent(header: string, index: number): void {
+    const condition = this.listTitleBody[index].data.find((item: any) => item.header === 'Nhóm tiêu chí');
+    if (header === 'Tên tiêu chí' && condition) {
+      if (condition.value == '' || condition.value == null) {
+        Swal.fire({
+          title: 'Error',
+          text: 'Chưa chọn nhóm tiêu chí',
+          icon: 'error',
+          confirmButtonText: 'OK',
+        });
+      } else {
+        const value = this.listTitleBody[index].data.find((val: any) => val.header === 'Nhóm tiêu chí')?.value ?? null;
+        const criteriaGroup = this.listCriteriaGroups.find((cri: any) => cri.name == value);
+        this.listSuggestions = this.listCriterias
+          .filter((item: any) => item.criterialGroupId == criteriaGroup.id)
+          .map((item: any) => item.name);
+      }
+    } else {
+      const data = this.listTitleHeaders.find((element: any) => element.name === header);
+      this.sourceService.getListTable().subscribe(tables => {
+        this.sourceService.getListColumns().subscribe(columns => {
+          const column = columns.find((element: any) => element[2] === data.field_name);
+          const table = tables.find(x => x[2] === data.source_table);
+          if (data) {
+            const body = { field_name: column[1], source_table: table[1] };
+            this.sampleReportService.getListSuggestions(body).subscribe((res: any) => {
+              this.listSuggestions = res.body;
+            });
+          } else {
+            Swal.fire({
+              title: 'Error',
+              text: 'No data found',
+              icon: 'error',
+              confirmButtonText: 'OK',
+            });
+          }
+        });
       });
-    });
+    }
   }
 
   protected onSaveSuccess(): void {

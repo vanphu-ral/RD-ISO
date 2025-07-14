@@ -14,13 +14,14 @@ import Swal from 'sweetalert2';
 import { CriteriaGroupService } from 'app/entities/criteria-group/service/criteria-group.service';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
+import { DropdownModule } from 'primeng/dropdown';
 import dayjs from 'dayjs/esm';
 
 @Component({
   standalone: true,
   selector: 'jhi-criteria-update',
   templateUrl: './criteria-update.component.html',
-  imports: [SharedModule, FormsModule, ReactiveFormsModule],
+  imports: [SharedModule, FormsModule, ReactiveFormsModule, DropdownModule],
 })
 export class CriteriaUpdateComponent implements OnInit {
   isSaving = false;

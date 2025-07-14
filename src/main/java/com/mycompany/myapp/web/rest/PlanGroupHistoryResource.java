@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +33,7 @@ public class PlanGroupHistoryResource {
 
     @GetMapping("")
     public List<PlanGroupHistory> getAllPlanGroups() {
-        return planGroupHistoryRepository.findAll();
+        return planGroupHistoryRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
     }
 
     // Get danh sach ke hoach hop theo ke hoach

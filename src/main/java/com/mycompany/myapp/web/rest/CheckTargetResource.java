@@ -11,6 +11,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -155,7 +156,7 @@ public class CheckTargetResource {
     @GetMapping("")
     public List<CheckTarget> getAllCheckTargets() {
         log.debug("REST request to get all CheckTargets");
-        return checkTargetRepository.findAll();
+        return checkTargetRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
     }
 
     /**

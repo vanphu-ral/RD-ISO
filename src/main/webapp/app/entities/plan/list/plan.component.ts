@@ -412,6 +412,9 @@ export class PlanComponent implements OnInit {
   showDialogCheckPlan(data: any, index: number): void {
     this.planParent = data;
     this.report = data.planDetail[index];
+    if (this.isMobile) {
+      this.report.reviewer = this.evaluators.find(evalua => evalua.username == this.report.checker).name;
+    }
     this.loadEvalTable(data.planDetail[index].id);
     this.minSelectableDate = new Date(this.planParent.timeStart);
     this.maxSelectableDate = new Date(this.planParent.timeEnd);

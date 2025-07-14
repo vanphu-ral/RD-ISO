@@ -530,6 +530,7 @@
   [(visible)]="dialogCheckPlan"
   [style]="{ width: '80vw' }"
   [contentStyle]="{ height: '70vh' }"
+  (onHide)="closeEvalReport(planParent)"
 >
   <div class="d-flex" style="justify-content: flex-end !important">
     <div class="custom-button-apply ms-3">
