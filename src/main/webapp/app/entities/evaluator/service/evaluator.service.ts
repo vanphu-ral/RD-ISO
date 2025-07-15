@@ -33,7 +33,7 @@ export class EvaluatorService {
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/evaluators');
   protected keycloakUrl = this.applicationConfigService.getEndpointFor('api/keycloak');
   private tokenUrl = 'http://192.168.68.90:8080/auth/realms/QLSX/protocol/openid-connect/token';
-  private usersUrl = 'http://192.168.68.90:8080/auth/admin/realms/QLSX/users?first=0&max=500';
+  private usersUrl = 'http://192.168.68.90:8080/auth/admin/realms/QLSX/users?first=0&max=2000';
 
   checkNameExists(name: string): Observable<boolean> {
     return this.http.get<IEvaluator[]>(this.resourceUrl).pipe(map(converts => converts.some(convert => convert.name === name)));
