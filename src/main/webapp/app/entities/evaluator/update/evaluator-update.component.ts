@@ -50,12 +50,15 @@ export class EvaluatorUpdateComponent implements OnInit {
       this.checkLevels = data;
     });
     this.evaluatorService.getUsers().subscribe(res => {
-      this.listUser = res
-        .filter(user => user.firstName && user.lastName)
-        .map(user => ({
-          name: `${user.firstName} ${user.lastName}`,
+      this.listUser = res.map(user => {
+        const firstName = user.firstName ?? '';
+        const lastName = user.lastName ?? '';
+        const fullName = [firstName, lastName].filter(Boolean).join(' ').trim();
+        return {
+          name: fullName ? `${user.username} - ${fullName}` : user.username,
           username: user.username,
-        }));
+        };
+      });
     });
     this.activatedRoute.data.subscribe(({ evaluator }) => {
       this.evaluator = evaluator;
