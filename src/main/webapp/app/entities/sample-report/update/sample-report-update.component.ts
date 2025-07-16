@@ -97,6 +97,7 @@ export class SampleReportUpdateComponent implements OnInit {
     });
     this.criteriaService.query().subscribe((res: any) => {
       this.listCriterias = res.body;
+      this.listSuggestions = this.listCriterias.map(item => item.name);
     });
     this.activatedRoute.data.subscribe(({ sampleReport }) => {
       this.sampleReport = sampleReport;
