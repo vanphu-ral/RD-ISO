@@ -151,6 +151,17 @@ export class PlanComponent implements OnInit {
       this.isMobile = value;
     });
     this.primengConfig.setTranslation({
+      startsWith: 'Bắt đầu với',
+      contains: 'Chứa',
+      notContains: 'Không chứa',
+      endsWith: 'Kết thúc với',
+      equals: 'Bằng',
+      notEquals: 'Không bằng',
+      noFilter: 'Không lọc',
+      dateIs: 'Ngày bằng',
+      dateIsNot: 'Ngày khác',
+      dateBefore: 'Trước ngày',
+      dateAfter: 'Sau ngày',
       dayNamesMin: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
       monthNames: [
         'Tháng 1',
@@ -452,7 +463,6 @@ export class PlanComponent implements OnInit {
           result: row.hasEvaluation == 0 ? row.result : row.result ?? (this.report.convertScore === 'Tính điểm' ? 'PASS' : 'Đạt'),
         };
       });
-      this.planGrDetail.sort((a, b) => a.criterialGroupName.localeCompare(b.criterialGroupName));
     }
     this.dialogCheckPlanChild = true;
   }
@@ -787,7 +797,8 @@ export class PlanComponent implements OnInit {
       'Loại BBKT',
       'Số lần thực hiện kiểm tra',
       'Thang điểm',
-      'Tổng điểm',
+      'Tổng điểm TB của BBKT',
+      'Tổng điểm của BBKT',
       'Loại quy đổi',
       'NC',
       'LC',
@@ -838,7 +849,8 @@ export class PlanComponent implements OnInit {
           detail.reportType,
           detail.sumOfAudit,
           detail.scoreScale,
-          this.getTotalPoit(detail), // Gọi hàm tính toán
+          this.getTotalPoitAvg(detail), // Gọi hàm tính toán
+          this.getTotalPoint(detail), // Gọi hàm tính toán
           detail.convertScore,
           detail.sumOfNc,
           detail.sumOfLy,
@@ -952,11 +964,23 @@ export class PlanComponent implements OnInit {
     XLSX.writeFile(wb, fileName);
   }
 
-  getTotalPoit(data: any) {
+  getTotalPoitAvg(data: any) {
     if (data.convertScore == 'Tính điểm') {
       const markNC = this.listEvalReportBase.find((item: any) => item.name == 'NC');
       const markLC = this.listEvalReportBase.find((item: any) => item.name == 'LY');
-      const totalPointSummarize = data.scoreScale * data.sumOfAudit - (data.sumOfLy * markLC.mark + data.sumOfNc * markNC.mark);
+      const totalPointSummarize =
+        (data.scoreScale * data.sumOfAudit - (data.sumOfLy * markLC.mark + data.sumOfNc * markNC.mark)) / data.sumOfAudit;
+      return isNaN(totalPointSummarize) ? data.scoreScale : totalPointSummarize;
+    } else {
+      return data.scoreScale;
+    }
+  }
+
+  getTotalPoint(data: any) {
+    if (data.convertScore == 'Tính điểm') {
+      const markNC = this.listEvalReportBase.find((item: any) => item.name == 'NC');
+      const markLC = this.listEvalReportBase.find((item: any) => item.name == 'LY');
+      const totalPointSummarize = data.scoreScale - (data.sumOfLy * markLC.mark + data.sumOfNc * markNC.mark);
       return totalPointSummarize;
     } else {
       return data.scoreScale;

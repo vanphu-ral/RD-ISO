@@ -57,13 +57,13 @@ public class PlanService {
                 }
 
                 if (!checked) {
-                    if (now.getHour() != 17) {
+                    if (now.getHour() != 23) {
                         plan.setStatus("Đang thực hiện");
                     } else {
                         plan.setStatus("Chưa hoàn thành");
                     }
                 } else {
-                    if (now.getHour() != 17) {
+                    if (now.getHour() != 23) {
                         plan.setStatus("Đang thực hiện");
                     } else {
                         plan.setStatus("Đã hoàn thành");
