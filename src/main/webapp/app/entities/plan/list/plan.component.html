@@ -44,17 +44,17 @@
       <tr>
         <th></th>
         <th>STT</th>
-        <th style="min-width: 150px">Mã kế hoạch</th>
-        <th style="min-width: 300px">Tên kế hoạch</th>
-        <th style="min-width: 150px">Bộ phận được KT</th>
-        <th style="min-width: 100px">Tần suất</th>
-        <th style="min-width: 180px">Thời gian bắt đầu</th>
-        <th style="min-width: 180px">Thời gian kết thúc</th>
-        <th style="min-width: 150px">Người tạo</th>
-        <th style="min-width: 200px">Người cập nhật</th>
-        <th style="min-width: 160px">Thời gian tạo</th>
-        <th style="min-width: 180px">Thời gian cập nhật</th>
-        <th style="min-width: 110px">Trạng thái</th>
+        <th style="min-width: 150px; padding: 0">Mã kế hoạch</th>
+        <th style="min-width: 300px; padding: 0">Tên kế hoạch</th>
+        <th style="min-width: 150px; padding: 0">Bộ phận được KT</th>
+        <th style="min-width: 100px; padding: 0">Tần suất</th>
+        <th style="min-width: 180px; padding: 0">Thời gian bắt đầu</th>
+        <th style="min-width: 180px; padding: 0">Thời gian kết thúc</th>
+        <th style="min-width: 150px; padding: 0">Người tạo</th>
+        <th style="min-width: 200px; padding: 0">Người cập nhật</th>
+        <th style="min-width: 160px; padding: 0">Thời gian tạo</th>
+        <th style="min-width: 180px; padding: 0">Thời gian cập nhật</th>
+        <th style="min-width: 110px; padding: 0">Trạng thái</th>
         <th>Tuỳ chọn</th>
       </tr>
       <tr>
@@ -243,52 +243,54 @@
             >
               <ng-template pTemplate="header">
                 <tr>
-                  <th style="min-width: 30px">STT</th>
-                  <th style="min-width: 150px">Mã BBKT</th>
-                  <th style="min-width: 300px">Tên BBKT</th>
-                  <th style="min-width: 150px">Người được KT</th>
-                  <th style="min-width: 150px">Loại BBKT (ID)</th>
-                  <th style="min-width: 100px">Số lần KT</th>
-                  <th style="min-width: 150px">Thang điểm</th>
-                  <th style="min-width: 125px">Tổng điểm</th>
-                  <th style="min-width: 150px">Loại quy đổi</th>
-                  <th style="min-width: 30px">NC</th>
-                  <th style="min-width: 30px">LY</th>
-                  <th style="min-width: 180px">SL không đạt</th>
-                  <th style="min-width: 150px">Người KT</th>
-                  <th style="min-width: 100px">Tần suất</th>
-                  <th style="min-width: 110px">Trạng thái</th>
+                  <th style="min-width: 30px; padding: 0">STT</th>
+                  <th style="min-width: 150px; padding: 0">Mã BBKT</th>
+                  <th style="min-width: 300px; padding: 0">Tên BBKT</th>
+                  <th style="min-width: 150px; padding: 0">Người được KT</th>
+                  <th style="min-width: 150px; padding: 0">Loại BBKT (ID)</th>
+                  <th style="min-width: 100px; padding: 0">Số lần KT</th>
+                  <th style="min-width: 150px; padding: 0">Thang điểm</th>
+                  <th style="min-width: 125px; padding: 0">Tổng điểm TB của BBKT</th>
+                  <th style="min-width: 125px; padding: 0">Tổng điểm của BBKT</th>
+                  <th style="min-width: 150px; padding: 0">Loại quy đổi</th>
+                  <th style="min-width: 30px; padding: 0">NC</th>
+                  <th style="min-width: 30px; padding: 0">LY</th>
+                  <th style="min-width: 180px; padding: 0">SL không đạt</th>
+                  <th style="min-width: 150px; padding: 0">Người KT</th>
+                  <th style="min-width: 100px; padding: 0">Tần suất</th>
+                  <th style="min-width: 110px; padding: 0">Trạng thái</th>
                   <th style="min-width: 10rem">Tuỳ chọn</th>
                 </tr>
                 <tr>
-                  <th></th>
-                  <th></th>
-                  <th>
+                  <th style="padding: 0"></th>
+                  <th style="padding: 0"></th>
+                  <th style="padding: 0">
                     <p-columnFilter type="text" field="name" placeholder="Search"></p-columnFilter>
                   </th>
-                  <th>
+                  <th style="padding: 0">
                     <p-columnFilter type="text" field="testOfObject" placeholder="Search"></p-columnFilter>
                   </th>
-                  <th>
+                  <th style="padding: 0">
                     <p-columnFilter type="text" field="reportType" placeholder="Search"></p-columnFilter>
                   </th>
-                  <th>
+                  <th style="padding: 0">
                     <p-columnFilter type="text" field="sumOfAudit" placeholder="Search"></p-columnFilter>
                   </th>
-                  <th>
+                  <th style="padding: 0">
                     <p-columnFilter type="text" field="scoreScale" placeholder="Search"></p-columnFilter>
                   </th>
-                  <th></th>
-                  <th>
+                  <th style="padding: 0"></th>
+                  <th style="padding: 0"></th>
+                  <th style="padding: 0">
                     <p-columnFilter type="text" field="convertScore" placeholder="Search"></p-columnFilter>
                   </th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th>
+                  <th style="padding: 0"></th>
+                  <th style="padding: 0"></th>
+                  <th style="padding: 0"></th>
+                  <th style="padding: 0">
                     <p-columnFilter type="text" field="checker" placeholder="Search"></p-columnFilter>
                   </th>
-                  <th>
+                  <th style="padding: 0">
                     <p-columnFilter field="frequency" matchMode="equals" [showMenu]="false">
                       <ng-template pTemplate="filter" let-value let-filter="filterCallback">
                         <p-dropdown
@@ -298,15 +300,22 @@
                           optionValue="name"
                           (onChange)="filter($event.value)"
                           [showClear]="true"
+                          [appendTo]="'body'"
                         >
                         </p-dropdown>
                       </ng-template>
                     </p-columnFilter>
                   </th>
-                  <th>
+                  <th style="padding: 0">
                     <p-columnFilter field="status" matchMode="equals" [showMenu]="false">
                       <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                        <p-dropdown [ngModel]="value" [options]="statuses" (onChange)="filter($event.value)" [showClear]="true">
+                        <p-dropdown
+                          [ngModel]="value"
+                          [options]="statuses"
+                          (onChange)="filter($event.value)"
+                          [showClear]="true"
+                          [appendTo]="'body'"
+                        >
                           <ng-template let-option pTemplate="item">
                             <p-tag [value]="option" [severity]="getSeverity(option)" />
                           </ng-template>
@@ -314,7 +323,7 @@
                       </ng-template>
                     </p-columnFilter>
                   </th>
-                  <th></th>
+                  <th style="padding: 0"></th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-detail let-index="rowIndex">
@@ -326,7 +335,8 @@
                   <td>{{ detail.reportType }}</td>
                   <td>{{ detail.sumOfAudit }}</td>
                   <td>{{ detail.scoreScale }}</td>
-                  <td>{{ getTotalPoit(detail) }}</td>
+                  <td>{{ getTotalPoitAvg(detail) }}</td>
+                  <td>{{ getTotalPoint(detail) }}</td>
                   <td>{{ detail.convertScore }}</td>
                   <td>{{ detail.sumOfNc }}</td>
                   <td>{{ detail.sumOfLy }}</td>
@@ -528,7 +538,7 @@
   [maximizable]="true"
   appendTo="body"
   [(visible)]="dialogCheckPlan"
-  [style]="{ width: '80vw' }"
+  [style]="{ width: '100%' }"
   [contentStyle]="{ height: '70vh' }"
   (onHide)="closeEvalReport(planParent)"
 >
@@ -733,7 +743,7 @@
   [maximizable]="true"
   appendTo="body"
   [(visible)]="dialogCheckPlanChild"
-  [style]="{ width: '80vw' }"
+  [style]="{ width: '100%' }"
   [contentStyle]="{ height: '70vh' }"
 >
   <p-table
@@ -753,8 +763,8 @@
         <th class="text-center border">Tên tiêu chí</th>
         <th class="text-center border">Tần suất</th>
         <th class="text-center border">Người kiểm tra</th>
-        <th class="text-center border">Đánh giá</th>
-        <th class="text-center border">Nội dung đánh giá</th>
+        <th class="text-center border" style="min-width: 100px">Đánh giá</th>
+        <th class="text-center border" style="min-width: 100px">Nội dung đánh giá</th>
         <th class="text-center border">Hình ảnh đánh giá</th>
         <th class="text-center border">Không đánh giá</th>
       </tr>
@@ -870,16 +880,32 @@
         <th class="text-center border" style="padding: 0">Nhóm tiêu chí</th>
         <th class="text-center border" style="padding: 0">Tên tiêu chí</th>
         <th class="text-center border" style="padding: 0">Tần suất</th>
-        <th class="text-center border" style="padding: 0">Đánh giá</th>
-        <th class="text-center border" style="padding: 0">Nội dung đánh giá</th>
+        <th class="text-center border" style="padding: 0; min-width: 100px">Đánh giá</th>
+        <th class="text-center border" style="padding: 0; min-width: 100px">Nội dung đánh giá</th>
         <th class="text-center border" style="padding: 0">Hình ảnh đánh giá</th>
         <th class="text-center border" style="padding: 0">Không đánh giá</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-item let-index="rowIndex">
       <tr>
-        <td class="text-center border" style="padding: 0">{{ item.criterialGroupName }}</td>
-        <td class="text-center border" style="padding: 0">{{ item.criterialName }}</td>
+        <td
+          class="border text-ellipsis text-start"
+          [ngbTooltip]="item.criterialGroupName"
+          placement="top-start"
+          container="body"
+          style="padding: 0"
+        >
+          {{ item.criterialGroupName }}
+        </td>
+        <td
+          class="border text-ellipsis text-start"
+          [ngbTooltip]="item.criterialName"
+          placement="top-start"
+          container="body"
+          style="padding: 0"
+        >
+          {{ item.criterialName }}
+        </td>
         <td class="text-center border" style="padding: 0">{{ item.frequency }}</td>
         <td class="text-center border" style="padding: 0">
           <select [(ngModel)]="item.result" name="report.result" [disabled]="item.hasEvaluation == 0">
@@ -1161,7 +1187,8 @@
         <th class="border text-center" style="padding: 0; min-width: 150px">Người được KT</th>
         <th class="border text-center" style="padding: 0; min-width: 90px">Số lần KT</th>
         <th class="border text-center" style="padding: 0; min-width: 40px">Điểm</th>
-        <th class="border text-center" style="padding: 0; min-width: 90px">Tổng điểm</th>
+        <th class="border text-center" style="padding: 0; min-width: 90px">Tổng điểm TB của BBKT</th>
+        <th class="border text-center" style="padding: 0; min-width: 90px">Tổng điểm của BBKT</th>
         <th class="border text-center" style="padding: 0; min-width: 30px">NC</th>
         <th class="border text-center" style="padding: 0; min-width: 30px">LY</th>
         <th class="border text-center" style="padding: 0; min-width: 110px">SL không đạt</th>
@@ -1211,7 +1238,8 @@
         <td class="border text-center">{{ detail.testOfObject }}</td>
         <td class="border text-center">{{ detail.sumOfAudit }}</td>
         <td class="border text-center">{{ detail.scoreScale }}</td>
-        <td class="border text-center">{{ getTotalPoit(detail) }}</td>
+        <td class="border text-center">{{ getTotalPoitAvg(detail) }}</td>
+        <td class="border text-center">{{ getTotalPoint(detail) }}</td>
         <td class="border text-center">{{ detail.sumOfNc }}</td>
         <td class="border text-center">{{ detail.sumOfLy }}</td>
         <td class="border text-center">{{ detail.sumOfFail }}</td>
