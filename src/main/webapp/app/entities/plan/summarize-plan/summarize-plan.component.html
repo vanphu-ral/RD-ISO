@@ -223,8 +223,8 @@
     <ng-template pTemplate="body" let-criteria let-index="rowIndex">
       <tr>
         <td class="text-center border">{{ index + 1 }}</td>
-        <td class="text-center border">{{ criteria.criterialGroupName }}</td>
-        <td class="text-center border">{{ criteria.criterialName }}</td>
+        <td class="text-start border">{{ criteria.criterialGroupName }}</td>
+        <td class="text-start border">{{ criteria.criterialName }}</td>
         <td class="text-center border">{{ criteria.result ? criteria.result : 'PASS' }}</td>
         <td class="text-center border">{{ criteria.note }}</td>
         <td class="text-center border">

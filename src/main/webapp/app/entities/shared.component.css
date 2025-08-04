@@ -2770,11 +2770,11 @@ p-dialog {
 }
 
 .text-ellipsis {
-  white-space: nowrap;
+  /* white-space: nowrap; */
   overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 150px; /* tùy chỉnh chiều rộng phù hợp */
-  /* display: inline-block; */
+  /* text-overflow: ellipsis; */
+  white-space: normal;
+  font-size: 14px;
 }
 
 .tooltip {

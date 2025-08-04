@@ -44,18 +44,18 @@
       <tr>
         <th></th>
         <th>STT</th>
-        <th style="min-width: 150px; padding: 0">Mã kế hoạch</th>
-        <th style="min-width: 300px; padding: 0">Tên kế hoạch</th>
-        <th style="min-width: 150px; padding: 0">Bộ phận được KT</th>
-        <th style="min-width: 100px; padding: 0">Tần suất</th>
-        <th style="min-width: 180px; padding: 0">Thời gian bắt đầu</th>
-        <th style="min-width: 180px; padding: 0">Thời gian kết thúc</th>
-        <th style="min-width: 150px; padding: 0">Người tạo</th>
-        <th style="min-width: 200px; padding: 0">Người cập nhật</th>
-        <th style="min-width: 160px; padding: 0">Thời gian tạo</th>
-        <th style="min-width: 180px; padding: 0">Thời gian cập nhật</th>
-        <th style="min-width: 110px; padding: 0">Trạng thái</th>
-        <th>Tuỳ chọn</th>
+        <th class="text-center" style="min-width: 150px; padding: 0">Mã kế hoạch</th>
+        <th class="text-center" style="min-width: 300px; padding: 0">Tên kế hoạch</th>
+        <th class="text-center" style="min-width: 150px; padding: 0">Bộ phận được KT</th>
+        <th class="text-center" style="min-width: 100px; padding: 0">Tần suất</th>
+        <th class="text-center" style="min-width: 180px; padding: 0">Thời gian bắt đầu</th>
+        <th class="text-center" style="min-width: 180px; padding: 0">Thời gian kết thúc</th>
+        <th class="text-center" style="min-width: 150px; padding: 0">Người tạo</th>
+        <th class="text-center" style="min-width: 200px; padding: 0">Người cập nhật</th>
+        <th class="text-center" style="min-width: 160px; padding: 0">Thời gian tạo</th>
+        <th class="text-center" style="min-width: 180px; padding: 0">Thời gian cập nhật</th>
+        <th class="text-center" style="min-width: 110px; padding: 0">Trạng thái</th>
+        <th class="text-center">Tuỳ chọn</th>
       </tr>
       <tr>
         <th style="padding: 0"></th>
@@ -245,11 +245,11 @@
                 <tr>
                   <th style="min-width: 30px; padding: 0">STT</th>
                   <th style="min-width: 150px; padding: 0">Mã BBKT</th>
-                  <th style="min-width: 300px; padding: 0">Tên BBKT</th>
-                  <th style="min-width: 150px; padding: 0">Người được KT</th>
+                  <th style="min-width: 150px; padding: 0">Tên BBKT</th>
+                  <th style="min-width: 100px; padding: 0">Người được KT</th>
                   <th style="min-width: 150px; padding: 0">Loại BBKT (ID)</th>
-                  <th style="min-width: 100px; padding: 0">Số lần KT</th>
-                  <th style="min-width: 150px; padding: 0">Thang điểm</th>
+                  <th style="min-width: 75px; padding: 0">Số lần KT</th>
+                  <th style="min-width: 75px; padding: 0">Thang điểm</th>
                   <th style="min-width: 125px; padding: 0">Tổng điểm TB của BBKT</th>
                   <th style="min-width: 125px; padding: 0">Tổng điểm của BBKT</th>
                   <th style="min-width: 150px; padding: 0">Loại quy đổi</th>
@@ -267,27 +267,34 @@
                   <th style="padding: 0">
                     <p-columnFilter type="text" field="name" placeholder="Search"></p-columnFilter>
                   </th>
-                  <th style="padding: 0">
+                  <th style="padding: 0; max-width: 173px">
                     <p-columnFilter type="text" field="testOfObject" placeholder="Search"></p-columnFilter>
                   </th>
                   <th style="padding: 0">
                     <p-columnFilter type="text" field="reportType" placeholder="Search"></p-columnFilter>
                   </th>
+                  <th style="padding: 0"></th>
+                  <th style="padding: 0"></th>
+                  <th style="padding: 0"></th>
+                  <th style="padding: 0"></th>
                   <th style="padding: 0">
-                    <p-columnFilter type="text" field="sumOfAudit" placeholder="Search"></p-columnFilter>
+                    <p-columnFilter field="convertScore" matchMode="equals" [showMenu]="false">
+                      <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                        <p-dropdown
+                          [ngModel]="value"
+                          [options]="listConvertScore"
+                          (onChange)="filter($event.value)"
+                          [showClear]="true"
+                          [appendTo]="'body'"
+                        >
+                        </p-dropdown>
+                      </ng-template>
+                    </p-columnFilter>
                   </th>
-                  <th style="padding: 0">
-                    <p-columnFilter type="text" field="scoreScale" placeholder="Search"></p-columnFilter>
-                  </th>
-                  <th style="padding: 0"></th>
-                  <th style="padding: 0"></th>
-                  <th style="padding: 0">
-                    <p-columnFilter type="text" field="convertScore" placeholder="Search"></p-columnFilter>
-                  </th>
                   <th style="padding: 0"></th>
                   <th style="padding: 0"></th>
                   <th style="padding: 0"></th>
-                  <th style="padding: 0">
+                  <th style="padding: 0; max-width: 173px">
                     <p-columnFilter type="text" field="checker" placeholder="Search"></p-columnFilter>
                   </th>
                   <th style="padding: 0">
@@ -427,14 +434,14 @@
       <tr>
         <th></th>
         <th>
-          <p-columnFilter type="text" field="name" placeholder="Search"></p-columnFilter>
+          <p-columnFilter type="text" field="name" display="menu"></p-columnFilter>
         </th>
         <th></th>
         <th>
           <p-columnFilter
             type="date"
             field="timeStart"
-            placeholder="Search"
+            display="menu"
             [matchMode]="'dateIs'"
             [showClearButton]="true"
             [showApplyButton]="true"
@@ -445,7 +452,7 @@
           <p-columnFilter
             type="date"
             field="timeEnd"
-            placeholder="Search"
+            display="menu"
             [matchMode]="'dateIs'"
             [showClearButton]="true"
             [showApplyButton]="true"
@@ -456,7 +463,7 @@
           <p-columnFilter
             type="date"
             field="createdAt"
-            placeholder="Search"
+            display="menu"
             [matchMode]="'dateIs'"
             [showClearButton]="true"
             [showApplyButton]="true"
@@ -782,10 +789,14 @@
           </select>
         </td>
         <td class="text-center border">
-          <input type="text" [(ngModel)]="item.note" [disabled]="item.hasEvaluation == 0" />
+          <textarea
+            [(ngModel)]="item.note"
+            [disabled]="item.hasEvaluation == 0"
+            style="height: 150px; width: 200px; box-sizing: border-box"
+          ></textarea>
         </td>
         <td class="text-center border">
-          <p-button (click)="showDialogUpLoad(item, index)" label="Attach files" [disabled]="item.hasEvaluation == 0" />
+          <p-button (click)="showDialogUpLoad(item, index)" icon="pi pi-paperclip" [disabled]="item.hasEvaluation == 0" />
           <p-dialog
             header="Upload Files"
             [modal]="true"
@@ -877,13 +888,13 @@
   >
     <ng-template pTemplate="header">
       <tr>
-        <th class="text-center border" style="padding: 0">Nhóm tiêu chí</th>
-        <th class="text-center border" style="padding: 0">Tên tiêu chí</th>
+        <th class="text-center border" style="padding: 0; min-width: 150px">Nhóm tiêu chí</th>
+        <th class="text-center border" style="padding: 0; min-width: 200px">Tên tiêu chí</th>
         <th class="text-center border" style="padding: 0">Tần suất</th>
         <th class="text-center border" style="padding: 0; min-width: 100px">Đánh giá</th>
-        <th class="text-center border" style="padding: 0; min-width: 100px">Nội dung đánh giá</th>
-        <th class="text-center border" style="padding: 0">Hình ảnh đánh giá</th>
-        <th class="text-center border" style="padding: 0">Không đánh giá</th>
+        <th class="text-center border" style="padding: 0">Nội dung đánh giá</th>
+        <th class="text-center border" style="padding: 0; min-width: 150px">Hình ảnh đánh giá</th>
+        <th class="text-center border" style="padding: 0; min-width: 150px">Không đánh giá</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-item let-index="rowIndex">
@@ -913,10 +924,14 @@
           </select>
         </td>
         <td class="text-center border" style="padding: 0">
-          <input type="text" [(ngModel)]="item.note" [disabled]="item.hasEvaluation == 0" (click)="openNoteDialog(item, index)" />
+          <textarea
+            [(ngModel)]="item.note"
+            [disabled]="item.hasEvaluation == 0"
+            style="height: 150px; width: 200px; box-sizing: border-box; font-size: 14px"
+          ></textarea>
         </td>
         <td class="text-center border" style="padding: 0">
-          <p-button (click)="showDialogUpLoad(item, index)" label="Attach files" [disabled]="item.hasEvaluation == 0" />
+          <p-button (click)="showDialogUpLoad(item, index)" icon="pi pi-paperclip" [disabled]="item.hasEvaluation == 0" />
           <p-dialog
             header="Upload Files"
             [modal]="true"
@@ -1130,8 +1145,8 @@
     <ng-template pTemplate="body" let-criteria let-index="rowIndex">
       <tr>
         <td class="text-center border">{{ index + 1 }}</td>
-        <td class="text-center border">{{ criteria.criterialGroupName }}</td>
-        <td class="text-center border">{{ criteria.criterialName }}</td>
+        <td class="text-start border">{{ criteria.criterialGroupName }}</td>
+        <td class="text-start border">{{ criteria.criterialName }}</td>
         <td class="text-center border">{{ criteria.result ? criteria.result : 'PASS' }}</td>
         <td class="text-center border">{{ criteria.note }}</td>
         <td class="text-center border">

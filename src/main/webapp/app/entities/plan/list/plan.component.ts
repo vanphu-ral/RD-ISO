@@ -38,6 +38,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { FrequencyService } from 'app/entities/frequency/service/frequency.service';
 import { LayoutService } from 'app/layouts/service/layout.service';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { SidebarModule } from 'primeng/sidebar';
 
 @Component({
   standalone: true,
@@ -66,6 +67,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     CheckboxModule,
     DropdownModule,
     ConfirmDialogModule,
+    SidebarModule,
   ],
   providers: [SummarizePlanComponent, ConfirmationService],
 })
@@ -115,6 +117,7 @@ export class PlanComponent implements OnInit {
   maxSelectableDate!: Date;
   account: any = {};
   statuses = ['Mới tạo', 'Đang thực hiện', 'Đã hoàn thành', 'Chưa hoàn thành'];
+  listConvertScore = ['Tính điểm', 'Bước nhảy'];
   isNameDuplicate: { [key: string]: boolean } = {};
   // Mobile availible
   isMobile: boolean = false;
@@ -123,6 +126,7 @@ export class PlanComponent implements OnInit {
   listReportByPlan: any = [];
   noteDialogVisible = false;
   selectedReport: any = null;
+  sidebarVisible: boolean = false;
 
   trackId = (_index: number, item: IPlan): number => this.planService.getPlanIdentifier(item);
 
@@ -162,6 +166,8 @@ export class PlanComponent implements OnInit {
       dateIsNot: 'Ngày khác',
       dateBefore: 'Trước ngày',
       dateAfter: 'Sau ngày',
+      matchAll: 'Khớp tất cả',
+      matchAny: 'Khớp bất kỳ',
       dayNamesMin: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
       monthNames: [
         'Tháng 1',
