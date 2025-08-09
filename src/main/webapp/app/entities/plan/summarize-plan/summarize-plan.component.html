@@ -225,7 +225,7 @@
         <td class="text-center border">{{ index + 1 }}</td>
         <td class="text-start border">{{ criteria.criterialGroupName }}</td>
         <td class="text-start border">{{ criteria.criterialName }}</td>
-        <td class="text-center border">{{ criteria.result ? criteria.result : 'PASS' }}</td>
+        <td class="text-center border">{{ criteria.result }}</td>
         <td class="text-center border">{{ criteria.note }}</td>
         <td class="text-center border">
           <p-button (onClick)="showDialogViewImg(criteria.image)" label="Xem ảnh" />
@@ -237,7 +237,10 @@
 
 <p-dialog header="Xem ảnh báo cáo" [(visible)]="dialogViewImage" [modal]="true" [style]="{ width: '70vw' }" [baseZIndex]="1100">
   <ng-container *ngIf="listImgReports && listImgReports.length > 0; else notImg">
-    <img *ngFor="let image of listImgReports" [src]="'content/images/bbkt/' + image" class="img-fluid mb-3" />
+    <ng-container *ngFor="let file of listImgReports">
+      <img *ngIf="isImage(file)" [src]="'content/images/bbkt/' + file" class="img-fluid mb-3" alt="Report Image" />
+      <video *ngIf="isVideo(file)" [src]="'content/videos/bbkt/' + file" controls class="video-fluid mb-3"></video>
+    </ng-container>
   </ng-container>
   <ng-template #notImg>
     <h1>Chưa có ảnh đánh giá</h1>

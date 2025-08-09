@@ -12,6 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class ApplicationProperties {
 
     private String uploadDir; // Tên biến phải khớp với upload-dir (camelCase)
+    private String videoDir;
 
     public String getUploadDir() {
         return uploadDir;
@@ -19,6 +20,14 @@ public class ApplicationProperties {
 
     public void setUploadDir(String uploadDir) {
         this.uploadDir = uploadDir;
+    }
+
+    public String getVideoDir() {
+        return videoDir;
+    }
+
+    public void setVideoDir(String videoDir) {
+        this.videoDir = videoDir;
     }
 
     private final Liquibase liquibase = new Liquibase();

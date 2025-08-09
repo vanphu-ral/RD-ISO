@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common';
 import { TagModule } from 'primeng/tag';
 import { DialogModule } from 'primeng/dialog';
 import { PlanGroupService } from '../service/plan-group.service';
-import { take } from 'rxjs';
+import { firstValueFrom, take } from 'rxjs';
 import { ConvertService } from 'app/entities/convert/service/convert.service';
 import { FileUploadModule } from 'primeng/fileupload';
 import { PlanService } from 'app/entities/plan/service/plan.service';
@@ -93,6 +93,7 @@ export class PlanGroupComponent implements OnInit {
   isMobile: boolean = false;
   noteDialogVisible = false;
   selectedReport: any = null;
+  checkAll: boolean = false;
 
   constructor(
     protected modalService: NgbModal,
@@ -182,8 +183,10 @@ export class PlanGroupComponent implements OnInit {
     this.first = event.first;
   }
 
-  loadCriteria(id: number): void {
-    this.planGroupService.findAllDetail(id).subscribe(res => {
+  async loadCriteria(id: number): Promise<void> {
+    this.criterialData = [];
+    try {
+      const res = await firstValueFrom(this.planGroupService.findAllDetail(id));
       this.planGrDetails = res.body;
       const groupMap = new Map<string, { criterialGroupName: string; criterialName: string; frequency: any; status: string[] }>();
       for (const item of this.planGrDetails) {
@@ -207,7 +210,9 @@ export class PlanGroupComponent implements OnInit {
           status: group.status.find(s => s !== 'Mới tạo') || 'Mới tạo',
         }))
         .sort((a, b) => a.criterialGroupName.localeCompare(b.criterialGroupName));
-    });
+    } catch (error) {
+      console.error('Lỗi khi tải tiêu chí:', error);
+    }
   }
 
   // mở dialog tiêu chí và call các detail từ id kế hoạch nhóm để lấy danh sách tiêu trí
@@ -282,6 +287,7 @@ export class PlanGroupComponent implements OnInit {
         result: item.hasEvaluation == 0 ? item.result : item.result ?? (item.convertScore === 'Tính điểm' ? 'PASS' : 'Đạt'),
       };
     });
+    this.updateCheckAllStatus();
     this.dialogVisible = true;
   }
 
@@ -298,6 +304,26 @@ export class PlanGroupComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
+  isImage(fileName: string): boolean {
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    return extension ? imageExtensions.includes(extension) : false;
+  }
+
+  isVideo(fileName: string): boolean {
+    const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv'];
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    return extension ? videoExtensions.includes(extension) : false;
+  }
+
+  getImageUrl(fileName: string): string {
+    return 'content/images/bbkt/' + fileName;
+  }
+
+  getVideoUrl(fileName: string): string {
+    return 'content/videos/bbkt/' + fileName;
+  }
+
   onFileSelect(event: any, data: any, index: number): void {
     const files: File[] = Array.from(event.files);
     const dataKey = data.reportCode + '-' + index;
@@ -312,21 +338,38 @@ export class PlanGroupComponent implements OnInit {
     }
     const existingNames = new Set(data.image);
     for (const file of files) {
-      const safeFileName = this.sanitizeFileName(file.name);
-      if (!existingNames.has(safeFileName)) {
-        data.image.push(safeFileName);
-        existingNames.add(safeFileName);
-      }
+      // Logic đã sửa để gọi API upload
+      this.planService.upload(file).subscribe(
+        response => {
+          const fileName = response.fileName; // Lấy tên file từ response của backend
+          if (!existingNames.has(fileName)) {
+            data.image.push(fileName);
+            existingNames.add(fileName);
+          }
+          this.cdr.detectChanges();
+        },
+        error => {
+          console.error('Upload failed:', error);
+        },
+      );
     }
   }
 
+  // Phương thức xóa file cập nhật
   deleteFile(filename: string, data: any): void {
     const index = data.image.indexOf(filename);
     if (index > -1) {
       data.image.splice(index, 1);
-      this.planService.deleteFile(filename).subscribe(response => {
-        console.log('File deleted successfully:', response);
-      });
+      this.planService.deleteFile(filename).subscribe(
+        response => {
+          console.log('File deleted successfully:', response);
+          this.cdr.detectChanges();
+        },
+        error => {
+          console.error('Failed to delete file:', error);
+          // Xử lý lỗi nếu cần
+        },
+      );
     }
   }
 
@@ -425,18 +468,31 @@ export class PlanGroupComponent implements OnInit {
     });
   }
 
-  completeEvalReport(data: any) {
+  async completeEvalReport(data: any) {
     this.confirmationService.confirm({
-      message: 'Bạn có muốn hoành thành bản đánh giá này ?',
+      message: 'Bạn có muốn hoàn thành bản đánh giá này?',
       header: 'Hoàn thành đánh giá',
       icon: 'pi pi-info-circle',
       acceptButtonStyleClass: 'p-button-danger p-button-text',
       rejectButtonStyleClass: 'p-button-text p-button-text',
       acceptIcon: 'none',
       rejectIcon: 'none',
-      accept: () => {
-        data.status = 'Đã hoàn thành';
-        this.planService.createGroupHistory(data).subscribe(res => {});
+      accept: async () => {
+        await this.loadCriteria(data.id);
+        const allInProgress = this.criterialData.every(item => item.status === 'Đang thực hiện');
+        if (allInProgress) {
+          data.status = 'Đã hoàn thành';
+          this.planService.createGroupHistory(data).subscribe(res => {
+            console.log('Đã tạo lịch sử đánh giá thành công');
+          });
+        } else {
+          Swal.fire({
+            title: 'Thông báo',
+            text: 'Bản đánh giá này không thể hoàn thành vì có tiêu chí chưa được đánh giá.',
+            icon: 'warning',
+            confirmButtonText: 'OK',
+          });
+        }
       },
       reject: () => {},
     });
@@ -448,6 +504,17 @@ export class PlanGroupComponent implements OnInit {
       item.note = '';
       item.image = [];
     }
+    this.updateCheckAllStatus();
+  }
+
+  toggleAllEvaluations() {
+    this.planGrEvals.forEach(report => {
+      report.hasEvaluation = this.checkAll ? 0 : 1;
+    });
+  }
+
+  updateCheckAllStatus() {
+    this.checkAll = this.planGrEvals.every(report => report.hasEvaluation === 0);
   }
 
   showResultEval(data: any) {

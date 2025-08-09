@@ -90,3 +90,4 @@ jhipster:
 
 application:
   upload-dir: src/main/webapp/content/images/bbkt/
+  video-dir: src/main/webapp/content/videos/bbkt/
