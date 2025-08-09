@@ -497,8 +497,8 @@
                     name="files"
                     [url]="''"
                     [multiple]="true"
-                    accept="image/*"
-                    maxFileSize="10000000"
+                    accept="image/*,video/*"
+                    maxFileSize="25000000"
                     mode="advanced"
                     [auto]="false"
                     [customUpload]="true"
@@ -512,19 +512,21 @@
                       <div>Drag and drop files to here to upload.</div>
                     </ng-template>
                     <ng-template pTemplate="content">
-                      <div *ngFor="let fileName of selectedData.image">
-                        <div
-                          *ngIf="!imageLoadErrors.has(fileName)"
-                          style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem; align-items: center"
-                        >
-                          <div style="grid-column: span 4">
-                            <img
-                              [src]="'content/images/bbkt/' + fileName"
-                              (error)="onImageError(fileName)"
-                              alt="Image thumbnail"
-                              style="width: 100%"
-                              class="thumbnail-image"
-                            />
+                      <div *ngFor="let fileName of selectedData.image" class="file-item-container">
+                        <div style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem; align-items: center">
+                          <div style="grid-column: span 4" class="file-preview-container">
+                            <ng-container *ngIf="isImage(fileName); else videoTemplate">
+                              <img
+                                [src]="getImageUrl(fileName)"
+                                (error)="onImageError(fileName)"
+                                alt="Image thumbnail"
+                                style="width: 100%"
+                                class="thumbnail-image"
+                              />
+                            </ng-container>
+                            <ng-template #videoTemplate>
+                              <video [src]="getVideoUrl(fileName)" controls style="width: 100%"></video>
+                            </ng-template>
                           </div>
                           <div style="grid-column: span 4">
                             <div class="file-name">{{ fileName }}</div>
@@ -696,8 +698,8 @@
                     name="files"
                     [url]="''"
                     [multiple]="true"
-                    accept="image/*"
-                    maxFileSize="10000000"
+                    accept="image/*,video/*"
+                    maxFileSize="25000000"
                     mode="advanced"
                     [auto]="false"
                     [customUpload]="true"
@@ -711,19 +713,21 @@
                       <div>Drag and drop files to here to upload.</div>
                     </ng-template>
                     <ng-template pTemplate="content">
-                      <div *ngFor="let fileName of selectedData.image">
-                        <div
-                          *ngIf="!imageLoadErrors.has(fileName)"
-                          style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem; align-items: center"
-                        >
-                          <div style="grid-column: span 4">
-                            <img
-                              [src]="'content/images/bbkt/' + fileName"
-                              (error)="onImageError(fileName)"
-                              alt="Image thumbnail"
-                              style="width: 100%"
-                              class="thumbnail-image"
-                            />
+                      <div *ngFor="let fileName of selectedData.image" class="file-item-container">
+                        <div style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem; align-items: center">
+                          <div style="grid-column: span 4" class="file-preview-container">
+                            <ng-container *ngIf="isImage(fileName); else videoTemplate">
+                              <img
+                                [src]="getImageUrl(fileName)"
+                                (error)="onImageError(fileName)"
+                                alt="Image thumbnail"
+                                style="width: 100%"
+                                class="thumbnail-image"
+                              />
+                            </ng-container>
+                            <ng-template #videoTemplate>
+                              <video [src]="getVideoUrl(fileName)" controls style="width: 100%"></video>
+                            </ng-template>
                           </div>
                           <div style="grid-column: span 4">
                             <div class="file-name">{{ fileName }}</div>
@@ -814,8 +818,8 @@
                     name="files"
                     [url]="''"
                     [multiple]="true"
-                    accept="image/*"
-                    maxFileSize="10000000"
+                    accept="image/*,video/*"
+                    maxFileSize="25000000"
                     mode="advanced"
                     [auto]="false"
                     [customUpload]="true"
@@ -829,19 +833,21 @@
                       <div>Drag and drop files to here to upload.</div>
                     </ng-template>
                     <ng-template pTemplate="content">
-                      <div *ngFor="let fileName of selectedData.image">
-                        <div
-                          *ngIf="!imageLoadErrors.has(fileName)"
-                          style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem; align-items: center"
-                        >
-                          <div style="grid-column: span 4">
-                            <img
-                              [src]="'content/images/bbkt/' + fileName"
-                              (error)="onImageError(fileName)"
-                              alt="Image thumbnail"
-                              style="width: 100%"
-                              class="thumbnail-image"
-                            />
+                      <div *ngFor="let fileName of selectedData.image" class="file-item-container">
+                        <div style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem; align-items: center">
+                          <div style="grid-column: span 4" class="file-preview-container">
+                            <ng-container *ngIf="isImage(fileName); else videoTemplate">
+                              <img
+                                [src]="getImageUrl(fileName)"
+                                (error)="onImageError(fileName)"
+                                alt="Image thumbnail"
+                                style="width: 100%"
+                                class="thumbnail-image"
+                              />
+                            </ng-container>
+                            <ng-template #videoTemplate>
+                              <video [src]="getVideoUrl(fileName)" controls style="width: 100%"></video>
+                            </ng-template>
                           </div>
                           <div style="grid-column: span 4">
                             <div class="file-name">{{ fileName }}</div>
@@ -1067,7 +1073,10 @@
 
 <p-dialog header="Xem ảnh báo cáo" [(visible)]="dialogViewImage" [modal]="true" [style]="{ width: '70vw' }" [baseZIndex]="1100">
   <ng-container *ngIf="listImgReports && listImgReports.length > 0; else notImg">
-    <img *ngFor="let image of listImgReports" [src]="'content/images/bbkt/' + image" class="img-fluid mb-3" />
+    <ng-container *ngFor="let file of listImgReports">
+      <img *ngIf="isImage(file)" [src]="'content/images/bbkt/' + file" class="img-fluid mb-3" alt="Report Image" />
+      <video *ngIf="isVideo(file)" [src]="'content/videos/bbkt/' + file" controls class="video-fluid mb-3"></video>
+    </ng-container>
   </ng-container>
   <ng-template #notImg>
     <h1>Chưa có ảnh đánh giá</h1>

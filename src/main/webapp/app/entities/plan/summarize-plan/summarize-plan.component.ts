@@ -131,4 +131,16 @@ export class SummarizePlanComponent implements OnInit {
   previousState(): void {
     this.router.navigate(['/plan']);
   }
+
+  isImage(fileName: string): boolean {
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    return extension ? imageExtensions.includes(extension) : false;
+  }
+
+  isVideo(fileName: string): boolean {
+    const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv'];
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    return extension ? videoExtensions.includes(extension) : false;
+  }
 }

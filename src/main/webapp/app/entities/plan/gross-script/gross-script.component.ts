@@ -118,6 +118,7 @@ export class GrossScriptComponent {
   isMobile: boolean = false;
   noteDialogVisible = false;
   selectedReport: any = null;
+  checkAll: boolean = false;
 
   constructor(
     protected modalService: NgbModal,
@@ -262,8 +263,7 @@ export class GrossScriptComponent {
         result: item.hasEvaluation == 0 ? item.result : item.result ?? (item.convertScore === 'Tính điểm' ? 'PASS' : 'Đạt'),
       };
     });
-    console.log(this.planGrEvals);
-
+    this.updateCheckAllStatus();
     this.dialogVisible = true;
   }
 
@@ -285,6 +285,26 @@ export class GrossScriptComponent {
     this.cdr.detectChanges();
   }
 
+  isImage(fileName: string): boolean {
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    return extension ? imageExtensions.includes(extension) : false;
+  }
+
+  isVideo(fileName: string): boolean {
+    const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv'];
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    return extension ? videoExtensions.includes(extension) : false;
+  }
+
+  getImageUrl(fileName: string): string {
+    return 'content/images/bbkt/' + fileName;
+  }
+
+  getVideoUrl(fileName: string): string {
+    return 'content/videos/bbkt/' + fileName;
+  }
+
   onFileSelect(event: any, data: any, index: number): void {
     const files: File[] = Array.from(event.files);
     const dataKey = data.reportCode + '-' + index;
@@ -299,21 +319,38 @@ export class GrossScriptComponent {
     }
     const existingNames = new Set(data.image);
     for (const file of files) {
-      const safeFileName = this.sanitizeFileName(file.name);
-      if (!existingNames.has(safeFileName)) {
-        data.image.push(safeFileName);
-        existingNames.add(safeFileName);
-      }
+      // Logic đã sửa để gọi API upload
+      this.planService.upload(file).subscribe(
+        (response: any) => {
+          const fileName = response.fileName; // Lấy tên file từ response của backend
+          if (!existingNames.has(fileName)) {
+            data.image.push(fileName);
+            existingNames.add(fileName);
+          }
+          this.cdr.detectChanges();
+        },
+        (error: any) => {
+          console.error('Upload failed:', error);
+        },
+      );
     }
   }
 
+  // Phương thức xóa file cập nhật
   deleteFile(filename: string, data: any): void {
     const index = data.image.indexOf(filename);
     if (index > -1) {
       data.image.splice(index, 1);
-      this.planService.deleteFile(filename).subscribe(response => {
-        console.log('File deleted successfully:', response);
-      });
+      this.planService.deleteFile(filename).subscribe(
+        response => {
+          console.log('File deleted successfully:', response);
+          this.cdr.detectChanges();
+        },
+        error => {
+          console.error('Failed to delete file:', error);
+          // Xử lý lỗi nếu cần
+        },
+      );
     }
   }
 
@@ -556,6 +593,17 @@ export class GrossScriptComponent {
       item.note = '';
       item.image = [];
     }
+    this.updateCheckAllStatus();
+  }
+
+  toggleAllEvaluations() {
+    this.planGrEvals.forEach(report => {
+      report.hasEvaluation = this.checkAll ? 0 : 1;
+    });
+  }
+
+  updateCheckAllStatus() {
+    this.checkAll = this.planGrEvals.every(report => report.hasEvaluation === 0);
   }
 
   previousState(): void {

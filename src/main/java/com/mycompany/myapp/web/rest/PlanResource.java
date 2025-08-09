@@ -40,6 +40,7 @@ public class PlanResource {
 
     //private static final String UPLOAD_DIR = "src/main/webapp/content/images/bbkt/";
     private final String uploadDir;
+    private final String videoDir;
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
@@ -51,6 +52,7 @@ public class PlanResource {
         this.planRepository = planRepository;
         this.reportRepository = reportRepository;
         this.uploadDir = applicationProperties.getUploadDir();
+        this.videoDir = applicationProperties.getVideoDir();
     }
 
     /**
@@ -306,26 +308,77 @@ public class PlanResource {
         return planDetailDTOS;
     }
 
+    //    @PostMapping("/upload")
+    //    public ResponseEntity<Map<String, String>> upload(@RequestParam("file") MultipartFile file) {
+    //        try {
+    //            String fileName = file.getOriginalFilename();
+    //            Path uploadPath = Paths.get(uploadDir);
+    //            if (!Files.exists(uploadPath)) {
+    //                Files.createDirectories(uploadPath);
+    //                log.info("Created upload directory: {}", uploadDir);
+    //            }
+    //            Path filePath = Paths.get(uploadDir + fileName);
+    //            Files.write(filePath, file.getBytes());
+    //            String responseFileName = fileName;
+    //            Map<String, String> response = new HashMap<>();
+    //            response.put("fileName", responseFileName);
+    //            log.info("File uploaded successfully to: {}", filePath.toString());
+    //            return ResponseEntity.ok(response);
+    //        } catch (IOException e) {
+    //            log.error("Failed to upload file: {}. Error: {}", file.getOriginalFilename(), e.getMessage(), e);
+    //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    //        }
+    //    }
+
     @PostMapping("/upload")
     public ResponseEntity<Map<String, String>> upload(@RequestParam("file") MultipartFile file) {
         try {
             String fileName = file.getOriginalFilename();
-            Path uploadPath = Paths.get(uploadDir);
+            String fileExtension = getFileExtension(fileName).toLowerCase();
+
+            // Danh sách các định dạng ảnh và video được hỗ trợ
+            List<String> imageExtensions = Arrays.asList("jpg", "jpeg", "png", "gif");
+            List<String> videoExtensions = Arrays.asList("mp4", "avi", "mov", "wmv", "flv");
+
+            Path uploadPath;
+            String fileType;
+
+            if (imageExtensions.contains(fileExtension)) {
+                uploadPath = Paths.get(uploadDir);
+                fileType = "image";
+            } else if (videoExtensions.contains(fileExtension)) {
+                uploadPath = Paths.get(videoDir);
+                fileType = "video";
+            } else {
+                return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Unsupported file type"));
+            }
+
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
-                log.info("Created upload directory: {}", uploadDir);
+                log.info("Created upload directory for {}: {}", fileType, uploadPath.toString());
             }
-            Path filePath = Paths.get(uploadDir + fileName);
+
+            Path filePath = Paths.get(uploadPath.toString(), fileName);
             Files.write(filePath, file.getBytes());
-            String responseFileName = fileName;
+
             Map<String, String> response = new HashMap<>();
-            response.put("fileName", responseFileName);
+            response.put("fileName", fileName);
+            response.put("fileType", fileType);
+
             log.info("File uploaded successfully to: {}", filePath.toString());
             return ResponseEntity.ok(response);
         } catch (IOException e) {
             log.error("Failed to upload file: {}. Error: {}", file.getOriginalFilename(), e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    private String getFileExtension(String fileName) {
+        int lastDotIndex = fileName.lastIndexOf('.');
+        if (lastDotIndex > 0) {
+            return fileName.substring(lastDotIndex + 1);
+        }
+        return "";
     }
 
     @DeleteMapping("/delete-file")

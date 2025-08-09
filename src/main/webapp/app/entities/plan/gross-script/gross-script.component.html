@@ -267,7 +267,17 @@
           <th class="text-center border">Đánh giá</th>
           <th class="text-center border">Nội dung đánh giá</th>
           <th class="text-center border">Hình ảnh đánh giá</th>
-          <th class="text-center border">Không đánh giá</th>
+          <th class="text-center border">
+            Không đánh giá
+            <p-checkbox
+              [(ngModel)]="checkAll"
+              [binary]="true"
+              [trueValue]="true"
+              [falseValue]="false"
+              (onChange)="toggleAllEvaluations()"
+              [style]="{ 'margin-left': '0.5rem' }"
+            ></p-checkbox>
+          </th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-report let-index="rowIndex">
@@ -382,7 +392,17 @@
           <th class="text-center border" style="min-width: 100px; padding: 0">Đánh giá</th>
           <th class="text-center border" style="min-width: 100px; padding: 0">Nội dung đánh giá</th>
           <th class="text-center border" style="padding: 0">Hình ảnh đánh giá</th>
-          <th class="text-center border" style="padding: 0">Không đánh giá</th>
+          <th class="text-center border" style="padding: 0">
+            Không đánh giá
+            <p-checkbox
+              [(ngModel)]="checkAll"
+              [binary]="true"
+              [trueValue]="true"
+              [falseValue]="false"
+              (onChange)="toggleAllEvaluations()"
+              [style]="{ 'margin-left': '0.5rem' }"
+            ></p-checkbox>
+          </th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-report let-index="rowIndex">

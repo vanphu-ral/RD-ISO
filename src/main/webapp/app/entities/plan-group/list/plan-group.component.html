@@ -313,7 +313,17 @@
           <th class="text-center border">Đánh giá</th>
           <th class="text-center border">Nội dung đánh giá</th>
           <th class="text-center border">Hình ảnh đánh giá</th>
-          <th class="text-center border">Không đánh giá</th>
+          <th class="text-center border">
+            Không đánh giá
+            <p-checkbox
+              [(ngModel)]="checkAll"
+              [binary]="true"
+              [trueValue]="true"
+              [falseValue]="false"
+              (onChange)="toggleAllEvaluations()"
+              [style]="{ 'margin-left': '0.5rem' }"
+            ></p-checkbox>
+          </th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-report let-index="rowIndex">
@@ -352,8 +362,8 @@
                   name="files"
                   [url]="''"
                   [multiple]="true"
-                  accept="image/*"
-                  maxFileSize="10000000"
+                  accept="image/*,video/*"
+                  maxFileSize="25000000"
                   mode="advanced"
                   [auto]="false"
                   [customUpload]="true"
@@ -367,19 +377,21 @@
                     <div>Drag and drop files to here to upload.</div>
                   </ng-template>
                   <ng-template pTemplate="content">
-                    <div *ngFor="let fileName of selectedData.image">
-                      <div
-                        *ngIf="!imageLoadErrors.has(fileName)"
-                        style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem; align-items: center"
-                      >
-                        <div style="grid-column: span 4">
-                          <img
-                            [src]="'content/images/bbkt/' + fileName"
-                            (error)="onImageError(fileName)"
-                            alt="Image thumbnail"
-                            style="width: 100%"
-                            class="thumbnail-image"
-                          />
+                    <div *ngFor="let fileName of selectedData.image" class="file-item-container">
+                      <div style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem; align-items: center">
+                        <div style="grid-column: span 4" class="file-preview-container">
+                          <ng-container *ngIf="isImage(fileName); else videoTemplate">
+                            <img
+                              [src]="getImageUrl(fileName)"
+                              (error)="onImageError(fileName)"
+                              alt="Image thumbnail"
+                              style="width: 100%"
+                              class="thumbnail-image"
+                            />
+                          </ng-container>
+                          <ng-template #videoTemplate>
+                            <video [src]="getVideoUrl(fileName)" controls style="width: 100%"></video>
+                          </ng-template>
                         </div>
                         <div style="grid-column: span 4">
                           <div class="file-name">{{ fileName }}</div>
@@ -427,7 +439,17 @@
           <th class="text-center border" style="min-width: 100px; padding: 0">Đánh giá</th>
           <th class="text-center border" style="min-width: 100px; padding: 0">Nội dung đánh giá</th>
           <th class="text-center border" style="padding: 0">Hình ảnh đánh giá</th>
-          <th class="text-center border" style="padding: 0">Không đánh giá</th>
+          <th class="text-center border" style="padding: 0">
+            Không đánh giá
+            <p-checkbox
+              [(ngModel)]="checkAll"
+              [binary]="true"
+              [trueValue]="true"
+              [falseValue]="false"
+              (onChange)="toggleAllEvaluations()"
+              [style]="{ 'margin-left': '0.5rem' }"
+            ></p-checkbox>
+          </th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-report let-index="rowIndex">
@@ -457,7 +479,7 @@
               style="height: 150px; width: 200px; box-sizing: border-box; font-size: 14px"
             ></textarea>
           </td>
-          <td class="text-center border" style="padding: 0">
+          <td class="text-center border">
             <p-button (click)="showDialogUpLoad(report, index)" icon="pi pi-paperclip" [disabled]="report.hasEvaluation == 0" />
             <p-dialog
               header="Upload Files"
@@ -472,8 +494,8 @@
                   name="files"
                   [url]="''"
                   [multiple]="true"
-                  accept="image/*"
-                  maxFileSize="10000000"
+                  accept="image/*,video/*"
+                  maxFileSize="25000000"
                   mode="advanced"
                   [auto]="false"
                   [customUpload]="true"
@@ -487,19 +509,21 @@
                     <div>Drag and drop files to here to upload.</div>
                   </ng-template>
                   <ng-template pTemplate="content">
-                    <div *ngFor="let fileName of selectedData.image">
-                      <div
-                        *ngIf="!imageLoadErrors.has(fileName)"
-                        style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem; align-items: center"
-                      >
-                        <div style="grid-column: span 4">
-                          <img
-                            [src]="'content/images/bbkt/' + fileName"
-                            (error)="onImageError(fileName)"
-                            alt="Image thumbnail"
-                            style="width: 100%"
-                            class="thumbnail-image"
-                          />
+                    <div *ngFor="let fileName of selectedData.image" class="file-item-container">
+                      <div style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem; align-items: center">
+                        <div style="grid-column: span 4" class="file-preview-container">
+                          <ng-container *ngIf="isImage(fileName); else videoTemplate">
+                            <img
+                              [src]="getImageUrl(fileName)"
+                              (error)="onImageError(fileName)"
+                              alt="Image thumbnail"
+                              style="width: 100%"
+                              class="thumbnail-image"
+                            />
+                          </ng-container>
+                          <ng-template #videoTemplate>
+                            <video [src]="getVideoUrl(fileName)" controls style="width: 100%"></video>
+                          </ng-template>
                         </div>
                         <div style="grid-column: span 4">
                           <div class="file-name">{{ fileName }}</div>
@@ -606,7 +630,7 @@
           <td class="text-center border">{{ index + 1 }}</td>
           <td class="text-start border">{{ criteria.criterialGroupName }}</td>
           <td class="text-start border">{{ criteria.criterialName }}</td>
-          <td class="text-center border">{{ criteria.result ? criteria.result : 'PASS' }}</td>
+          <td class="text-center border">{{ criteria.result }}</td>
           <td class="text-center border">{{ criteria.note }}</td>
           <td class="text-center border">
             <p-button (onClick)="showDialogViewImg(criteria.image)" label="Xem ảnh" />
@@ -622,7 +646,10 @@
 
 <p-dialog header="Xem ảnh báo cáo" [(visible)]="dialogViewImage" [modal]="true" [style]="{ width: '70vw' }" [baseZIndex]="1100">
   <ng-container *ngIf="listImgReports && listImgReports.length > 0; else notImg">
-    <img *ngFor="let image of listImgReports" [src]="'content/images/bbkt/' + image" class="img-fluid mb-3" />
+    <ng-container *ngFor="let file of listImgReports">
+      <img *ngIf="isImage(file)" [src]="'content/images/bbkt/' + file" class="img-fluid mb-3" alt="Report Image" />
+      <video *ngIf="isVideo(file)" [src]="'content/videos/bbkt/' + file" controls class="video-fluid mb-3"></video>
+    </ng-container>
   </ng-container>
   <ng-template #notImg>
     <h1>Chưa có ảnh đánh giá</h1>

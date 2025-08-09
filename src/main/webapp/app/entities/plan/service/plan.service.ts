@@ -156,12 +156,12 @@ export class PlanService {
     });
   }
 
-  deleteFile(fileName: string): Observable<any> {
-    return this.http.delete(`${this.resourceUrl}/delete-file`, {
-      params: { fileName: fileName },
-      responseType: 'text',
-    });
-  }
+  // deleteFile(fileName: string): Observable<any> {
+  //   return this.http.delete(`${this.resourceUrl}/delete-file`, {
+  //     params: { fileName: fileName },
+  //     responseType: 'text',
+  //   });
+  // }
 
   getAllByPlainId(id: number): Observable<HttpResponse<{}>> {
     return this.http.get(`${this.planGroupHistoryUrl}/${id}`, { observe: 'response' });
@@ -177,5 +177,16 @@ export class PlanService {
 
   getAllPlanGroupHistoryDetailsByPlanId(planId: number): Observable<any> {
     return this.http.get<any[]>(`${this.planGroupHistoryDetailUrl}/by-plan-id/${planId}`, { observe: 'response' });
+  }
+
+  upload(file: File): Observable<any> {
+    const formData: FormData = new FormData();
+    formData.append('file', file);
+    return this.http.post<any>(`${this.resourceUrl}/upload`, formData);
+  }
+
+  // Phương thức xóa file đã được cập nhật
+  deleteFile(fileName: string): Observable<any> {
+    return this.http.delete<any>(`${this.resourceUrl}/delete-file`, { params: { fileName } });
   }
 }
