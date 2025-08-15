@@ -342,7 +342,7 @@
                   <td>{{ detail.reportType }}</td>
                   <td>{{ detail.sumOfAudit }}</td>
                   <td>{{ detail.scoreScale }}</td>
-                  <td>{{ getTotalPoitAvg(detail) }}</td>
+                  <td>{{ getTotalPoitAvg(detail) | noZeroDecimal }}</td>
                   <td>{{ getTotalPoint(detail) }}</td>
                   <td>{{ detail.convertScore }}</td>
                   <td>{{ detail.sumOfNc }}</td>

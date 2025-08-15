@@ -39,6 +39,7 @@ import { FrequencyService } from 'app/entities/frequency/service/frequency.servi
 import { LayoutService } from 'app/layouts/service/layout.service';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SidebarModule } from 'primeng/sidebar';
+import { NoZeroDecimalPipe } from 'app/shared/pipe/no-zero-decimal.pipe';
 
 @Component({
   standalone: true,
@@ -68,6 +69,7 @@ import { SidebarModule } from 'primeng/sidebar';
     DropdownModule,
     ConfirmDialogModule,
     SidebarModule,
+    NoZeroDecimalPipe,
   ],
   providers: [SummarizePlanComponent, ConfirmationService],
 })
