@@ -714,7 +714,7 @@
                 !item.name ||
                 !item.checkDate ||
                 isNameDuplicate[index] ||
-                !(report.checker != account.login || hasAnyAuthority(['ROLE_ISO_ADMIN']))
+                !(report.checker == account.login || hasAnyAuthority(['ROLE_ISO_ADMIN']))
               "
             />
             <p-button
