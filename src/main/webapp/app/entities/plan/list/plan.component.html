@@ -1280,7 +1280,7 @@
         <td class="border text-center">{{ detail.testOfObject }}</td>
         <td class="border text-center">{{ detail.sumOfAudit }}</td>
         <td class="border text-center">{{ detail.scoreScale }}</td>
-        <td class="border text-center">{{ getTotalPoitAvg(detail) }}</td>
+        <td class="border text-center">{{ getTotalPoitAvg(detail) | noZeroDecimal }}</td>
         <td class="border text-center">{{ getTotalPoint(detail) }}</td>
         <td class="border text-center">{{ detail.sumOfNc }}</td>
         <td class="border text-center">{{ detail.sumOfLy }}</td>
