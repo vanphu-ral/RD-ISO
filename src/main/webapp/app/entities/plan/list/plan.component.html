@@ -255,7 +255,8 @@
                   <th style="min-width: 150px; padding: 0">Loại quy đổi</th>
                   <th style="min-width: 30px; padding: 0">NC</th>
                   <th style="min-width: 30px; padding: 0">LY</th>
-                  <th style="min-width: 180px; padding: 0">SL không đạt</th>
+                  <th style="min-width: 110px; padding: 0">SL không đạt</th>
+                  <th style="min-width: 100px; padding: 0">SL chọn lại</th>
                   <th style="min-width: 150px; padding: 0">Người KT</th>
                   <th style="min-width: 100px; padding: 0">Tần suất</th>
                   <th style="min-width: 110px; padding: 0">Trạng thái</th>
@@ -291,6 +292,7 @@
                       </ng-template>
                     </p-columnFilter>
                   </th>
+                  <th style="padding: 0"></th>
                   <th style="padding: 0"></th>
                   <th style="padding: 0"></th>
                   <th style="padding: 0"></th>
@@ -348,6 +350,7 @@
                   <td>{{ detail.sumOfNc }}</td>
                   <td>{{ detail.sumOfLy }}</td>
                   <td>{{ detail.sumOfFail }}</td>
+                  <td>{{ detail.sumOfSelectAgain }}</td>
                   <td>{{ detail.reviewer }}</td>
                   <td>{{ detail.frequency }}</td>
                   <td><p-tag [value]="detail.status" [severity]="getSeverity(detail.status)" /></td>
@@ -1234,6 +1237,7 @@
         <th class="border text-center" style="padding: 0; min-width: 30px">NC</th>
         <th class="border text-center" style="padding: 0; min-width: 30px">LY</th>
         <th class="border text-center" style="padding: 0; min-width: 110px">SL không đạt</th>
+        <th class="border text-center" style="padding: 0; min-width: 110px">SL chọn lại</th>
         <th class="border text-center" style="padding: 0; min-width: 150px">Người KT</th>
         <th class="border text-center" style="padding: 0; min-width: 110px">Trạng thái</th>
       </tr>
@@ -1285,7 +1289,7 @@
         <td class="border text-center">{{ detail.sumOfNc }}</td>
         <td class="border text-center">{{ detail.sumOfLy }}</td>
         <td class="border text-center">{{ detail.sumOfFail }}</td>
-        <td class="border text-center">{{ detail.reviewer }}</td>
+        <td class="border text-center">{{ detail.sumOfSelectAgain }}</td>
         <td class="border text-center"><p-tag [value]="detail.status" [severity]="getSeverity(detail.status)" /></td>
       </tr>
     </ng-template>

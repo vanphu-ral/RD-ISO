@@ -27,4 +27,5 @@ public interface ReportResponse {
     Long getSumOfNc();
     Long getSumOfLy();
     Long getSumOfFail();
+    Long getSumOfSelectAgain();
 }
