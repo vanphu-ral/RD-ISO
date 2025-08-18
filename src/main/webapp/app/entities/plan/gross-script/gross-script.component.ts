@@ -28,6 +28,8 @@ import { DropdownModule } from 'primeng/dropdown';
 import { CheckTargetService } from 'app/entities/check-target/service/check-target.service';
 import { AccountService } from 'app/core/auth/account.service';
 import { LayoutService } from 'app/layouts/service/layout.service';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { FrequencyService } from 'app/entities/frequency/service/frequency.service';
 
 interface GroupReport {
   code: string | null;
@@ -64,6 +66,7 @@ interface GroupReport {
     FileUploadModule,
     CalendarModule,
     DropdownModule,
+    MultiSelectModule,
   ],
   templateUrl: './gross-script.component.html',
   styleUrls: ['./gross-script.component.scss'],
@@ -113,6 +116,8 @@ export class GrossScriptComponent {
   originalGrossScripts: any[] = [];
   account: any = {};
   isNameDuplicate: boolean = false;
+  listOfFrequency: any[] = [];
+  statuses = ['Mới tạo', 'Đang thực hiện', 'Đã hoàn thành', 'Chưa hoàn thành'];
 
   // Mobile Availible
   isMobile: boolean = false;
@@ -135,6 +140,7 @@ export class GrossScriptComponent {
     protected checkTargetService: CheckTargetService,
     private accountService: AccountService,
     private layoutService: LayoutService,
+    private frequencyService: FrequencyService,
   ) {}
 
   ngOnInit(): void {
@@ -170,6 +176,9 @@ export class GrossScriptComponent {
     });
     this.accountService.identity().subscribe(account => {
       this.account = account;
+    });
+    this.frequencyService.getAllCheckFrequency().subscribe(res => {
+      this.listOfFrequency = res;
     });
   }
 
@@ -488,6 +497,7 @@ export class GrossScriptComponent {
   loadCriteria(id: number): void {
     this.planGroupService.findAllDetail(id).subscribe(res => {
       this.planGrDetails = res.body;
+      this.criterialData = res.body;
       const groupMap = new Map<string, { criterialGroupName: string; criterialName: string; frequency: any; status: string[] }>();
       for (const item of this.planGrDetails) {
         const key = `${item.criterialGroupName}|${item.criterialName}`;
@@ -502,14 +512,14 @@ export class GrossScriptComponent {
           groupMap.get(key)!.status.push(item.status);
         }
       }
-      this.criterialData = Array.from(groupMap.values())
-        .map(group => ({
-          criterialGroupName: group.criterialGroupName,
-          criterialName: group.criterialName,
-          frequency: group.frequency,
-          status: group.status.find(s => s !== 'Mới tạo') || 'Mới tạo',
-        }))
-        .sort((a, b) => a.criterialGroupName.localeCompare(b.criterialGroupName));
+      // this.criterialData = Array.from(groupMap.values())
+      //   .map(group => ({
+      //     criterialGroupName: group.criterialGroupName,
+      //     criterialName: group.criterialName,
+      //     frequency: group.frequency,
+      //     status: group.status.find(s => s !== 'Mới tạo') || 'Mới tạo',
+      //   }))
+      //   .sort((a, b) => a.criterialGroupName.localeCompare(b.criterialGroupName));
     });
   }
 
