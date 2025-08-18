@@ -200,17 +200,50 @@
           <th class="text-center border">Trạng thái</th>
           <th class="text-center border">Tùy chọn</th>
         </tr>
+        <tr>
+          <td style="padding: 0"></td>
+          <th style="padding: 0"><p-columnFilter type="text" field="criterialGroupName" placeholder="Search"></p-columnFilter></th>
+          <th style="padding: 0"><p-columnFilter type="text" field="criterialName" placeholder="Search"></p-columnFilter></th>
+          <th style="padding: 0">
+            <p-columnFilter field="frequency" matchMode="in" [showMenu]="false">
+              <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                <p-multiSelect
+                  [ngModel]="value"
+                  [options]="listOfFrequency"
+                  optionLabel="name"
+                  optionValue="name"
+                  (onChange)="filter($event.value)"
+                  [showClear]="true"
+                  [autoZIndex]="true"
+                >
+                </p-multiSelect>
+              </ng-template>
+            </p-columnFilter>
+          </th>
+          <th style="padding: 0">
+            <p-columnFilter field="status" matchMode="equals" [showMenu]="false">
+              <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                <p-dropdown [ngModel]="value" [options]="statuses" (onChange)="filter($event.value)" [showClear]="true" [autoZIndex]="true">
+                  <ng-template let-option pTemplate="item">
+                    <p-tag [value]="option" [severity]="getSeverity(option)" />
+                  </ng-template>
+                </p-dropdown>
+              </ng-template>
+            </p-columnFilter>
+          </th>
+        </tr>
       </ng-template>
       <ng-template pTemplate="body" let-row let-rowIndex="rowIndex">
         <tr>
           <td class="text-center border">{{ rowIndex + 1 }}</td>
-          <td
+          <!-- <td
             class="text-start border"
             *ngIf="rowIndex == 0 || this.criterialData[rowIndex].criterialGroupName !== this.criterialData[rowIndex - 1].criterialGroupName"
             [attr.rowspan]="getRowSpan(row.criterialGroupName)"
           >
             {{ row.criterialGroupName }}
-          </td>
+          </td> -->
+          <td class="text-start border">{{ row.criterialGroupName }}</td>
           <td class="text-start border">{{ row.criterialName }}</td>
           <td class="text-center border">{{ row.frequency }}</td>
           <td class="text-center border">

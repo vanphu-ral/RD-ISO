@@ -439,7 +439,22 @@
         <th>
           <p-columnFilter type="text" field="name" display="menu"></p-columnFilter>
         </th>
-        <th></th>
+        <th style="padding: 0">
+          <p-columnFilter field="frequency" matchMode="equals" [showMenu]="false">
+            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+              <p-dropdown
+                [ngModel]="value"
+                [options]="listOfFrequency"
+                optionLabel="name"
+                optionValue="name"
+                (onChange)="filter($event.value)"
+                [showClear]="true"
+                [appendTo]="'body'"
+              >
+              </p-dropdown>
+            </ng-template>
+          </p-columnFilter>
+        </th>
         <th>
           <p-columnFilter
             type="date"
@@ -788,6 +803,34 @@
           ></p-checkbox>
         </th>
       </tr>
+      <tr>
+        <th style="padding: 0"></th>
+        <th style="padding: 0"><p-columnFilter type="text" field="criterialGroupName" placeholder="Search"></p-columnFilter></th>
+        <th style="padding: 0"><p-columnFilter type="text" field="criterialName" placeholder="Search"></p-columnFilter></th>
+        <th style="padding: 0">
+          <p-columnFilter field="frequency" matchMode="equals" [showMenu]="false">
+            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+              <p-dropdown
+                [ngModel]="value"
+                [options]="listOfFrequency"
+                optionLabel="name"
+                optionValue="name"
+                (onChange)="filter($event.value)"
+                [showClear]="true"
+                [appendTo]="'body'"
+              >
+              </p-dropdown>
+            </ng-template>
+          </p-columnFilter>
+        </th>
+        <th style="padding: 0">
+          <p-columnFilter type="text" field="createdBy" placeholder="Search"></p-columnFilter>
+        </th>
+        <th style="padding: 0"></th>
+        <th style="padding: 0"></th>
+        <th style="padding: 0"></th>
+        <th style="padding: 0"></th>
+      </tr>
     </ng-template>
     <ng-template pTemplate="body" let-item let-index="rowIndex">
       <tr>
@@ -920,6 +963,30 @@
             [style]="{ 'margin-left': '0.5rem' }"
           ></p-checkbox>
         </th>
+      </tr>
+      <tr>
+        <th style="padding: 0"><p-columnFilter type="text" field="criterialGroupName" placeholder="Search"></p-columnFilter></th>
+        <th style="padding: 0"><p-columnFilter type="text" field="criterialName" placeholder="Search"></p-columnFilter></th>
+        <th style="padding: 0">
+          <p-columnFilter field="frequency" matchMode="equals" [showMenu]="false">
+            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+              <p-dropdown
+                [ngModel]="value"
+                [options]="listOfFrequency"
+                optionLabel="name"
+                optionValue="name"
+                (onChange)="filter($event.value)"
+                [showClear]="true"
+                [appendTo]="'body'"
+              >
+              </p-dropdown>
+            </ng-template>
+          </p-columnFilter>
+        </th>
+        <th style="padding: 0"></th>
+        <th style="padding: 0"></th>
+        <th style="padding: 0"></th>
+        <th style="padding: 0"></th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-item let-index="rowIndex">
@@ -1290,6 +1357,7 @@
         <td class="border text-center">{{ detail.sumOfLy }}</td>
         <td class="border text-center">{{ detail.sumOfFail }}</td>
         <td class="border text-center">{{ detail.sumOfSelectAgain }}</td>
+        <td class="border text-center">{{ detail.reviewer }}</td>
         <td class="border text-center"><p-tag [value]="detail.status" [severity]="getSeverity(detail.status)" /></td>
       </tr>
     </ng-template>
