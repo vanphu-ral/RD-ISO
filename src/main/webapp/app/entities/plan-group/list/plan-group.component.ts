@@ -77,6 +77,7 @@ export class PlanGroupComponent implements OnInit {
   imageLoadErrors = new Set<string>();
   selectedFiles: { dataKey: string; files: File[] }[] = [];
   filters = {
+    planName: '',
     name: '',
     checker: '',
     reviewer: '',
@@ -480,7 +481,7 @@ export class PlanGroupComponent implements OnInit {
     });
   }
 
-  async completeEvalReport(data: any) {
+  completeEvalReport(data: any) {
     this.confirmationService.confirm({
       message: 'Bạn có muốn hoàn thành bản đánh giá này?',
       header: 'Hoàn thành đánh giá',

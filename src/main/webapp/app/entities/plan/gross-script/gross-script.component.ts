@@ -35,7 +35,7 @@ interface GroupReport {
   code: string | null;
   name: string | null;
   planId: number | null;
-  checkDate: dayjs.Dayjs | null;
+  checkDate: any | null;
   checker: string | null;
   type: string | null;
   createdAt?: dayjs.Dayjs | null;
@@ -528,8 +528,22 @@ export class GrossScriptComponent {
     return groupItems.length;
   }
 
+  generateName(username: string): string {
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = String(now.getFullYear()).slice(-2);
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+
+    return `${username}-${day}${month}${year}${hours}${minutes}${seconds}`;
+  }
+
   openGroupReportModal(): void {
     this.groupReportData.checker = this.account.login;
+    this.groupReportData.name = this.generateName(this.account.login);
+    this.groupReportData.checkDate = new Date();
     this.modalService
       .open(this.groupReport, {
         ariaLabelledBy: 'modal-basic-title',

@@ -17,6 +17,8 @@
     <ng-template pTemplate="header">
       <tr>
         <th>STT</th>
+        <th>Mã kế hoạch</th>
+        <th>Tên kế hoạch</th>
         <th>Mã kế hoạch gộp</th>
         <th>Tên kế hoạch gộp kiểm tra</th>
         <th>Người kiểm tra</th>
@@ -27,6 +29,15 @@
       </tr>
       <tr>
         <th></th>
+        <th></th>
+        <th>
+          <p-iconField iconPosition="left" class="ml-auto">
+            <p-inputIcon>
+              <i class="pi pi-search"></i>
+            </p-inputIcon>
+            <input pInputText type="text" placeholder="Search" style="padding-left: 30px" (input)="onSearch('planName', $event)" />
+          </p-iconField>
+        </th>
         <th></th>
         <th>
           <p-iconField iconPosition="left" class="ml-auto">
@@ -74,6 +85,8 @@
     <ng-template pTemplate="body" let-group let-index="rowIndex">
       <tr>
         <td>{{ index + 1 }}</td>
+        <td>{{ group.planCode }}</td>
+        <td>{{ group.planName }}</td>
         <td>{{ group.code }}</td>
         <td>{{ group.name }}</td>
         <td>{{ group.reviewer }}</td>
@@ -136,6 +149,7 @@
     <ng-template pTemplate="header">
       <tr>
         <th>Tùy chọn</th>
+        <th style="min-width: 150px">Tên kế hoạch</th>
         <th style="min-width: 150px">Tên kế hoạch gộp</th>
         <th>Người kiểm tra</th>
         <th>Loại</th>
@@ -144,6 +158,14 @@
       </tr>
       <tr>
         <th></th>
+        <th>
+          <p-iconField iconPosition="left" class="ml-auto">
+            <p-inputIcon>
+              <i class="pi pi-search"></i>
+            </p-inputIcon>
+            <input pInputText type="text" placeholder="Search" style="padding-left: 30px" (input)="onSearch('planName', $event)" />
+          </p-iconField>
+        </th>
         <th>
           <p-iconField iconPosition="left" class="ml-auto">
             <p-inputIcon>
@@ -216,6 +238,7 @@
             />
           </div>
         </td>
+        <td class="text-ellipsis" [ngbTooltip]="group.planName" container="body" placement="top-start">{{ group.planName }}</td>
         <td class="text-ellipsis" [ngbTooltip]="group.name" container="body" placement="top-start">{{ group.name }}</td>
         <td>{{ group.createdBy }}</td>
         <td>{{ group.type }}</td>

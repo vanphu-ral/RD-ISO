@@ -2,66 +2,16 @@
   <h2 class="page-heading" id="page-haeding">Gộp Biên bản kiểm tra</h2>
 
   <div class="modal-body">
-    <div class="col-md-12">
-      <div class="col-md-6">
-        <label for="testObject">Đối tượng kiểm tra</label>
-        <select id="testObject" class="form-control" [(ngModel)]="selectedTestObject">
-          <option *ngFor="let item of testObjects" [value]="item.name">
-            {{ item.name }}
-          </option>
-        </select>
-      </div>
-      <div class="col-md-6">
-        <label for="conversion">Quy đổi</label>
-        <select id="conversion" class="form-control" [(ngModel)]="selectedConversion">
-          <option *ngFor="let item of conversions" [value]="item">
-            {{ item }}
-          </option>
-        </select>
-      </div>
-
-      <div class="col-md-6">
-        <label for="reportStatus">Trạng thái</label>
-        <select id="reportStatus" class="form-control" [(ngModel)]="selectedStatus">
-          <option *ngFor="let item of reportStatus" [value]="item">
-            {{ item }}
-          </option>
-        </select>
-      </div>
-      <div class="col-md-6">
-        <label for="reportTemplate">&nbsp;</label>
-        <p-button
-          label="Lọc"
-          icon="pi pi-check"
-          aria-label="Apply"
-          styleClass="p-button-rounded p-button-info p-button-sm mr-2 gross-btn"
-          [severity]="'info'"
-          (onClick)="filterGrossScripts()"
-        />
-      </div>
-      <div class="col-md-6">
-        <label for="reportTemplate">&nbsp;</label>
-        <p-button
-          label="Hủy lọc"
-          icon="pi pi-trash"
-          aria-label="Hủy lọc"
-          styleClass="p-button-rounded p-button-info p-button-sm mr-2 gross-btn"
-          [severity]="'danger'"
-          (onClick)="resetFilter()"
-        />
-      </div>
-      <div class="col-md-6">
-        <label for="reportTemplate">&nbsp;</label>
-
-        <p-button
-          label="Danh sách kế hoạch đã gộp"
-          size="large"
-          aria-label="Gross"
-          styleClass="p-button-rounded p-button-info "
-          [severity]="'help'"
-          [routerLink]="['/plan-group', plan.id, 'list']"
-        />
-      </div>
+    <div class="d-flex justify-content-end">
+      <label for="reportTemplate">&nbsp;</label>
+      <p-button
+        label="Danh sách kế hoạch đã gộp"
+        size="large"
+        aria-label="Gross"
+        styleClass="p-button-rounded p-button-info "
+        [severity]="'help'"
+        [routerLink]="['/plan-group', plan.id, 'list']"
+      />
     </div>
   </div>
 

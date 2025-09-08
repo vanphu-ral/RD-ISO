@@ -10,7 +10,7 @@ const planGroupResolve = (route: ActivatedRouteSnapshot): Observable<null | any>
   const id = route.params['id'];
   if (id) {
     return inject(PlanGroupService)
-      .find(id)
+      .getAllByPlanId(id)
       .pipe(
         mergeMap((plan: HttpResponse<any>) => {
           if (plan.body) {
@@ -22,7 +22,7 @@ const planGroupResolve = (route: ActivatedRouteSnapshot): Observable<null | any>
         }),
       );
   } else {
-    return inject(PlanGroupService).findAll();
+    return inject(PlanGroupService).getAll();
   }
 };
 
