@@ -1,6 +1,7 @@
 package com.mycompany.myapp.repository;
 
 import com.mycompany.myapp.domain.PlanGroupHistory;
+import com.mycompany.myapp.service.dto.PlanGroupHistoryDTO;
 import java.util.List;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
@@ -19,4 +20,33 @@ public interface PlanGroupHistoryRepository extends JpaRepository<PlanGroupHisto
         ")"
     )
     List<PlanGroupHistory> findAllByReportId(@Param("reportId") Long reportId);
+
+    @Query(
+        """
+            SELECT new com.mycompany.myapp.service.dto.PlanGroupHistoryDTO(
+                h.id, h.code, h.name, h.planId, h.checker, h.checkDate, h.type,
+                h.createdAt, h.createdBy, h.status,
+                p.code, p.name
+            )
+            FROM PlanGroupHistory h
+            LEFT JOIN Plan p ON h.planId = p.id
+            ORDER BY h.id DESC
+        """
+    )
+    List<PlanGroupHistoryDTO> findAllWithPlanInfo();
+
+    @Query(
+        """
+            SELECT new com.mycompany.myapp.service.dto.PlanGroupHistoryDTO(
+                h.id, h.code, h.name, h.planId, h.checker, h.checkDate, h.type,
+                h.createdAt, h.createdBy, h.status,
+                p.code, p.name
+            )
+            FROM PlanGroupHistory h
+            LEFT JOIN Plan p ON h.planId = p.id
+            WHERE h.planId = :planId
+            ORDER BY h.id DESC
+        """
+    )
+    List<PlanGroupHistoryDTO> findAllWithPlanInfoByPlanId(@Param("planId") Long planId);
 }

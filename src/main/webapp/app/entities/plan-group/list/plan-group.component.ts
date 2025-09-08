@@ -77,6 +77,7 @@ export class PlanGroupComponent implements OnInit {
   imageLoadErrors = new Set<string>();
   selectedFiles: { dataKey: string; files: File[] }[] = [];
   filters = {
+    planName: '',
     name: '',
     checker: '',
     reviewer: '',

@@ -3,6 +3,7 @@ package com.mycompany.myapp.web.rest;
 import com.mycompany.myapp.domain.Plan;
 import com.mycompany.myapp.domain.PlanGroupHistory;
 import com.mycompany.myapp.repository.PlanGroupHistoryRepository;
+import com.mycompany.myapp.service.dto.PlanGroupHistoryDTO;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,19 @@ public class PlanGroupHistoryResource {
     @GetMapping("")
     public List<PlanGroupHistory> getAllPlanGroups() {
         return planGroupHistoryRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+    }
+
+    @GetMapping("/with-plan")
+    public ResponseEntity<List<PlanGroupHistoryDTO>> getAllWithPlanInfo() {
+        List<PlanGroupHistoryDTO> result = planGroupHistoryRepository.findAllWithPlanInfo();
+        return ResponseEntity.ok(result);
+    }
+
+    // Get danh sách kế hoạch gộp theo kế hoạch (kèm planCode, planName)
+    @GetMapping("/with-plan/{id}")
+    public ResponseEntity<List<PlanGroupHistoryDTO>> getAllByPlanIdWithPlan(@PathVariable Long id) {
+        List<PlanGroupHistoryDTO> result = this.planGroupHistoryRepository.findAllWithPlanInfoByPlanId(id);
+        return ResponseEntity.ok(result);
     }
 
     // Get danh sach ke hoach hop theo ke hoach

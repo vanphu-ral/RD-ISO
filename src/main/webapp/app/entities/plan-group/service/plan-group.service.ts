@@ -41,9 +41,18 @@ export class PlanGroupService {
   find(id: number): Observable<EntityResponseType> {
     return this.http.get<any>(`${this.resourceUrl}/${id}`, { observe: 'response' }).pipe(map(res => this.convertResponseFromServer(res)));
   }
+  getAllByPlanId(planId: number): Observable<EntityArrayResponseType> {
+    return this.http
+      .get<any[]>(`${this.resourceUrl}/with-plan/${planId}`, { observe: 'response' })
+      .pipe(map(res => this.convertResponseArrayFromServer(res)));
+  }
 
   findAll(): Observable<any> {
     return this.http.get<any>(this.resourceUrl);
+  }
+
+  getAll(): Observable<any> {
+    return this.http.get<any>(`${this.resourceUrl}/with-plan`);
   }
 
   findAllDetail(id: number): Observable<EntityResponseType> {
