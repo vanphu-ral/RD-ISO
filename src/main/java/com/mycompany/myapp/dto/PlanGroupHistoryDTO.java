@@ -1,4 +1,4 @@
-package com.mycompany.myapp.service.dto;
+package com.mycompany.myapp.dto;
 
 import java.time.ZonedDateTime;
 

@@ -481,7 +481,7 @@ export class PlanGroupComponent implements OnInit {
     });
   }
 
-  async completeEvalReport(data: any) {
+  completeEvalReport(data: any) {
     this.confirmationService.confirm({
       message: 'Bạn có muốn hoàn thành bản đánh giá này?',
       header: 'Hoàn thành đánh giá',

@@ -2,8 +2,8 @@ package com.mycompany.myapp.web.rest;
 
 import com.mycompany.myapp.domain.Plan;
 import com.mycompany.myapp.domain.PlanGroupHistory;
+import com.mycompany.myapp.dto.PlanGroupHistoryDTO;
 import com.mycompany.myapp.repository.PlanGroupHistoryRepository;
-import com.mycompany.myapp.service.dto.PlanGroupHistoryDTO;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
