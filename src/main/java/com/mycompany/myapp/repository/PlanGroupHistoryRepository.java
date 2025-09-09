@@ -1,6 +1,7 @@
 package com.mycompany.myapp.repository;
 
 import com.mycompany.myapp.domain.PlanGroupHistory;
+import com.mycompany.myapp.domain.PlanGroupHistoryListDetail;
 import java.util.List;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
@@ -22,30 +23,46 @@ public interface PlanGroupHistoryRepository extends JpaRepository<PlanGroupHisto
 
     @Query(
         """
-            SELECT new com.mycompany.myapp.dto.PlanGroupHistoryDTO(
-                h.id, h.code, h.name, h.planId, h.checker, h.checkDate, h.type,
-                h.createdAt, h.createdBy, h.status,
-                p.code, p.name
-            )
+            SELECT
+                h.id AS id,
+                h.code AS code,
+                h.name AS name,
+                h.planId AS planId,
+                h.checker AS checker,
+                h.checkDate AS checkDate,
+                h.type AS type,
+                h.createdAt AS createdAt,
+                h.createdBy AS createdBy,
+                h.status AS status,
+                p.code AS planCode,
+                p.name AS planName
             FROM PlanGroupHistory h
             LEFT JOIN Plan p ON h.planId = p.id
             ORDER BY h.id DESC
         """
     )
-    List<com.mycompany.myapp.dto.PlanGroupHistoryDTO> findAllWithPlanInfo();
+    List<PlanGroupHistoryListDetail> findAllWithPlanInfo();
 
     @Query(
         """
-            SELECT new com.mycompany.myapp.service.dto.PlanGroupHistoryDTO(
-                h.id, h.code, h.name, h.planId, h.checker, h.checkDate, h.type,
-                h.createdAt, h.createdBy, h.status,
-                p.code, p.name
-            )
+            SELECT
+                h.id AS id,
+                h.code AS code,
+                h.name AS name,
+                h.planId AS planId,
+                h.checker AS checker,
+                h.checkDate AS checkDate,
+                h.type AS type,
+                h.createdAt AS createdAt,
+                h.createdBy AS createdBy,
+                h.status AS status,
+                p.code AS planCode,
+                p.name AS planName
             FROM PlanGroupHistory h
             LEFT JOIN Plan p ON h.planId = p.id
             WHERE h.planId = :planId
             ORDER BY h.id DESC
         """
     )
-    List<com.mycompany.myapp.dto.PlanGroupHistoryDTO> findAllWithPlanInfoByPlanId(@Param("planId") Long planId);
+    List<PlanGroupHistoryListDetail> findAllWithPlanInfoByPlanId(@Param("planId") Long planId);
 }
