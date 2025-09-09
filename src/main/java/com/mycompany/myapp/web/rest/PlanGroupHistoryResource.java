@@ -1,15 +1,13 @@
 package com.mycompany.myapp.web.rest;
 
-import com.mycompany.myapp.domain.Plan;
 import com.mycompany.myapp.domain.PlanGroupHistory;
-import com.mycompany.myapp.dto.PlanGroupHistoryDTO;
+import com.mycompany.myapp.domain.PlanGroupHistoryListDetail;
 import com.mycompany.myapp.repository.PlanGroupHistoryRepository;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,15 +36,15 @@ public class PlanGroupHistoryResource {
     }
 
     @GetMapping("/with-plan")
-    public ResponseEntity<List<PlanGroupHistoryDTO>> getAllWithPlanInfo() {
-        List<PlanGroupHistoryDTO> result = planGroupHistoryRepository.findAllWithPlanInfo();
+    public ResponseEntity<List<PlanGroupHistoryListDetail>> getAllWithPlanInfo() {
+        List<PlanGroupHistoryListDetail> result = planGroupHistoryRepository.findAllWithPlanInfo();
         return ResponseEntity.ok(result);
     }
 
     // Get danh sách kế hoạch gộp theo kế hoạch (kèm planCode, planName)
     @GetMapping("/with-plan/{id}")
-    public ResponseEntity<List<PlanGroupHistoryDTO>> getAllByPlanIdWithPlan(@PathVariable Long id) {
-        List<PlanGroupHistoryDTO> result = this.planGroupHistoryRepository.findAllWithPlanInfoByPlanId(id);
+    public ResponseEntity<List<PlanGroupHistoryListDetail>> getAllByPlanIdWithPlan(@PathVariable Long id) {
+        List<PlanGroupHistoryListDetail> result = this.planGroupHistoryRepository.findAllWithPlanInfoByPlanId(id);
         return ResponseEntity.ok(result);
     }
 
