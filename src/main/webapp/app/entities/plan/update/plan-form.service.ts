@@ -129,18 +129,18 @@ export class PlanFormService {
       id: null,
       timeStart: currentTime,
       timeEnd: currentTime,
-      createdAt: currentTime,
-      updatedAt: currentTime,
+      createdAt: null,
+      updatedAt: null,
     };
   }
 
   private convertPlanRawValueToPlan(rawPlan: PlanFormRawValue | NewPlanFormRawValue): IPlan | NewPlan {
     return {
       ...rawPlan,
-      timeStart: dayjs(rawPlan.timeStart, DATE_TIME_FORMAT),
-      timeEnd: dayjs(rawPlan.timeEnd, DATE_TIME_FORMAT),
-      createdAt: dayjs(rawPlan.createdAt, DATE_TIME_FORMAT),
-      updatedAt: dayjs(rawPlan.updatedAt, DATE_TIME_FORMAT),
+      timeStart: rawPlan.timeStart ? dayjs(rawPlan.timeStart, DATE_TIME_FORMAT) : undefined,
+      timeEnd: rawPlan.timeEnd ? dayjs(rawPlan.timeEnd, DATE_TIME_FORMAT) : undefined,
+      createdAt: rawPlan.createdAt ? dayjs(rawPlan.createdAt, DATE_TIME_FORMAT) : undefined,
+      updatedAt: rawPlan.updatedAt ? dayjs(rawPlan.updatedAt, DATE_TIME_FORMAT) : undefined,
     };
   }
 
@@ -149,10 +149,10 @@ export class PlanFormService {
   ): PlanFormRawValue | PartialWithRequiredKeyOf<NewPlanFormRawValue> {
     return {
       ...plan,
-      timeStart: plan.timeStart ? plan.timeStart.format(DATE_TIME_FORMAT) : undefined,
-      timeEnd: plan.timeEnd ? plan.timeEnd.format(DATE_TIME_FORMAT) : undefined,
-      createdAt: plan.createdAt ? plan.createdAt.format(DATE_TIME_FORMAT) : undefined,
-      updatedAt: plan.updatedAt ? plan.updatedAt.format(DATE_TIME_FORMAT) : undefined,
+      timeStart: plan.timeStart ? dayjs(plan.timeStart).format(DATE_TIME_FORMAT) : undefined,
+      timeEnd: plan.timeEnd ? dayjs(plan.timeEnd).format(DATE_TIME_FORMAT) : undefined,
+      createdAt: plan.createdAt ? dayjs(plan.createdAt).format(DATE_TIME_FORMAT) : undefined,
+      updatedAt: plan.updatedAt ? dayjs(plan.updatedAt).format(DATE_TIME_FORMAT) : undefined,
     };
   }
 }
