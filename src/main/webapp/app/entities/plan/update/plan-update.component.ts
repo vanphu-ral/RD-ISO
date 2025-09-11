@@ -315,20 +315,19 @@ export class PlanUpdateComponent implements OnInit {
     const plan = {
       ...formPlan,
       createBy: formPlan.createBy ?? this.plan?.createBy,
-      updatedAt: formPlan.updatedAt ?? this.plan?.updatedAt,
+      createdAt: formPlan.createdAt ?? this.plan?.createdAt,
     };
     if (plan.id === null || this.mode === 'COPY') {
       // Create mode
       const newPlan = { ...plan, id: null };
-      newPlan.updatedAt = dayjs(new Date());
-      newPlan.updateBy = this.account?.login;
       newPlan.createBy = this.account?.login;
+      newPlan.createdAt = dayjs(new Date());
+      newPlan.updateBy = this.account?.login;
+      newPlan.updatedAt = dayjs(new Date());
       newPlan.status = 'Mới tạo';
+
       this.planService.create(newPlan).subscribe(response => {
         const savedPlan = response.body;
-        plan.updatedAt = dayjs(new Date());
-        plan.updateBy = this.account?.login;
-        plan.createBy = this.account?.login;
         if (savedPlan) {
           this.saveChildRecords(savedPlan.id);
         } else {
