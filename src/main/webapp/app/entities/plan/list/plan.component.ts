@@ -267,7 +267,7 @@ export class PlanComponent implements OnInit {
           };
         });
       if (this.planEvaluations.length === 0) {
-        this.planEvaluations.push({});
+        this.planEvaluations.push({ name: this.generateName(this.account.login), checkDate: new Date() });
       }
     });
   }
