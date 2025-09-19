@@ -1,6 +1,6 @@
 import { Component, NgZone, inject, OnInit, ViewChild, TemplateRef, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
-import { combineLatest, filter, Observable, Subscription, tap } from 'rxjs';
+import { combineLatest, filter, forkJoin, Observable, Subscription, tap } from 'rxjs';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationService, PrimeNGConfig, TreeNode } from 'primeng/api'; // Import TreeNode
 import Swal from 'sweetalert2';
@@ -192,6 +192,64 @@ export class PlanComponent implements OnInit {
       dateFormat: 'dd/mm/yy',
       firstDayOfWeek: 1,
     });
+
+    // this.planService.getPlanDetail().subscribe(res => {
+    //   this.planDetailResults = res.map((item: any) => ({
+    //     ...item,
+    //     timeStart: item.timeStart ? new Date(item.timeStart) : null,
+    //     timeEnd: item.timeEnd ? new Date(item.timeEnd) : null,
+    //     createdAt: item.createdAt ? new Date(item.createdAt) : null,
+    //     updatedAt: item.updatedAt ? new Date(item.updatedAt) : null,
+    //   }));
+    //   this.loadTreeNodes();
+    // });
+
+    // combineLatest([
+    //   this.planService.getPlanDetail(),
+    //   this.evaluatorService.getAllCheckTargets(),
+    //   this.activatedRoute.queryParamMap.pipe(
+    //     tap(() => this.fillComponentAttributeFromRoute(this.activatedRoute.snapshot.queryParamMap, this.activatedRoute.snapshot.data))
+    //   )
+    // ])
+    //   .subscribe(([planDetailRes, evaluatorsRes]) => {
+    //     this.evaluators = evaluatorsRes;
+    //     this.planDetailResults = planDetailRes.map((item: any) => ({
+    //       ...item,
+    //       timeStart: item.timeStart ? new Date(item.timeStart) : null,
+    //       timeEnd: item.timeEnd ? new Date(item.timeEnd) : null,
+    //       createdAt: item.createdAt ? new Date(item.createdAt) : null,
+    //       updatedAt: item.updatedAt ? new Date(item.updatedAt) : null,
+    //       planDetail: item.planDetail.map((detail: any) => ({
+    //         ...detail,
+    //         reviewer: this.evaluators.find(evalua => evalua.username === detail.checker)?.name // Gán reviewer ngay khi load
+    //       }))
+    //     }));
+    //     this.loadTreeNodes();
+    //   });
+    // this.evaluatorService.getAllCheckTargets().subscribe(res => {
+    //   this.evaluators = res;
+    // });
+    // this.convertService.query().subscribe(res => {
+    //   this.listEvalReportBase = res.body;
+    // });
+    // this.frequencyService.getAllCheckFrequency().subscribe(res => {
+    //   this.listOfFrequency = res;
+    // });
+    // this.accountService.identity().subscribe(account => {
+    //   this.account = account;
+    // });
+
+    forkJoin({
+      evaluators: this.evaluatorService.getAllCheckTargets(),
+      converts: this.convertService.query(),
+      frequencies: this.frequencyService.getAllCheckFrequency(),
+      account: this.accountService.identity(),
+    }).subscribe(({ evaluators, converts, frequencies, account }) => {
+      this.evaluators = evaluators;
+      this.listEvalReportBase = converts.body;
+      this.listOfFrequency = frequencies;
+      this.account = account;
+    });
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
       .pipe(
         tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
@@ -202,29 +260,6 @@ export class PlanComponent implements OnInit {
         }),
       )
       .subscribe();
-    this.planService.getPlanDetail().subscribe(res => {
-      this.planDetailResults = res.map((item: any) => ({
-        ...item,
-        timeStart: item.timeStart ? new Date(item.timeStart) : null,
-        timeEnd: item.timeEnd ? new Date(item.timeEnd) : null,
-        createdAt: item.createdAt ? new Date(item.createdAt) : null,
-        updatedAt: item.updatedAt ? new Date(item.updatedAt) : null,
-        // planDetail: item.planDetail.map((detail: any) => { return {...detail, reviewer: this.evaluators.find(evalua => evalua.username == detail.checker).name}})
-      }));
-      this.loadTreeNodes();
-    });
-    this.evaluatorService.getAllCheckTargets().subscribe(res => {
-      this.evaluators = res;
-    });
-    this.convertService.query().subscribe(res => {
-      this.listEvalReportBase = res.body;
-    });
-    this.frequencyService.getAllCheckFrequency().subscribe(res => {
-      this.listOfFrequency = res;
-    });
-    this.accountService.identity().subscribe(account => {
-      this.account = account;
-    });
   }
 
   hasAnyAuthority(authorities: string[]): boolean {
@@ -300,13 +335,38 @@ export class PlanComponent implements OnInit {
               timeStart: new Date(item.timeStart),
               timeEnd: new Date(item.timeEnd),
               createdAt: new Date(item.createdAt),
-              // planDetail: item.planDetail.map((detail: any) => { return {...detail, reviewer: this.evaluators.find(evalua => evalua.username == detail.checker).name}})
             };
           });
           this.totalRecords = this.planDetailResults.length;
           this.isLoading = false;
+          this.preloadFullData();
         }
       },
+    });
+  }
+
+  preloadFullData(): void {
+    this.planService.getPlanDetail().subscribe(fullData => {
+      const fullDataMap = new Map(fullData.map((item: any) => [item.id, item]));
+      this.planDetailResults.forEach(item => {
+        const fullDataItem: any = fullDataMap.get(item.id);
+        if (fullDataItem) {
+          Object.assign(item, {
+            ...fullDataItem,
+            timeStart: fullDataItem.timeStart ? new Date(fullDataItem.timeStart) : null,
+            timeEnd: fullDataItem.timeEnd ? new Date(fullDataItem.timeEnd) : null,
+            createdAt: fullDataItem.createdAt ? new Date(fullDataItem.createdAt) : null,
+            updatedAt: fullDataItem.updatedAt ? new Date(fullDataItem.updatedAt) : null,
+            planDetail: fullDataItem.planDetail.map((detail: any) => ({
+              ...detail,
+              reviewer: this.evaluators.find(evalua => evalua.username === detail.checker)?.name,
+            })),
+          });
+        }
+      });
+      this.totalRecords = this.planDetailResults.length;
+      this.loadTreeNodes();
+      this.cdr.detectChanges();
     });
   }
 
@@ -336,14 +396,26 @@ export class PlanComponent implements OnInit {
     this.router.navigate(['summarize-plan']);
   }
 
+  // onRowExpand(event: any): void {
+  //   if (this.dt2 && this.dt2.paginator) {
+  //     this.currentPage = this.dt2.first / this.dt2.rows;
+  //   }
+  //   const rowData = event.data;
+  //   this.expandedRows[rowData.id] = true;
+  //   this.loadPlanDetails(rowData.id);
+  // }
+
   onRowExpand(event: any): void {
-    if (this.dt2 && this.dt2.paginator) {
-      this.currentPage = this.dt2.first / this.dt2.rows;
-    }
     const rowData = event.data;
     this.expandedRows[rowData.id] = true;
-    this.loadPlanDetails(rowData.id);
-    // console.log('rowData', rowData);
+    // Cập nhật dữ liệu cho planDetail của hàng đang mở rộng
+    rowData.planDetail.forEach((detail: any) => {
+      const evaluator = this.evaluators.find(evalua => evalua.username === detail.checker);
+      if (evaluator) {
+        detail.reviewer = evaluator.name;
+      }
+    });
+    // Không cần gọi loadPlanDetails() nữa
   }
 
   restorePaginatorState() {

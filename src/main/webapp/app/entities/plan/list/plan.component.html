@@ -183,7 +183,6 @@
               [rounded]="true"
               [routerLink]="['/plan', rowNode.id, 'inspection-plan']"
               styleClass="p-button-rounded p-button-info p-button-sm mr-2"
-              *ngIf="validDisplayButton(rowNode, ['ROLE_ISO_ADMIN', 'ROLE_ISO_CREATE_FIX_PLAN', 'ROLE_ISO_CHECK'])"
               [severity]="'danger'"
               title="Khai báo kế hoạch khắc phục"
             />
@@ -379,7 +378,6 @@
                         [rounded]="true"
                         [routerLink]="['/plan', detail.id, 'inspection-report']"
                         styleClass="p-button-rounded p-button-info p-button-sm mr-2"
-                        *ngIf="validDisplayButton(detail, ['ROLE_ISO_ADMIN', 'ROLE_ISO_CREATE_FIX_PLAN', 'ROLE_ISO_CHECK'])"
                         [severity]="'danger'"
                         title="Khai báo kế hoạch khắc phục"
                       />
@@ -525,7 +523,6 @@
           </div>
           <div class="action-buttons my-1">
             <p-button
-              *jhiHasAnyAuthority="['ROLE_ISO_ADMIN', 'ROLE_ISO_CREATE_FIX_PLAN', 'ROLE_ISO_CHECK']"
               icon="pi pi-wrench"
               aria-label="Report"
               [rounded]="true"
@@ -1324,7 +1321,6 @@
               (onClick)="showDialogCheckPlan(selectedPlan, index)"
             />
             <p-button
-              *jhiHasAnyAuthority="['ROLE_ISO_ADMIN', 'ROLE_ISO_CREATE_FIX_PLAN', 'ROLE_ISO_CHECK']"
               icon="pi pi-wrench"
               aria-label="Report"
               [rounded]="true"
