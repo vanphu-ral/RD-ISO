@@ -137,7 +137,9 @@ public class CheckerGroupResource {
                 if (checkerGroup.getUpdateBy() != null) {
                     existingCheckerGroup.setUpdateBy(checkerGroup.getUpdateBy());
                 }
-
+                if (checkerGroup.getCode() != null) {
+                    existingCheckerGroup.setCode(checkerGroup.getCode());
+                }
                 return existingCheckerGroup;
             })
             .map(checkerGroupRepository::save);

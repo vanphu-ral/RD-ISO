@@ -61,6 +61,14 @@ public class CheckerGroup implements Serializable {
         return this;
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
