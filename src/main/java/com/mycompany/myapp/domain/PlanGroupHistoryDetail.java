@@ -47,6 +47,9 @@ public class PlanGroupHistoryDetail implements Serializable {
     @Column(name = "has_evaluation")
     private Integer hasEvaluation;
 
+    @Column(name = "fixed")
+    private Integer fixed;
+
     @Column(name = "status")
     private String status;
 

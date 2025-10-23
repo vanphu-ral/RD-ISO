@@ -1,0 +1,111 @@
+<div>
+  <h2 id="page-heading" data-cy="SummarizePlanHeading">
+    <span>Báo cáo đánh giá chi tiết</span>
+  </h2>
+  <div class="col-container">
+    <div class="col-container">
+      <div class="col col-container-child mx-2">
+        <label for="field_timeStart">Thời gian bắt đầu</label>
+        <p-calendar [(ngModel)]="date" appendTo="body" />
+      </div>
+      <div class="col col-container-child mx-2">
+        <label for="field_timeEnd">Thời gian kết thúc</label>
+        <p-calendar [(ngModel)]="date" appendTo="body" />
+      </div>
+      <div class="col col-container-child mx-2">
+        <label for="field_selectedBranches">Bộ phận được kiểm tra</label>
+        <p-multiSelect
+          [options]="listBranch"
+          optionLabel="name"
+          optionValue="name"
+          placeholder="Không đánh giá"
+          [(ngModel)]="selectedBranches"
+          [showClear]="true"
+          id="field_selectedBranches"
+          display="chip"
+          [appendTo]="'body'"
+          styleClass="w-full"
+        />
+      </div>
+      <div class="col col-container-child mx-2">
+        <label for="field_selectedBranches">Tổ được kiểm tra</label>
+        <p-multiSelect
+          [options]="listBranch"
+          optionLabel="name"
+          optionValue="name"
+          placeholder="Không đánh giá"
+          [(ngModel)]="selectedBranches"
+          [showClear]="true"
+          id="field_selectedBranches"
+          display="chip"
+          [appendTo]="'body'"
+          styleClass="w-full"
+        />
+      </div>
+      <div class="col col-container-child mx-2">
+        <label for="field_selectedBranches">Loại BBKT</label>
+        <p-multiSelect
+          [options]="listBranch"
+          optionLabel="name"
+          optionValue="name"
+          placeholder="Không đánh giá"
+          [(ngModel)]="selectedBranches"
+          [showClear]="true"
+          id="field_selectedBranches"
+          display="chip"
+          [appendTo]="'body'"
+          styleClass="w-full"
+        />
+      </div>
+      <div class="col col-container-child mx-2">
+        <label for="field_selectedBranches"> <br /></label>
+        <p-button id="field_selectedBranches" label="Tìm kiếm" icon="pi pi-search" class="mt-4"></p-button>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <button pButton type="button" label="Xuất Excel" icon="pi pi-file-excel" class="p-button-success"></button>
+  </div>
+
+  <div class="table-reposive">
+    <p-table
+      [value]="summary"
+      [paginator]="true"
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+      [tableStyle]="{ 'min-width': '50rem' }"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="id">Thời gian kế hoạch KT<p-sortIcon field="id"></p-sortIcon></th>
+          <th pSortableColumn="branchName">Ngành <p-sortIcon field="branchName"></p-sortIcon></th>
+          <th pSortableColumn="teamName">Tên tổ <p-sortIcon field="teamName"></p-sortIcon></th>
+          <th pSortableColumn="planType">Tổng BB KT phát hành <p-sortIcon field="planType"></p-sortIcon></th>
+          <th pSortableColumn="timeStart">Loại BB Kiểm tra <p-sortIcon field="timeStart"></p-sortIcon></th>
+          <th pSortableColumn="timeEnd">Tổng số đợt kiểm tra <p-sortIcon field="timeEnd"></p-sortIcon></th>
+          <th pSortableColumn="status">Tổng điểm <p-sortIcon field="status"></p-sortIcon></th>
+          <th pSortableColumn="status">Điểm trung bình <p-sortIcon field="status"></p-sortIcon></th>
+          <th pSortableColumn="status">Tổng NC <p-sortIcon field="status"></p-sortIcon></th>
+          <th pSortableColumn="status">Tổng LY <p-sortIcon field="status"></p-sortIcon></th>
+          <th pSortableColumn="status">Tổng đạt <p-sortIcon field="status"></p-sortIcon></th>
+          <th pSortableColumn="status">Tổng không đạt <p-sortIcon field="status"></p-sortIcon></th>
+          <th pSortableColumn="status">Tổng số lỗi đã khắc phục <p-sortIcon field="status"></p-sortIcon></th>
+          <th pSortableColumn="status">Tổng số lỗi chưa khắc phục <p-sortIcon field="status"></p-sortIcon></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-summaryDetail>
+        <tr>
+          <td>{{ summaryDetail.id }}</td>
+          <td>{{ summaryDetail.branchName }}</td>
+          <td>{{ summaryDetail.teamName }}</td>
+          <td>{{ summaryDetail.planType }}</td>
+          <td>{{ summaryDetail.timeStart }}</td>
+          <td>{{ summaryDetail.timeEnd }}</td>
+          <td>{{ summaryDetail.status }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

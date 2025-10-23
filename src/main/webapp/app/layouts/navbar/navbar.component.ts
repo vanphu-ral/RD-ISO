@@ -17,6 +17,7 @@ import MainComponent from '../main/main.component';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { FormsModule } from '@angular/forms';
 import { LayoutService } from '../service/layout.service';
+import { faChartBar } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   standalone: true,
@@ -35,6 +36,7 @@ export default class NavbarComponent implements OnInit {
   entitiesNavbarItems: NavbarItem[] = [];
   showLogo = 'false';
   isMobile: boolean = false;
+  faChartBar = faChartBar;
 
   private loginService = inject(LoginService);
   private translateService = inject(TranslateService);
