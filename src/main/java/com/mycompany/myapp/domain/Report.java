@@ -47,6 +47,9 @@ public class Report implements Serializable {
     @Column(name = "report_type_id")
     private Long reportTypeId;
 
+    @Column(name = "group")
+    private String group;
+
     @Column(name = "group_report")
     private Integer groupReport;
 
