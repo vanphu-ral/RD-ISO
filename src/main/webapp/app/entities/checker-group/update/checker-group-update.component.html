@@ -14,6 +14,27 @@
         }
 
         <div class="mb-3">
+          <label class="form-label" for="field_code">Mã</label>
+          <input
+            type="text"
+            class="form-control"
+            name="code"
+            id="field_code"
+            data-cy="code"
+            formControlName="code"
+            [ngClass]="{ 'is-invalid': editForm.get('code')?.invalid && editForm.get('code')?.touched }"
+            required
+          />
+          <div
+            class="error-message"
+            *ngIf="editForm.get('code')?.invalid && (editForm.get('code')?.touched || editForm.get('code')?.dirty)"
+          >
+            <span *ngIf="editForm.get('code')?.errors?.['required']">Mã không được để trống </span>
+            <span *ngIf="editForm.get('code')?.errors?.['duplicate']">Mã này đã tồn tại</span>
+          </div>
+        </div>
+
+        <div class="mb-3">
           <label class="form-label" for="field_name">Tên</label>
           <input
             type="text"

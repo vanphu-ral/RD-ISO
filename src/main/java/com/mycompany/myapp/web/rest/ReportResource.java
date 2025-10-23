@@ -177,8 +177,8 @@ public class ReportResource {
                 if (report.getConvertScore() != null) {
                     existingReport.setConvertScore(report.getConvertScore());
                 }
-                if (report.getGroup() != null) {
-                    existingReport.setGroup(report.getGroup());
+                if (report.getGroupName() != null) {
+                    existingReport.setGroupName(report.getGroupName());
                 }
                 return existingReport;
             })

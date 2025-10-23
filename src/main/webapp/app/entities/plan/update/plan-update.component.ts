@@ -106,6 +106,8 @@ export class PlanUpdateComponent implements OnInit {
   checkTargets: any[] = [];
   checkTargetBases: any[] = [];
   checkerGroups: any[] = [];
+  groupInfo: any[] = [];
+  groupInfoBase: any[] = [];
   reportTypes: any[] = [];
   sampleReport: any[] = [];
   evaluator: any[] = [];
@@ -189,6 +191,12 @@ export class PlanUpdateComponent implements OnInit {
       this.checkerGroups = res;
       const checkGroupId = this.checkerGroups.find(x => x.name === this.plan?.subjectOfAssetmentPlan)?.id;
       this.checkTargets = this.checkTargetBases.filter(x => x.checkGroupId === checkGroupId);
+      const checkGroupCode = this.checkerGroups.find(x => x.name === this.plan?.subjectOfAssetmentPlan)?.code;
+      this.groupInfo = this.groupInfoBase.filter(x => x.branchCode === checkGroupCode);
+    });
+
+    this.checkerGroupService.getGroupInfo().subscribe(res => {
+      this.groupInfoBase = res;
     });
 
     this.reportTypeService.getAllCheckTargets().subscribe(res => {
@@ -228,6 +236,7 @@ export class PlanUpdateComponent implements OnInit {
         if (this.isCopyMode) plan.code = `PLAN-COPY-${plan.code}`;
         this.plan = plan;
         this.checkTargets = [...this.checkTargetBases];
+        this.groupInfo = [...this.groupInfoBase];
         if (plan) {
           this.updateForm(plan);
         }
@@ -620,6 +629,19 @@ export class PlanUpdateComponent implements OnInit {
       Swal.fire({
         title: 'Error',
         text: `Chưa có đối tượng đánh giá thuộc nhóm đối tượng đánh giá kế hoạch này`,
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+    }
+  }
+
+  checkGroup() {
+    const checkGroupCode = this.checkerGroups.find(x => x.name === this.editForm.get('subjectOfAssetmentPlan')?.value)?.code;
+    this.groupInfo = this.groupInfoBase.filter(x => x.branchCode === checkGroupCode);
+    if (this.groupInfo.length === 0) {
+      Swal.fire({
+        title: 'Error',
+        text: `Không có dữ liệu tổ đánh giá thuộc bộ phận ${this.editForm.get('subjectOfAssetmentPlan')?.value}`,
         icon: 'error',
         confirmButtonText: 'OK',
       });

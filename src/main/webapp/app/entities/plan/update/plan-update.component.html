@@ -113,6 +113,7 @@
               <th style="min-width: 300px; width: 300px">Mẫu BBKT</th>
               <th style="min-width: 180px; width: 180px">Mã BBKT</th>
               <th style="min-width: 400px; width: 400px">Tên BBKT</th>
+              <th style="min-width: 200px; width: 200px">Tổ được kiểm tra</th>
               <th style="min-width: 200px; width: 200px">Người được kiểm tra</th>
               <th style="min-width: 200px; width: 200px">Người kiểm tra</th>
               <th style="min-width: 180px; width: 180px">Loại BBKT</th>
@@ -142,6 +143,13 @@
               </td>
               <td>
                 <input type="text" [(ngModel)]="report.name" [ngModelOptions]="{ standalone: true }" />
+              </td>
+              <td>
+                <select [(ngModel)]="report.groupName" [ngModelOptions]="{ standalone: true }" (click)="checkGroup()">
+                  <option *ngFor="let data of groupInfo" [value]="data.groupName">
+                    {{ data.groupName }}
+                  </option>
+                </select>
               </td>
               <td>
                 <select [(ngModel)]="report.testOfObject" [ngModelOptions]="{ standalone: true }" (click)="checkTarget()">
@@ -244,6 +252,7 @@
             <tr>
               <th>Tuỳ chọn</th>
               <th style="min-width: 400px; width: 400px">Tên BBKT</th>
+              <th style="min-width: 200px; width: 200px">Tổ được kiểm tra</th>
               <th style="min-width: 200px; width: 200px">Người được kiểm tra</th>
               <th style="min-width: 200px; width: 200px">Người kiểm tra</th>
               <th style="min-width: 180px; width: 180px">Loại BBKT</th>
@@ -285,6 +294,13 @@
               </td>
               <td>
                 <input type="text" [(ngModel)]="report.name" [ngModelOptions]="{ standalone: true }" />
+              </td>
+              <td>
+                <select [(ngModel)]="report.groupName" [ngModelOptions]="{ standalone: true }" (click)="checkGroup()">
+                  <option *ngFor="let data of groupInfo" [value]="data.groupName">
+                    {{ data.groupName }}
+                  </option>
+                </select>
               </td>
               <td>
                 <select [(ngModel)]="report.testOfObject" [ngModelOptions]="{ standalone: true }" (click)="checkTarget()">
@@ -597,6 +613,14 @@
       </div>
     </div>
     <div class="col-container">
+      <div class="col-m4-25 col-container-child">
+        <label for="">Tổ được kiểm tra</label>
+        <select [(ngModel)]="selectedReport.groupName" [ngModelOptions]="{ standalone: true }" (click)="checkGroup()">
+          <option *ngFor="let data of groupInfo" [value]="data.groupName">
+            {{ data.groupName }}
+          </option>
+        </select>
+      </div>
       <div class="col-m4-25 col-container-child">
         <label for="">Người được kiểm tra</label>
         <select [(ngModel)]="selectedReport.testOfObject" [ngModelOptions]="{ standalone: true }" (click)="checkTarget()">

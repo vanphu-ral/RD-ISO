@@ -55,6 +55,9 @@ export class CheckerGroupUpdateComponent implements OnInit {
         });
       }
     });
+    this.editForm.get('code')?.addValidators([Validators.required]);
+    this.editForm.get('code')?.setAsyncValidators([this.duplicateNameValidator.bind(this)]);
+    this.editForm.get('code')?.updateValueAndValidity();
     this.editForm.get('name')?.addValidators([Validators.required]);
     this.editForm.get('name')?.setAsyncValidators([this.duplicateNameValidator.bind(this)]);
     this.editForm.get('name')?.updateValueAndValidity();

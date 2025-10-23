@@ -192,6 +192,7 @@
     <ng-template pTemplate="header">
       <tr>
         <th class="text-center border">STT</th>
+        <th class="text-center border">Mã</th>
         <th class="text-center border">Tên</th>
         <th class="text-center border">Trạng thái</th>
         <th class="text-center border">Thời gian tạo</th>
@@ -201,6 +202,14 @@
       </tr>
       <tr>
         <th class="text-center border"></th>
+        <th class="text-center border">
+          <p-iconField iconPosition="left" class="ml-auto">
+            <p-inputIcon>
+              <i class="pi pi-search"></i>
+            </p-inputIcon>
+            <input pInputText type="text" placeholder="Search" style="padding-left: 30px" (input)="onSearch('code', $event)" />
+          </p-iconField>
+        </th>
         <th class="text-center border">
           <p-iconField iconPosition="left" class="ml-auto">
             <p-inputIcon>
@@ -247,6 +256,7 @@
     <ng-template pTemplate="body" let-checkerGroup let-index="rowIndex">
       <tr>
         <td class="text-center border">{{ index + 1 }}</td>
+        <td class="text-center border">{{ checkerGroup.code }}</td>
         <td class="text-center border">{{ checkerGroup.name }}</td>
         <td class="text-center border"><p-tag [value]="checkerGroup.status" [severity]="getSeverity(checkerGroup.status)" /></td>
         <td class="text-center border">{{ checkerGroup.createdAt | formatMediumDatetime }}</td>

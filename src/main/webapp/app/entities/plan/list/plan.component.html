@@ -245,6 +245,7 @@
                   <th style="min-width: 30px; padding: 0">STT</th>
                   <th style="min-width: 150px; padding: 0">Mã BBKT</th>
                   <th style="min-width: 150px; padding: 0">Tên BBKT</th>
+                  <th style="min-width: 100px; padding: 0">Tổ được KT</th>
                   <th style="min-width: 100px; padding: 0">Người được KT</th>
                   <th style="min-width: 150px; padding: 0">Loại BBKT (ID)</th>
                   <th style="min-width: 75px; padding: 0">Số lần KT</th>
@@ -266,6 +267,9 @@
                   <th style="padding: 0"></th>
                   <th style="padding: 0">
                     <p-columnFilter type="text" field="name" placeholder="Search"></p-columnFilter>
+                  </th>
+                  <th style="padding: 0; max-width: 173px">
+                    <p-columnFilter type="text" field="groupName" placeholder="Search"></p-columnFilter>
                   </th>
                   <th style="padding: 0; max-width: 173px">
                     <p-columnFilter type="text" field="testOfObject" placeholder="Search"></p-columnFilter>
@@ -339,6 +343,7 @@
                   <td>{{ index + 1 }}</td>
                   <td class="text-start">{{ detail.code }}</td>
                   <td class="text-start">{{ detail.name }}</td>
+                  <td>{{ detail.groupName }}</td>
                   <td>{{ detail.testOfObject }}</td>
                   <td>{{ detail.reportType }}</td>
                   <td>{{ detail.sumOfAudit }}</td>
@@ -592,6 +597,7 @@
         <th class="text-center border">STT</th>
         <th class="text-center border">Mã BBKT</th>
         <th class="text-center border">Tên mẫu BBKT</th>
+        <th class="text-center border">Tổ tượng kiểm tra</th>
         <th class="text-center border">Đối tượng kiểm tra</th>
         <th class="text-center border">Loại BBKT</th>
         <th class="text-center border">Loại đánh giá</th>
@@ -607,6 +613,7 @@
         <td class="text-center border">{{ index + 1 }}</td>
         <td class="text-start border">{{ planParent.code }}</td>
         <td class="text-start border">{{ planParent.name }}</td>
+        <td class="text-center border">{{ report.groupName }}</td>
         <td class="text-center border">{{ report.testOfObject }}</td>
         <td class="text-center border">{{ report.reportType }}</td>
         <td class="text-center border">{{ report.convertScore }}</td>
@@ -768,16 +775,7 @@
   [style]="{ width: '100%' }"
   [contentStyle]="{ height: '70vh' }"
 >
-  <p-table
-    *ngIf="!isMobile"
-    paginator="true"
-    [rows]="100"
-    [responsive]="true"
-    styleClass="p-datatable-gridlines"
-    [rowsPerPageOptions]="[5, 10, 20]"
-    [autoLayout]="true"
-    [value]="planGrDetail"
-  >
+  <p-table *ngIf="!isMobile" [rows]="100" [responsive]="true" styleClass="p-datatable-gridlines" [autoLayout]="true" [value]="planGrDetail">
     <ng-template pTemplate="header">
       <tr>
         <th class="text-center border">STT</th>
@@ -796,7 +794,7 @@
             [trueValue]="true"
             [falseValue]="false"
             (onChange)="toggleAllEvaluations()"
-            [style]="{ 'margin-left': '0.5rem' }"
+            [style]="{ 'margin-left': '0.5rem', transform: 'scale(1.5)' }"
           ></p-checkbox>
         </th>
       </tr>
@@ -826,7 +824,20 @@
         <th style="padding: 0"></th>
         <th style="padding: 0"></th>
         <th style="padding: 0"></th>
-        <th style="padding: 0"></th>
+        <th style="padding: 0">
+          <p-multiSelect
+            [options]="listOfFrequency"
+            optionLabel="name"
+            optionValue="name"
+            placeholder="Không đánh giá"
+            [(ngModel)]="selectedFrequencies"
+            (onChange)="onFrequencySelect($event.value)"
+            [showClear]="true"
+            display="chip"
+            [appendTo]="'body'"
+            styleClass="w-full"
+          />
+        </th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-item let-index="rowIndex">
@@ -926,6 +937,7 @@
             [trueValue]="0"
             [falseValue]="1"
             (onChange)="onEvaluationToggle(item)"
+            [style]="{ transform: 'scale(1.5)' }"
           ></p-checkbox>
         </td>
       </tr>
@@ -957,7 +969,7 @@
             [trueValue]="true"
             [falseValue]="false"
             (onChange)="toggleAllEvaluations()"
-            [style]="{ 'margin-left': '0.5rem' }"
+            [style]="{ 'margin-left': '0.5rem', transform: 'scale(1.5)' }"
           ></p-checkbox>
         </th>
       </tr>
@@ -983,7 +995,20 @@
         <th style="padding: 0"></th>
         <th style="padding: 0"></th>
         <th style="padding: 0"></th>
-        <th style="padding: 0"></th>
+        <th style="padding: 0">
+          <p-multiSelect
+            [options]="listOfFrequency"
+            optionLabel="name"
+            optionValue="name"
+            placeholder="Không đánh giá"
+            [(ngModel)]="selectedFrequencies"
+            (onChange)="onFrequencySelect($event.value)"
+            [showClear]="true"
+            display="chip"
+            [appendTo]="'body'"
+            styleClass="w-full"
+          />
+        </th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-item let-index="rowIndex">
@@ -1091,7 +1116,14 @@
           </p-dialog>
         </td>
         <td class="text-center border" style="padding: 0">
-          <p-checkbox [binary]="true" [(ngModel)]="item.hasEvaluation" [trueValue]="0" [falseValue]="1"></p-checkbox>
+          <p-checkbox
+            [binary]="true"
+            [(ngModel)]="item.hasEvaluation"
+            [trueValue]="0"
+            [falseValue]="1"
+            (onChange)="onEvaluationToggle(item)"
+            [style]="{ transform: 'scale(1.5)' }"
+          ></p-checkbox>
         </td>
       </tr>
     </ng-template>

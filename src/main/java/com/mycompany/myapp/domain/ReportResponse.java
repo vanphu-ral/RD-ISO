@@ -9,6 +9,7 @@ public interface ReportResponse {
     Long getSampleReportId();
     String getTestOfObject();
     String getChecker();
+    String getGroupName();
     String getStatus();
     String getFrequency();
     String getReportType();

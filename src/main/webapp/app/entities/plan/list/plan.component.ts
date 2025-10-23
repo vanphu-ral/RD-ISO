@@ -40,6 +40,7 @@ import { LayoutService } from 'app/layouts/service/layout.service';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SidebarModule } from 'primeng/sidebar';
 import { NoZeroDecimalPipe } from 'app/shared/pipe/no-zero-decimal.pipe';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({
   standalone: true,
@@ -70,6 +71,7 @@ import { NoZeroDecimalPipe } from 'app/shared/pipe/no-zero-decimal.pipe';
     ConfirmDialogModule,
     SidebarModule,
     NoZeroDecimalPipe,
+    MultiSelectModule,
   ],
   providers: [SummarizePlanComponent, ConfirmationService],
 })
@@ -130,6 +132,7 @@ export class PlanComponent implements OnInit {
   selectedReport: any = null;
   sidebarVisible: boolean = false;
   checkAll: boolean = false;
+  selectedFrequencies: string[] = [];
 
   trackId = (_index: number, item: IPlan): number => this.planService.getPlanIdentifier(item);
 
@@ -339,7 +342,7 @@ export class PlanComponent implements OnInit {
           });
           this.totalRecords = this.planDetailResults.length;
           this.isLoading = false;
-          this.preloadFullData();
+          // this.preloadFullData();
         }
       },
     });
@@ -408,13 +411,9 @@ export class PlanComponent implements OnInit {
   onRowExpand(event: any): void {
     const rowData = event.data;
     this.expandedRows[rowData.id] = true;
+    this.loadPlanDetailsByPlanId(rowData.id);
     // Cập nhật dữ liệu cho planDetail của hàng đang mở rộng
-    rowData.planDetail.forEach((detail: any) => {
-      const evaluator = this.evaluators.find(evalua => evalua.username === detail.checker);
-      if (evaluator) {
-        detail.reviewer = evaluator.name;
-      }
-    });
+
     // Không cần gọi loadPlanDetails() nữa
   }
 
@@ -431,6 +430,20 @@ export class PlanComponent implements OnInit {
         globalFilter: this.dt2.globalFilter,
       });
     }
+  }
+
+  loadPlanDetailsByPlanId(planId: number): void {
+    this.planService.getAllStatisReportByPlanId(planId).subscribe((res: any) => {
+      res.body.forEach((detail: any) => {
+        const evaluator = this.evaluators.find(evalua => evalua.username === detail.checker);
+        if (evaluator) {
+          detail.reviewer = evaluator.name;
+        }
+        this.planDetailResults[this.planDetailResults.findIndex(item => item.id === planId)].planDetail = res.body;
+      });
+      this.loadTreeNodes();
+      this.cdr.detectChanges();
+    });
   }
 
   loadPlanDetails(planId: number): void {
@@ -923,7 +936,8 @@ export class PlanComponent implements OnInit {
       '', // Cột trống để thụt lề
       'Mã BBKT',
       'Tên BBKT',
-      'Đối tượng kiểm tra',
+      'Tổ được kiểm tra',
+      'Người được kiểm tra',
       'Loại BBKT',
       'Số lần thực hiện kiểm tra',
       'Thang điểm',
@@ -975,6 +989,7 @@ export class PlanComponent implements OnInit {
           '', // Cột thụt lề
           detail.code,
           detail.name,
+          detail.groupName,
           detail.testOfObject,
           detail.reportType,
           detail.sumOfAudit,
@@ -1149,6 +1164,19 @@ export class PlanComponent implements OnInit {
     this.loadPlanDetails(data.id);
   }
 
+  onFrequencySelect(selectedFrequencies: string[]): void {
+    if (!selectedFrequencies || selectedFrequencies.length === 0) return;
+    this.planGrDetail.forEach(report => {
+      if (selectedFrequencies.includes(report.frequency)) {
+        report.hasEvaluation = 0;
+        this.onEvaluationToggle(report);
+      } else {
+        report.hasEvaluation = 1;
+        this.onEvaluationToggle(report);
+      }
+    });
+  }
+
   onEvaluationToggle(item: any): void {
     if (item.hasEvaluation === 0) {
       item.result = null;
@@ -1174,6 +1202,7 @@ export class PlanComponent implements OnInit {
     this.selectedPlan = plan;
     this.planService.getAllStatisReportByPlanId(plan.id).subscribe(res => {
       this.listReportByPlan = res.body;
+      this.selectedPlan.planDetail = this.listReportByPlan;
       this.listReportByPlan = this.listReportByPlan.map((item: any) => {
         return { ...item, reviewer: this.evaluators.find(evalua => evalua.username == item.checker).name };
       });

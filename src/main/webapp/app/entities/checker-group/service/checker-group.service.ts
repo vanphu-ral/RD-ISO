@@ -31,6 +31,7 @@ export class CheckerGroupService {
   protected applicationConfigService = inject(ApplicationConfigService);
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/checker-groups');
+  protected resourceUrlInfor = this.applicationConfigService.getEndpointFor('api/group-info');
 
   checkNameExists(name: string): Observable<boolean> {
     return this.http.get<ICheckerGroup[]>(this.resourceUrl).pipe(map(converts => converts.some(convert => convert.name === name)));
@@ -76,6 +77,10 @@ export class CheckerGroupService {
 
   delete(id: number): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
+
+  getGroupInfo(): Observable<string[]> {
+    return this.http.get<string[]>(this.resourceUrlInfor);
   }
 
   getCheckerGroupIdentifier(checkerGroup: Pick<ICheckerGroup, 'id'>): number {

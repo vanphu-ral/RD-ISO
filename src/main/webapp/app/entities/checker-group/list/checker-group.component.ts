@@ -49,6 +49,7 @@ export class CheckerGroupComponent implements OnInit {
   first: number = 0;
   totalRecords: number = 0;
   filters = {
+    code: '',
     name: '',
     status: '',
     createdAt: '',
