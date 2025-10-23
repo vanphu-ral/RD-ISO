@@ -10,16 +10,16 @@ public class GroupInfo {
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "U_BranchCode")
+    @Column(name = "u_branch_code")
     private String branchCode;
 
-    @Column(name = "U_GroupName")
+    @Column(name = "u_group_name")
     private String groupName;
 
-    @Column(name = "U_BranchName")
+    @Column(name = "u_branch_name")
     private String branchName;
 
-    @Column(name = "U_GroupCode")
+    @Column(name = "u_group_code")
     private String groupCode;
 
     public Long getId() {
