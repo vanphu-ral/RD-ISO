@@ -106,6 +106,14 @@ public class Report implements Serializable {
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
     public Long getId() {
         return this.id;
     }
