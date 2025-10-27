@@ -21,4 +21,7 @@ public interface PlanStatisticalResponse {
     String getChecker();
     String getGroupName();
     String getTimeStart();
+    Integer getSumOfPass();
+    Integer getTotal();
+    Integer getSumOfUncheck();
 }

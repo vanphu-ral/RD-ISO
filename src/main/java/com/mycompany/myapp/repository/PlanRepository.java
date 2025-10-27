@@ -166,13 +166,29 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
         "FROM iso.plan_group_history_detail pghd " +
         "INNER JOIN iso.report rp ON rp.id = pghd.report_id " +
         "INNER JOIN iso.plan p ON p.id = rp.plan_id " +
-        "WHERE p.time_start BETWEEN ?1 AND ?2",
+        "WHERE p.time_start BETWEEN ?1 AND ?2 " +
+        " and (rp.report_type IS NULL OR rp.report_type LIKE ?3)  \n" +
+        "             and (p.subject_of_assetment_plan IS NULL OR p.subject_of_assetment_plan LIKE ?4)  \n" +
+        "             and (rp.group_name IS NULL OR rp.group_name LIKE ?5)  \n" +
+        "             and (rp.test_of_object IS NULL OR rp.test_of_object LIKE ?6) ",
         countQuery = "SELECT COUNT(DISTINCT rp.id) " +
         "FROM iso.plan_group_history_detail pghd " +
         "INNER JOIN iso.report rp ON rp.id = pghd.report_id " +
         "INNER JOIN iso.plan p ON p.id = rp.plan_id " +
-        "WHERE p.time_start BETWEEN ?1 AND ?2",
+        "WHERE p.time_start BETWEEN ?1 AND ?2" +
+        " and (rp.report_type IS NULL OR rp.report_type LIKE ?3)  \n" +
+        "             and (p.subject_of_assetment_plan IS NULL OR p.subject_of_assetment_plan LIKE ?4)  \n" +
+        "             and (rp.group_name IS NULL OR rp.group_name LIKE ?5)  \n" +
+        "             and (rp.test_of_object IS NULL OR rp.test_of_object LIKE ?6) ",
         nativeQuery = true
     )
-    Page<PlanStatisticalResponse> getPlanStatisticalByManyCriteria(String timeStart, String timeEnd, Pageable pageable);
+    Page<PlanStatisticalResponse> getPlanStatisticalByManyCriteria(
+        String timeStart,
+        String timeEnd,
+        String reportType,
+        String subjectOfAssetmentPlan,
+        String groupName,
+        String testOfObject,
+        Pageable pageable
+    );
 }
