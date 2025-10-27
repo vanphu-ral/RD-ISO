@@ -70,12 +70,13 @@
 
   <div class="table-reposive">
     <p-table
-      [value]="summary"
+      [value]="data"
       [paginator]="true"
       [rows]="10"
       [showCurrentPageReport]="true"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
       [tableStyle]="{ 'min-width': '50rem' }"
+      [loading]="loading"
     >
       <ng-template pTemplate="header">
         <tr>

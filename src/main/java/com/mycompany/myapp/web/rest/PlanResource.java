@@ -416,10 +416,7 @@ public class PlanResource {
     }
 
     @PostMapping("/statistical")
-    public Page<PlanStatisticalResponse> getStatistics(
-        @RequestBody ReportDTO dto,
-        @PageableDefault(size = 10, sort = "reportId", direction = Sort.Direction.DESC) Pageable pageable
-    ) {
+    public Page<PlanStatisticalResponse> getStatistics(@RequestBody ReportDTO dto, @PageableDefault(size = 10) Pageable pageable) {
         return planRepository.getPlanStatisticalByManyCriteria(
             dto.getTimeStart(),
             dto.getTimeEnd(),

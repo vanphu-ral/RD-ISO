@@ -14,6 +14,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
+import { SummaryService } from '../service/summary.service';
+import { ReportDTO } from '../summary.model';
 
 @Component({
   selector: 'jhi-summary-report-detail',
@@ -40,17 +42,40 @@ import { TagModule } from 'primeng/tag';
   styleUrls: ['./summary-report-detail.component.scss'],
 })
 export class SummaryReportDetailComponent implements OnInit {
-  protected route = inject(ActivatedRoute);
-
   summaryReport: any = null;
   listBranch: any[] = [];
   selectedBranches: any[] = [];
   date: Date = new Date();
-  summary: any[] = [];
+  data: any[] = [];
+  reportDto: ReportDTO = {};
+  statisticalData: any[] = [];
+  totalRecords = 0;
+  loading = false;
+
+  constructor(
+    private summaryService: SummaryService,
+    private route: ActivatedRoute,
+  ) {}
 
   ngOnInit(): void {
-    this.route.data.subscribe(({ summaryDetail }) => {
-      this.summaryReport = summaryDetail;
+    this.loadData();
+  }
+
+  loadData(page: number = 0, size: number = 10) {
+    this.loading = true;
+
+    this.summaryService.getSummaryReportDetail(this.reportDto, page, size).subscribe({
+      next: res => {
+        console.log(res);
+
+        this.data = res.content;
+        this.totalRecords = res.totalElements;
+        this.loading = false;
+      },
+      error: err => {
+        console.error('Error fetching data', err);
+        this.loading = false;
+      },
     });
   }
 }
