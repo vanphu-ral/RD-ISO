@@ -7,6 +7,7 @@ import com.mycompany.myapp.domain.ReportResponse;
 import com.mycompany.myapp.repository.PlanRepository;
 import com.mycompany.myapp.repository.ReportRepository;
 import com.mycompany.myapp.service.dto.PlanDetailDTO;
+import com.mycompany.myapp.service.dto.ReportDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.io.IOException;
 import java.net.URI;
@@ -18,6 +19,10 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -408,5 +413,21 @@ public class PlanResource {
     @GetMapping("plan-detail-summarize/{planId}")
     public List<ReportResponse> getPlanDetailByPlanId(@PathVariable Long planId) {
         return reportRepository.getDetailByPlanId(planId);
+    }
+
+    @PostMapping
+    public Page<PlanStatisticalResponse> getStatistics(
+        @RequestBody ReportDTO dto,
+        @PageableDefault(size = 10, sort = "reportId", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        return planRepository.getPlanStatisticalByManyCriteria(
+            dto.getTimeStart(),
+            dto.getTimeEnd(),
+            dto.getGroupName(),
+            dto.getTestOfObject(),
+            dto.getReportType(),
+            dto.getSubjectOfAssetmentPlan(),
+            pageable
+        );
     }
 }
