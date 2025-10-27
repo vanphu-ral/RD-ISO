@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ReportDTO } from '../summary.model';
+import dayjs from 'dayjs/esm';
 
 @Injectable({ providedIn: 'root' })
 export class SummaryService {

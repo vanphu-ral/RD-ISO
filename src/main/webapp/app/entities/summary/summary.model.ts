@@ -1,6 +1,6 @@
 export interface ReportDTO {
-  timeStart?: string;
-  timeEnd?: string;
+  timeStart?: Date;
+  timeEnd?: Date;
   planName?: string;
   groupName?: string;
   testOfObject?: string;

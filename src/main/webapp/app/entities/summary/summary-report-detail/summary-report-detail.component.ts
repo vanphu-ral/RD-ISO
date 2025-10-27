@@ -16,6 +16,12 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { SummaryService } from '../service/summary.service';
 import { ReportDTO } from '../summary.model';
+import { ConvertService } from 'app/entities/convert/service/convert.service';
+import { NoZeroDecimalPipe } from 'app/shared/pipe/no-zero-decimal.pipe';
+import { CheckerGroupService } from 'app/entities/checker-group/service/checker-group.service';
+import { ReportTypeService } from 'app/entities/report-type/service/report-type.service';
+import { DatePipe } from '@angular/common';
+import { EvaluatorService } from 'app/entities/evaluator/service/evaluator.service';
 
 @Component({
   selector: 'jhi-summary-report-detail',
@@ -37,38 +43,59 @@ import { ReportDTO } from '../summary.model';
     TagModule,
     MultiSelectModule,
     CalendarModule,
+    NoZeroDecimalPipe,
+    DatePipe,
   ],
   templateUrl: './summary-report-detail.component.html',
   styleUrls: ['./summary-report-detail.component.scss'],
 })
 export class SummaryReportDetailComponent implements OnInit {
-  summaryReport: any = null;
-  listBranch: any[] = [];
-  selectedBranches: any[] = [];
-  date: Date = new Date();
   data: any[] = [];
+  listBranch: any[] = [];
+  listTeams: any[] = [];
+  listReportType: any[] = [];
   reportDto: ReportDTO = {};
   statisticalData: any[] = [];
-  totalRecords = 0;
+  listEvalReportBase: any = [];
+  listEvaluator: any[] = [];
+
+  // Pagination and loading state
+  totalRecords: number = 0;
+  pageSize: number = 10;
   loading = false;
 
   constructor(
     private summaryService: SummaryService,
-    private route: ActivatedRoute,
+    private convertService: ConvertService,
+    private checkerGroupService: CheckerGroupService,
+    private reportTypeService: ReportTypeService,
+    private evaluatorService: EvaluatorService,
   ) {}
 
   ngOnInit(): void {
-    this.loadData();
+    this.reportDto.timeStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+    this.reportDto.timeEnd = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
+    this.convertService.query().subscribe(res => {
+      this.listEvalReportBase = res.body || [];
+    });
+    this.checkerGroupService.getGroupInfo().subscribe(res => {
+      this.listBranch = [...new Map(res.map((item: any) => [item.branchCode, { code: item.branchCode, name: item.branchName }])).values()];
+      this.listTeams = res.map((item: any) => ({ code: item.groupCode, name: item.groupName }));
+    });
+    this.reportTypeService.getAllCheckTargets().subscribe(res => {
+      this.listReportType = res;
+    });
+    this.evaluatorService.getAllCheckTargets().subscribe(res => {
+      this.listEvaluator = res;
+    });
+    this.loadData(1, this.pageSize);
   }
 
-  loadData(page: number = 0, size: number = 10) {
+  loadData(page: number = 1, size: number = 10) {
     this.loading = true;
-
     this.summaryService.getSummaryReportDetail(this.reportDto, page, size).subscribe({
       next: res => {
-        console.log(res);
-
-        this.data = res.content;
+        this.data = this.formatData(res.content || []);
         this.totalRecords = res.totalElements;
         this.loading = false;
       },
@@ -77,5 +104,49 @@ export class SummaryReportDetailComponent implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  formatData(data: any[]) {
+    return data.map(item => ({
+      ...item,
+      checker: this.listEvaluator.find(evalua => evalua.username === item.checker)?.name,
+    }));
+  }
+
+  clearFilters() {
+    this.reportDto = {};
+    this.reportDto.timeStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+    this.reportDto.timeEnd = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
+    this.loadData(1, this.pageSize);
+  }
+
+  onPage(event: any) {
+    const page = event.first / event.rows;
+    const size = event.rows;
+    this.pageSize = size;
+    this.loadData(page, size);
+  }
+
+  getTotalPointAvg(data: any) {
+    if (data.convertScore == 'Tính điểm') {
+      const markNC = this.listEvalReportBase.find((item: any) => item.name == 'NC');
+      const markLC = this.listEvalReportBase.find((item: any) => item.name == 'LY');
+      const totalPointSummarize =
+        (data.scoreScale * data.sumOfAudit - (data.sumOfLy * markLC.mark + data.sumOfNc * markNC.mark)) / data.sumOfAudit;
+      return isNaN(totalPointSummarize) ? data.scoreScale : totalPointSummarize;
+    } else {
+      return data.scoreScale;
+    }
+  }
+
+  getTotalPoint(data: any) {
+    if (data.convertScore == 'Tính điểm') {
+      const markNC = this.listEvalReportBase.find((item: any) => item.name == 'NC');
+      const markLC = this.listEvalReportBase.find((item: any) => item.name == 'LY');
+      const totalPointSummarize = data.scoreScale - (data.sumOfLy * markLC.mark + data.sumOfNc * markNC.mark);
+      return totalPointSummarize;
+    } else {
+      return data.scoreScale;
+    }
   }
 }

@@ -6,11 +6,11 @@
     <div class="col-container">
       <div class="col col-container-child mx-2">
         <label for="field_timeStart">Thời gian bắt đầu</label>
-        <p-calendar [(ngModel)]="date" appendTo="body" />
+        <p-calendar appendTo="body" [(ngModel)]="reportDto.timeStart" dateFormat="dd/mm/yy" />
       </div>
       <div class="col col-container-child mx-2">
         <label for="field_timeEnd">Thời gian kết thúc</label>
-        <p-calendar [(ngModel)]="date" appendTo="body" />
+        <p-calendar appendTo="body" [(ngModel)]="reportDto.timeEnd" dateFormat="dd/mm/yy" />
       </div>
       <div class="col col-container-child mx-2">
         <label for="field_selectedBranches">Bộ phận được kiểm tra</label>
@@ -19,7 +19,7 @@
           optionLabel="name"
           optionValue="name"
           placeholder="Không đánh giá"
-          [(ngModel)]="selectedBranches"
+          [(ngModel)]="reportDto.subjectOfAssetmentPlan"
           [showClear]="true"
           id="field_selectedBranches"
           display="chip"
@@ -28,38 +28,42 @@
         />
       </div>
       <div class="col col-container-child mx-2">
-        <label for="field_selectedBranches">Tổ được kiểm tra</label>
+        <label for="field_selectedTeams">Tổ được kiểm tra</label>
         <p-multiSelect
-          [options]="listBranch"
+          [options]="listTeams"
           optionLabel="name"
           optionValue="name"
           placeholder="Không đánh giá"
-          [(ngModel)]="selectedBranches"
+          [(ngModel)]="reportDto.groupName"
           [showClear]="true"
-          id="field_selectedBranches"
+          id="field_selectedTeams"
           display="chip"
           [appendTo]="'body'"
           styleClass="w-full"
         />
       </div>
       <div class="col col-container-child mx-2">
-        <label for="field_selectedBranches">Loại BBKT</label>
+        <label for="field_selectedReportType">Loại BBKT</label>
         <p-multiSelect
-          [options]="listBranch"
+          [options]="listReportType"
           optionLabel="name"
           optionValue="name"
           placeholder="Không đánh giá"
-          [(ngModel)]="selectedBranches"
+          [(ngModel)]="reportDto.reportType"
           [showClear]="true"
-          id="field_selectedBranches"
+          id="field_selectedReportType"
           display="chip"
           [appendTo]="'body'"
           styleClass="w-full"
         />
       </div>
       <div class="col col-container-child mx-2">
-        <label for="field_selectedBranches"> <br /></label>
-        <p-button id="field_selectedBranches" label="Tìm kiếm" icon="pi pi-search" class="mt-4"></p-button>
+        <label for="searchBtn"> <br /></label>
+        <p-button id="searchBtn" label="Tìm kiếm" icon="pi pi-search" class="mt-4" (click)="loadData()"></p-button>
+      </div>
+      <div class="col col-container-child">
+        <label for="searchBtn"> <br /></label>
+        <p-button id="searchBtn" label="Hủy lọc" icon="pi pi-times" class="mt-4" (click)="clearFilters()"></p-button>
       </div>
     </div>
   </div>
@@ -72,44 +76,54 @@
     <p-table
       [value]="data"
       [paginator]="true"
-      [rows]="10"
-      [showCurrentPageReport]="true"
-      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-      [tableStyle]="{ 'min-width': '50rem' }"
+      [rows]="pageSize"
+      [totalRecords]="totalRecords"
+      [lazy]="true"
       [loading]="loading"
+      (onLazyLoad)="onPage($event)"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Hiển thị {first} đến {last} trong tổng số {totalRecords} mục"
+      [tableStyle]="{ 'min-width': '50rem' }"
     >
       <ng-template pTemplate="header">
         <tr>
-          <th pSortableColumn="id">Thời gian kế hoạch KT<p-sortIcon field="id"></p-sortIcon></th>
-          <th pSortableColumn="id">Tên kế hoạch KT<p-sortIcon field="id"></p-sortIcon></th>
-          <th pSortableColumn="id">Tên BBKT<p-sortIcon field="id"></p-sortIcon></th>
-          <th pSortableColumn="id">Người kiểm tra<p-sortIcon field="id"></p-sortIcon></th>
-          <th pSortableColumn="branchName">Ngành <p-sortIcon field="branchName"></p-sortIcon></th>
-          <th pSortableColumn="teamName">Tên tổ <p-sortIcon field="teamName"></p-sortIcon></th>
-          <th pSortableColumn="teamName">Người được kiểm tra <p-sortIcon field="teamName"></p-sortIcon></th>
-          <th pSortableColumn="planType">Tổng BB KT phát hành <p-sortIcon field="planType"></p-sortIcon></th>
-          <th pSortableColumn="timeStart">Loại BB Kiểm tra <p-sortIcon field="timeStart"></p-sortIcon></th>
-          <th pSortableColumn="timeEnd">Tổng số đợt kiểm tra <p-sortIcon field="timeEnd"></p-sortIcon></th>
-          <th pSortableColumn="status">Tổng điểm <p-sortIcon field="status"></p-sortIcon></th>
-          <th pSortableColumn="status">Điểm trung bình <p-sortIcon field="status"></p-sortIcon></th>
-          <th pSortableColumn="status">Tổng NC <p-sortIcon field="status"></p-sortIcon></th>
-          <th pSortableColumn="status">Tổng LY <p-sortIcon field="status"></p-sortIcon></th>
-          <th pSortableColumn="status">Tổng đạt <p-sortIcon field="status"></p-sortIcon></th>
-          <th pSortableColumn="status">Tổng không đạt <p-sortIcon field="status"></p-sortIcon></th>
-          <th pSortableColumn="status">Tổng số lỗi đã khắc phục <p-sortIcon field="status"></p-sortIcon></th>
-          <th pSortableColumn="status">Tổng số lỗi chưa khắc phục <p-sortIcon field="status"></p-sortIcon></th>
+          <th pSortableColumn="timeStart">Thời gian kế hoạch KT<p-sortIcon field="timeStart"></p-sortIcon></th>
+          <th pSortableColumn="planName">Tên kế hoạch KT<p-sortIcon field="planName"></p-sortIcon></th>
+          <th pSortableColumn="reportName">Tên BBKT<p-sortIcon field="reportName"></p-sortIcon></th>
+          <th pSortableColumn="checker">Người kiểm tra<p-sortIcon field="checker"></p-sortIcon></th>
+          <th pSortableColumn="subjectOfAssetmentPlan">Ngành <p-sortIcon field="subjectOfAssetmentPlan"></p-sortIcon></th>
+          <th pSortableColumn="groupName">Tên tổ <p-sortIcon field="groupName"></p-sortIcon></th>
+          <th pSortableColumn="testOfObject">Người được kiểm tra <p-sortIcon field="testOfObject"></p-sortIcon></th>
+          <th pSortableColumn="reportType">Loại BB Kiểm tra <p-sortIcon field="reportType"></p-sortIcon></th>
+          <th pSortableColumn="sumOfAudit">Tổng số đợt kiểm tra <p-sortIcon field="sumOfAudit"></p-sortIcon></th>
+          <th>Tổng điểm</th>
+          <th>Điểm trung bình</th>
+          <th pSortableColumn="sumOfNc">Tổng NC <p-sortIcon field="sumOfNc"></p-sortIcon></th>
+          <th pSortableColumn="sumOfLy">Tổng LY <p-sortIcon field="sumOfLy"></p-sortIcon></th>
+          <th pSortableColumn="sumOfPass">Tổng đạt <p-sortIcon field="sumOfPass"></p-sortIcon></th>
+          <th pSortableColumn="sumOfFail">Tổng không đạt <p-sortIcon field="sumOfFail"></p-sortIcon></th>
+          <th pSortableColumn="sumOfUncheck">Tổng số lỗi chưa khắc phục <p-sortIcon field="sumOfUncheck"></p-sortIcon></th>
           <th pSortableColumn="status">Chi tiết</th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-summaryDetail>
+      <ng-template pTemplate="body" let-row>
         <tr>
-          <td>{{ summaryDetail.id }}</td>
-          <td>{{ summaryDetail.branchName }}</td>
-          <td>{{ summaryDetail.teamName }}</td>
-          <td>{{ summaryDetail.planType }}</td>
-          <td>{{ summaryDetail.timeStart }}</td>
-          <td>{{ summaryDetail.timeEnd }}</td>
-          <td>{{ summaryDetail.status }}</td>
+          <td>{{ row.timeStart | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ row.planName }}</td>
+          <td>{{ row.reportName }}</td>
+          <td>{{ row.checker }}</td>
+          <td>{{ row.subjectOfAssetmentPlan }}</td>
+          <td>{{ row.groupName }}</td>
+          <td>{{ row.testOfObject }}</td>
+          <td>{{ row.reportType }}</td>
+          <td>{{ row.sumOfAudit }}</td>
+          <td>{{ getTotalPoint(row) }}</td>
+          <td>{{ getTotalPointAvg(row) | noZeroDecimal }}</td>
+          <td>{{ row.sumOfNc }}</td>
+          <td>{{ row.sumOfLy }}</td>
+          <td>{{ row.sumOfPass }}</td>
+          <td>{{ row.sumOfFail }}</td>
+          <td>{{ row.sumOfUncheck }}</td>
         </tr>
       </ng-template>
       <ng-template pTemplate="empty">
