@@ -289,6 +289,7 @@ export class InspectionReportComponent implements OnInit {
   saveRemediationPlan(data: any) {
     data.code = this.generateCode();
     data.reportId = this.report.id;
+    data.planId = this.report.planId;
     data.repairDate = dayjs(data.repairDate).toISOString();
     data.createdAt = dayjs();
     data.type = 'Single';

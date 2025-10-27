@@ -195,53 +195,6 @@ export class PlanComponent implements OnInit {
       dateFormat: 'dd/mm/yy',
       firstDayOfWeek: 1,
     });
-
-    // this.planService.getPlanDetail().subscribe(res => {
-    //   this.planDetailResults = res.map((item: any) => ({
-    //     ...item,
-    //     timeStart: item.timeStart ? new Date(item.timeStart) : null,
-    //     timeEnd: item.timeEnd ? new Date(item.timeEnd) : null,
-    //     createdAt: item.createdAt ? new Date(item.createdAt) : null,
-    //     updatedAt: item.updatedAt ? new Date(item.updatedAt) : null,
-    //   }));
-    //   this.loadTreeNodes();
-    // });
-
-    // combineLatest([
-    //   this.planService.getPlanDetail(),
-    //   this.evaluatorService.getAllCheckTargets(),
-    //   this.activatedRoute.queryParamMap.pipe(
-    //     tap(() => this.fillComponentAttributeFromRoute(this.activatedRoute.snapshot.queryParamMap, this.activatedRoute.snapshot.data))
-    //   )
-    // ])
-    //   .subscribe(([planDetailRes, evaluatorsRes]) => {
-    //     this.evaluators = evaluatorsRes;
-    //     this.planDetailResults = planDetailRes.map((item: any) => ({
-    //       ...item,
-    //       timeStart: item.timeStart ? new Date(item.timeStart) : null,
-    //       timeEnd: item.timeEnd ? new Date(item.timeEnd) : null,
-    //       createdAt: item.createdAt ? new Date(item.createdAt) : null,
-    //       updatedAt: item.updatedAt ? new Date(item.updatedAt) : null,
-    //       planDetail: item.planDetail.map((detail: any) => ({
-    //         ...detail,
-    //         reviewer: this.evaluators.find(evalua => evalua.username === detail.checker)?.name // Gán reviewer ngay khi load
-    //       }))
-    //     }));
-    //     this.loadTreeNodes();
-    //   });
-    // this.evaluatorService.getAllCheckTargets().subscribe(res => {
-    //   this.evaluators = res;
-    // });
-    // this.convertService.query().subscribe(res => {
-    //   this.listEvalReportBase = res.body;
-    // });
-    // this.frequencyService.getAllCheckFrequency().subscribe(res => {
-    //   this.listOfFrequency = res;
-    // });
-    // this.accountService.identity().subscribe(account => {
-    //   this.account = account;
-    // });
-
     forkJoin({
       evaluators: this.evaluatorService.getAllCheckTargets(),
       converts: this.convertService.query(),
@@ -1189,6 +1142,12 @@ export class PlanComponent implements OnInit {
   toggleAllEvaluations() {
     this.planGrDetail.forEach(report => {
       report.hasEvaluation = this.checkAll ? 0 : 1;
+      if (report.hasEvaluation === 0) {
+        report.result = null;
+        report.note = '';
+        report.image = []; // hoặc null, tùy theo kiểu dữ liệu
+      }
+      // this.onEvaluationToggle(report);
     });
   }
 
