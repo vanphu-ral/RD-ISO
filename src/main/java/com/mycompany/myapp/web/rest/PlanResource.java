@@ -415,7 +415,7 @@ public class PlanResource {
         return reportRepository.getDetailByPlanId(planId);
     }
 
-    @PostMapping
+    @PostMapping("/statistical")
     public Page<PlanStatisticalResponse> getStatistics(
         @RequestBody ReportDTO dto,
         @PageableDefault(size = 10, sort = "reportId", direction = Sort.Direction.DESC) Pageable pageable
@@ -423,10 +423,10 @@ public class PlanResource {
         return planRepository.getPlanStatisticalByManyCriteria(
             dto.getTimeStart(),
             dto.getTimeEnd(),
-            dto.getGroupName(),
-            dto.getTestOfObject(),
-            dto.getReportType(),
-            dto.getSubjectOfAssetmentPlan(),
+            "%" + dto.getGroupName() + "%",
+            "%" + dto.getTestOfObject() + "%",
+            "%" + dto.getReportType() + "%",
+            "%" + dto.getSubjectOfAssetmentPlan() + "%",
             pageable
         );
     }

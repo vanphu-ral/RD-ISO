@@ -156,10 +156,11 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
         "where " +
         "(?1 is null OR ?1 >= p.time_start )" +
         "and ( ?2 is null OR ?2 <= p.timeEnd )" +
-        "and  (?3 is null or rp like rp.group_name like ?3 )" +
+        "and  (?3 is null OR rp.group_name like ?3 )" +
         "and (?4 is null OR rp.test_of_object like ?4 )" +
         "and (?5 is null OR rp.report_type like ?5) " +
-        "and (?6 is null OR  p.subject_of_assetment_plan like ?6 );"
+        "and (?6 is null OR  p.subject_of_assetment_plan like ?6 );",
+        nativeQuery = true
     )
     public Page<PlanStatisticalResponse> getPlanStatisticalByManyCriteria(
         String timeStart,
