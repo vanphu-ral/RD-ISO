@@ -132,6 +132,7 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
         ")\n" +
         "SELECT DISTINCT \n" +
         "\t\tp.name AS planName,\n" +
+        "p.time_start AS timeStart," +
         "\t\tp.subject_of_assetment_plan AS subjectOfAssetmentPlan,\n" +
         "\t\trp.report_type AS reportType,\n" +
         "\t\trp.checker AS checker,\n" +
@@ -154,8 +155,7 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
         "INNER JOIN iso.report rp ON rp.id = pghd.report_id\n" +
         "INNER JOIN iso.plan p ON p.id = rp.plan_id " +
         "where " +
-        "(?1 is null OR ?1 >= p.time_start )" +
-        "and ( ?2 is null OR ?2 <= p.time_end )" +
+        " p.time_start between ?1 and ?2 " +
         "and  (?3 is null OR rp.group_name like ?3 )" +
         "and (?4 is null OR rp.test_of_object like ?4 )" +
         "and (?5 is null OR rp.report_type like ?5) " +

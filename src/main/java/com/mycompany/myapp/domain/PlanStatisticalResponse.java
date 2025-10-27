@@ -20,4 +20,5 @@ public interface PlanStatisticalResponse {
     String getReportType();
     String getChecker();
     String getGroupName();
+    String getTimeStart();
 }

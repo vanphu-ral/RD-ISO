@@ -418,8 +418,8 @@ public class PlanResource {
     @PostMapping("/statistical")
     public Page<PlanStatisticalResponse> getStatistics(@RequestBody ReportDTO dto, @PageableDefault(size = 10) Pageable pageable) {
         return planRepository.getPlanStatisticalByManyCriteria(
-            dto.getTimeStart(),
-            dto.getTimeEnd(),
+            dto.getTimeStart().substring(0, 10) + " 00:00:00.000000",
+            dto.getTimeEnd().substring(0, 10) + " 23:59:59.999999",
             "%" + dto.getGroupName() + "%",
             "%" + dto.getTestOfObject() + "%",
             "%" + dto.getReportType() + "%",
