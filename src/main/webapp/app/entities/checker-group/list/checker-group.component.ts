@@ -51,6 +51,8 @@ export class CheckerGroupComponent implements OnInit {
   filters = {
     code: '',
     name: '',
+    groupCode: '',
+    groupName: '',
     status: '',
     createdAt: '',
     updatedAt: '',
@@ -131,7 +133,9 @@ export class CheckerGroupComponent implements OnInit {
         (!this.filters.status || checkerGroup.status?.toString().includes(this.filters.status)) &&
         (!this.filters.createdAt || createdDate === searchCreatedDate) &&
         (!this.filters.updatedAt || updatedDate === searchUpdatedDate) &&
-        (!this.filters.updateBy || checkerGroup.updateBy?.toLowerCase().includes(this.filters.updateBy.toLowerCase()))
+        (!this.filters.updateBy || checkerGroup.updateBy?.toLowerCase().includes(this.filters.updateBy.toLowerCase())) &&
+        (!this.filters.groupCode || checkerGroup.groupCode?.toLowerCase().includes(this.filters.groupCode.toLowerCase())) &&
+        (!this.filters.groupName || checkerGroup.groupName?.toLowerCase().includes(this.filters.groupName.toLowerCase()))
       );
     });
     this.totalRecords = this.checkerGroupResult.length;

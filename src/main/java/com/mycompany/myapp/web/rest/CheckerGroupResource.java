@@ -125,6 +125,18 @@ public class CheckerGroupResource {
                 if (checkerGroup.getName() != null) {
                     existingCheckerGroup.setName(checkerGroup.getName());
                 }
+                if (checkerGroup.getGroupCode() != null) {
+                    existingCheckerGroup.setGroupCode(checkerGroup.getGroupCode());
+                }
+                if (checkerGroup.getGroupName() != null) {
+                    existingCheckerGroup.setGroupName(checkerGroup.getGroupName());
+                }
+                if (checkerGroup.getFactoryCode() != null) {
+                    existingCheckerGroup.setFactoryCode(checkerGroup.getFactoryCode());
+                }
+                if (checkerGroup.getFactoryName() != null) {
+                    existingCheckerGroup.setFactoryName(checkerGroup.getFactoryName());
+                }
                 if (checkerGroup.getStatus() != null) {
                     existingCheckerGroup.setStatus(checkerGroup.getStatus());
                 }
