@@ -1,32 +1,16 @@
 package com.mycompany.myapp.service.dto;
 
+import java.util.List;
+
 public class ReportDTO {
 
     private String timeStart;
     private String timeEnd;
     private String planName;
-    private String groupName;
-    private String testOfObject;
-    private String reportType;
-    private String subjectOfAssetmentPlan;
-
-    public ReportDTO(
-        String timeStart,
-        String timeEnd,
-        String planName,
-        String groupName,
-        String testOfObject,
-        String reportType,
-        String subjectOfAssetmentPlan
-    ) {
-        this.timeStart = timeStart;
-        this.timeEnd = timeEnd;
-        this.planName = planName;
-        this.groupName = groupName;
-        this.testOfObject = testOfObject;
-        this.reportType = reportType;
-        this.subjectOfAssetmentPlan = subjectOfAssetmentPlan;
-    }
+    private List<String> groupName;
+    private List<String> testOfObject;
+    private List<String> reportType;
+    private List<String> subjectOfAssetmentPlan;
 
     public ReportDTO() {}
 
@@ -54,35 +38,35 @@ public class ReportDTO {
         this.planName = planName;
     }
 
-    public String getGroupName() {
+    public List<String> getGroupName() {
         return groupName;
     }
 
-    public void setGroupName(String groupName) {
+    public void setGroupName(List<String> groupName) {
         this.groupName = groupName;
     }
 
-    public String getTestOfObject() {
+    public List<String> getTestOfObject() {
         return testOfObject;
     }
 
-    public void setTestOfObject(String testOfObject) {
+    public void setTestOfObject(List<String> testOfObject) {
         this.testOfObject = testOfObject;
     }
 
-    public String getReportType() {
+    public List<String> getReportType() {
         return reportType;
     }
 
-    public void setReportType(String reportType) {
+    public void setReportType(List<String> reportType) {
         this.reportType = reportType;
     }
 
-    public String getSubjectOfAssetmentPlan() {
+    public List<String> getSubjectOfAssetmentPlan() {
         return subjectOfAssetmentPlan;
     }
 
-    public void setSubjectOfAssetmentPlan(String subjectOfAssetmentPlan) {
+    public void setSubjectOfAssetmentPlan(List<String> subjectOfAssetmentPlan) {
         this.subjectOfAssetmentPlan = subjectOfAssetmentPlan;
     }
 }
