@@ -98,10 +98,10 @@ export class SummaryReportDetailComponent implements OnInit {
       this.listTestOfObject = res.body || [];
       this.reportDto.testOfObject = this.listTestOfObject.map(item => item.name);
     });
-    this.loadData(1, this.pageSize);
+    this.loadData(0, this.pageSize);
   }
 
-  loadData(page: number = 1, size: number = 10) {
+  loadData(page: number = 0, size: number = 10) {
     this.loading = true;
     this.summaryService.getSummaryReportDetail(this.reportDto, page, size).subscribe({
       next: res => {
