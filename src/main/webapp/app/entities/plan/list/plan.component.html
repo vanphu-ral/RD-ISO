@@ -605,6 +605,7 @@
         <th class="text-center border">Tên kế hoạch</th>
         <th class="text-center border">Người kiểm tra</th>
         <th class="text-center border">Ngày kiểm tra</th>
+        <th class="text-center border">Tạo báo cáo</th>
         <th class="text-center border">Tuỳ chọn</th>
       </tr>
     </ng-template>
@@ -648,6 +649,16 @@
           ></p-calendar>
         </td>
         <td class="text-center border">
+          <p-checkbox
+            [(ngModel)]="item.hasReportCreate"
+            [binary]="true"
+            inputId="hasReportCreate"
+            [trueValue]="1"
+            [falseValue]="0"
+            styleClass="mt-2"
+          ></p-checkbox>
+        </td>
+        <td class="text-center border">
           <div class="action-buttons mx-1">
             <p-button
               icon="pi pi-check"
@@ -689,6 +700,7 @@
       <tr>
         <th class="text-center border">Tên kế hoạch</th>
         <th class="text-center border">Người kiểm tra</th>
+        <th class="text-center border">Tạo báo cáo</th>
         <th class="text-center border">Ngày kiểm tra</th>
         <th class="text-center border">Tuỳ chọn</th>
       </tr>
@@ -711,6 +723,16 @@
         </td>
         <td class="text-center border">
           {{ report.reviewer }}
+        </td>
+        <td class="text-center border">
+          <p-checkbox
+            [(ngModel)]="item.hasReportCreate"
+            [binary]="true"
+            inputId="hasReportCreate"
+            [trueValue]="1"
+            [falseValue]="0"
+            styleClass="mt-2"
+          ></p-checkbox>
         </td>
         <td class="text-center border">
           <p-calendar

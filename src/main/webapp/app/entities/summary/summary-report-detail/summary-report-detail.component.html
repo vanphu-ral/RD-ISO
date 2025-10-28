@@ -15,6 +15,7 @@
       <div class="col col-container-child mx-2">
         <label for="field_selectedBranches">Bộ phận được kiểm tra</label>
         <p-multiSelect
+          [maxSelectedLabels]="1"
           [options]="listBranch"
           optionLabel="name"
           optionValue="name"
@@ -30,6 +31,7 @@
       <div class="col col-container-child mx-2">
         <label for="field_selectedTeams">Tổ được kiểm tra</label>
         <p-multiSelect
+          [maxSelectedLabels]="1"
           [options]="listTeams"
           optionLabel="name"
           optionValue="name"
@@ -43,8 +45,25 @@
         />
       </div>
       <div class="col col-container-child mx-2">
+        <label for="field_TestOfObject">Người được kiểm tra</label>
+        <p-multiSelect
+          [maxSelectedLabels]="1"
+          [options]="listTestOfObject"
+          optionLabel="name"
+          optionValue="name"
+          placeholder="Không đánh giá"
+          [(ngModel)]="reportDto.testOfObject"
+          [showClear]="true"
+          id="field_TestOfObject"
+          display="chip"
+          [appendTo]="'body'"
+          styleClass="w-full"
+        />
+      </div>
+      <div class="col col-container-child mx-2">
         <label for="field_selectedReportType">Loại BBKT</label>
         <p-multiSelect
+          [maxSelectedLabels]="1"
           [options]="listReportType"
           optionLabel="name"
           optionValue="name"
@@ -60,10 +79,6 @@
       <div class="col col-container-child mx-2">
         <label for="searchBtn"> <br /></label>
         <p-button id="searchBtn" label="Tìm kiếm" icon="pi pi-search" class="mt-4" (click)="loadData()"></p-button>
-      </div>
-      <div class="col col-container-child">
-        <label for="searchBtn"> <br /></label>
-        <p-button id="searchBtn" label="Hủy lọc" icon="pi pi-times" class="mt-4" (click)="clearFilters()"></p-button>
       </div>
     </div>
   </div>

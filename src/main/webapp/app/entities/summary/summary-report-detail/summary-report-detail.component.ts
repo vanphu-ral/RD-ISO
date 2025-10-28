@@ -22,6 +22,7 @@ import { CheckerGroupService } from 'app/entities/checker-group/service/checker-
 import { ReportTypeService } from 'app/entities/report-type/service/report-type.service';
 import { DatePipe } from '@angular/common';
 import { EvaluatorService } from 'app/entities/evaluator/service/evaluator.service';
+import { CheckTargetService } from 'app/entities/check-target/service/check-target.service';
 
 @Component({
   selector: 'jhi-summary-report-detail',
@@ -58,6 +59,7 @@ export class SummaryReportDetailComponent implements OnInit {
   statisticalData: any[] = [];
   listEvalReportBase: any = [];
   listEvaluator: any[] = [];
+  listTestOfObject: any[] = [];
 
   // Pagination and loading state
   totalRecords: number = 0;
@@ -70,6 +72,7 @@ export class SummaryReportDetailComponent implements OnInit {
     private checkerGroupService: CheckerGroupService,
     private reportTypeService: ReportTypeService,
     private evaluatorService: EvaluatorService,
+    private checkTargetService: CheckTargetService,
   ) {}
 
   ngOnInit(): void {
@@ -81,12 +84,19 @@ export class SummaryReportDetailComponent implements OnInit {
     this.checkerGroupService.getGroupInfo().subscribe(res => {
       this.listBranch = [...new Map(res.map((item: any) => [item.branchCode, { code: item.branchCode, name: item.branchName }])).values()];
       this.listTeams = res.map((item: any) => ({ code: item.groupCode, name: item.groupName }));
+      this.reportDto.subjectOfAssetmentPlan = this.listBranch.map(item => item.name);
+      this.reportDto.groupName = this.listTeams.map(item => item.name);
     });
     this.reportTypeService.getAllCheckTargets().subscribe(res => {
       this.listReportType = res;
+      this.reportDto.reportType = this.listReportType.map(item => item.name);
     });
     this.evaluatorService.getAllCheckTargets().subscribe(res => {
       this.listEvaluator = res;
+    });
+    this.checkTargetService.query().subscribe(res => {
+      this.listTestOfObject = res.body || [];
+      this.reportDto.testOfObject = this.listTestOfObject.map(item => item.name);
     });
     this.loadData(1, this.pageSize);
   }
@@ -111,13 +121,6 @@ export class SummaryReportDetailComponent implements OnInit {
       ...item,
       checker: this.listEvaluator.find(evalua => evalua.username === item.checker)?.name,
     }));
-  }
-
-  clearFilters() {
-    this.reportDto = {};
-    this.reportDto.timeStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-    this.reportDto.timeEnd = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
-    this.loadData(1, this.pageSize);
   }
 
   onPage(event: any) {

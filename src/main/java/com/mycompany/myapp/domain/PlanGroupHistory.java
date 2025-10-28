@@ -28,6 +28,9 @@ public class PlanGroupHistory implements Serializable {
     @Column(name = "check_date")
     private ZonedDateTime checkDate; // ngày kiểm tra
 
+    @Column(name = "has_report_create")
+    private Integer hasReportCreate;
+
     @Column(name = "type")
     private String type; // loại (Multiple: Trong kế hoạch)
 
@@ -129,5 +132,13 @@ public class PlanGroupHistory implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public void setHasReportCreate(Integer hasReportCreate) {
+        this.hasReportCreate = hasReportCreate;
+    }
+
+    public Integer getHasReportCreate() {
+        return hasReportCreate;
     }
 }
