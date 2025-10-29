@@ -437,4 +437,45 @@ public class PlanResource {
             pageable
         );
     }
+
+    @PostMapping("/statistical/by-group")
+    public Page<PlanStatisticalResponse> getStatisticsByGroup(@RequestBody ReportDTO dto, @PageableDefault(size = 10) Pageable pageable) {
+        System.out.println(dto.getTimeStart().substring(0, 4) + "-" + dto.getTimeStart().substring(5, 7));
+        System.out.println(dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7));
+        List<String> reportType = dto.getReportType();
+        List<String> subjectOfAssetmentPlan = dto.getSubjectOfAssetmentPlan();
+        List<String> groupName = dto.getGroupName();
+        List<String> testOfObject = dto.getTestOfObject();
+        return planRepository.getPlanStatisticalByManyCriteriaByGroup(
+            dto.getTimeStart().substring(0, 4) + "-" + dto.getTimeStart().substring(5, 7),
+            dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7),
+            reportType,
+            subjectOfAssetmentPlan,
+            groupName,
+            testOfObject,
+            pageable
+        );
+    }
+
+    @PostMapping("/statistical/by-subject-assetment-plan")
+    public Page<PlanStatisticalResponse> getPlanStatisticalByManyCriteriaBySubjectAssetmentPlan(
+        @RequestBody ReportDTO dto,
+        @PageableDefault(size = 10) Pageable pageable
+    ) {
+        System.out.println(dto.getTimeStart().substring(0, 4) + "-" + dto.getTimeStart().substring(5, 7));
+        System.out.println(dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7));
+        List<String> reportType = dto.getReportType();
+        List<String> subjectOfAssetmentPlan = dto.getSubjectOfAssetmentPlan();
+        List<String> groupName = dto.getGroupName();
+        List<String> testOfObject = dto.getTestOfObject();
+        return planRepository.getPlanStatisticalByManyCriteriaBySubjectAssetmentPlan(
+            dto.getTimeStart().substring(0, 4) + "-" + dto.getTimeStart().substring(5, 7),
+            dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7),
+            reportType,
+            subjectOfAssetmentPlan,
+            groupName,
+            testOfObject,
+            pageable
+        );
+    }
 }

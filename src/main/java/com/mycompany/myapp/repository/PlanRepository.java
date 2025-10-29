@@ -175,7 +175,7 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
         "FROM iso.plan_group_history_detail pghd " +
         "INNER JOIN iso.report rp ON rp.id = pghd.report_id " +
         "INNER JOIN iso.plan p ON p.id = rp.plan_id " +
-        "WHERE p.time_start BETWEEN ?1 AND ?2" +
+        "WHERE p.time_start BETWEEN ?1 AND ?2 " +
         " and rp.report_type IN ?3  \n" +
         "             and  p.subject_of_assetment_plan IN ?4   \n" +
         "             and  rp.group_name IN ?5  \n" +
@@ -183,6 +183,184 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
         nativeQuery = true
     )
     Page<PlanStatisticalResponse> getPlanStatisticalByManyCriteria(
+        String timeStart,
+        String timeEnd,
+        List<String> reportType,
+        List<String> subjectOfAssetmentPlan,
+        List<String> groupName,
+        List<String> testOfObject,
+        Pageable pageable
+    );
+
+    @Query(
+        value = "SELECT DISTINCT " +
+        "rp.group_name AS groupName, " +
+        "CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0')) AS timeStart, " +
+        "p.subject_of_assetment_plan AS subjectOfAssetmentPlan, " +
+        "rp.report_type AS reportType, " +
+        "rp.checker AS checker, " +
+        "rp.test_of_object AS testOfObject, " +
+        "rp.convert_score AS convertScore, " +
+        "rp.score_scale AS scoreScale, " +
+        // sumOfAudit
+        "(SELECT COUNT(DISTINCT a.plan_group_history_id) " +
+        " FROM iso.plan_group_history_detail a " +
+        " INNER JOIN iso.plan_group_history b ON a.plan_group_history_id = b.id " +
+        " INNER JOIN iso.plan c ON c.id = b.plan_id " +
+        " inner join iso.report d on d.id = a.report_id" +
+        " WHERE d.group_name = rp.group_name) AS sumOfAudit, " +
+        // sumOfNc
+        "(SELECT COUNT(*) " +
+        " FROM iso.plan_group_history_detail a " +
+        " INNER JOIN iso.plan_group_history b ON a.plan_group_history_id = b.id " +
+        " INNER JOIN iso.plan c ON c.id = b.plan_id " +
+        " inner join iso.report d on d.id = a.report_id" +
+        " WHERE d.group_name = rp.group_name AND a.result = 'NC') AS sumOfNc, " +
+        // sumOfLy
+        "(SELECT COUNT(*) " +
+        " FROM iso.plan_group_history_detail a " +
+        " INNER JOIN iso.plan_group_history b ON a.plan_group_history_id = b.id " +
+        " INNER JOIN iso.plan c ON c.id = b.plan_id " +
+        " inner join iso.report d on d.id = a.report_id" +
+        " WHERE d.group_name = rp.group_name  AND a.result = 'LY') AS sumOfLy, " +
+        // sumOfFail
+        "(SELECT COUNT(*) " +
+        " FROM iso.plan_group_history_detail a " +
+        " INNER JOIN iso.plan_group_history b ON a.plan_group_history_id = b.id " +
+        " INNER JOIN iso.plan c ON c.id = b.plan_id " +
+        " inner join iso.report d on d.id = a.report_id" +
+        " WHERE d.group_name = rp.group_name AND a.result = 'Không đạt') AS sumOfFail, " +
+        // sumOfPass
+        "(SELECT COUNT(*) " +
+        " FROM iso.plan_group_history_detail a " +
+        " INNER JOIN iso.plan_group_history b ON a.plan_group_history_id = b.id " +
+        " INNER JOIN iso.plan c ON c.id = b.plan_id " +
+        " inner join iso.report d on d.id = a.report_id" +
+        " WHERE d.group_name = rp.group_name AND (a.result = 'Đạt' OR a.result = 'PASS')) AS sumOfPass, " +
+        // total
+        "(SELECT COUNT(*) " +
+        " FROM iso.plan_group_history_detail a " +
+        " INNER JOIN iso.plan_group_history b ON a.plan_group_history_id = b.id " +
+        " INNER JOIN iso.plan c ON c.id = b.plan_id " +
+        " inner join iso.report d on d.id = a.report_id" +
+        " WHERE d.group_name = rp.group_name ) AS total, " +
+        // sumOfUncheck
+        "(SELECT COUNT(*) " +
+        " FROM iso.recheck_remediation_plan_detail rrpd " +
+        " INNER JOIN iso.remediation_plan_detail rpd ON rpd.id = rrpd.remediation_plan_detail_id " +
+        " INNER JOIN iso.remediation_plan rps ON rps.id = rpd.remediation_plan_id " +
+        " INNER JOIN iso.plan c ON c.id = rps.plan_id " +
+        " inner join iso.report d on d.id = rps.report_id" +
+        " WHERE d.group_name = rp.group_name AND rrpd.result = 'Không đạt') AS sumOfUncheck " +
+        "FROM iso.plan_group_history_detail pghd " +
+        "INNER JOIN iso.report rp ON rp.id = pghd.report_id " +
+        "INNER JOIN iso.plan p ON p.id = rp.plan_id " +
+        "WHERE CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0')) BETWEEN ?1 AND ?2 " +
+        " and rp.report_type IN ?3  \n" +
+        "             and p.subject_of_assetment_plan IN ?4   \n" +
+        "             and rp.group_name IN ?5  \n" +
+        "             and rp.test_of_object IN ?6 ",
+        countQuery = "SELECT COUNT(DISTINCT rp.id) " +
+        "FROM iso.plan_group_history_detail pghd " +
+        "INNER JOIN iso.report rp ON rp.id = pghd.report_id " +
+        "INNER JOIN iso.plan p ON p.id = rp.plan_id " +
+        "WHERE CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0')) BETWEEN ?1 AND ?2" +
+        " and rp.report_type IN ?3  \n" +
+        "             and  p.subject_of_assetment_plan IN ?4   \n" +
+        "             and  rp.group_name IN ?5  \n" +
+        "             and  rp.test_of_object IN ?6 ",
+        nativeQuery = true
+    )
+    Page<PlanStatisticalResponse> getPlanStatisticalByManyCriteriaByGroup(
+        String timeStart,
+        String timeEnd,
+        List<String> reportType,
+        List<String> subjectOfAssetmentPlan,
+        List<String> groupName,
+        List<String> testOfObject,
+        Pageable pageable
+    );
+
+    @Query(
+        value = "SELECT DISTINCT " +
+        "rp.group_name AS groupName, " +
+        "CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0')) AS timeStart, " +
+        "p.subject_of_assetment_plan AS subjectOfAssetmentPlan, " +
+        "rp.report_type AS reportType, " +
+        "rp.checker AS checker, " +
+        "rp.test_of_object AS testOfObject, " +
+        "rp.convert_score AS convertScore, " +
+        "rp.score_scale AS scoreScale, " +
+        // sumOfAudit
+        "(SELECT COUNT(DISTINCT a.plan_group_history_id) " +
+        " FROM iso.plan_group_history_detail a " +
+        " INNER JOIN iso.plan_group_history b ON a.plan_group_history_id = b.id " +
+        " INNER JOIN iso.plan c ON c.id = b.plan_id " +
+        " inner join iso.report d on d.id = a.report_id" +
+        " WHERE c.subject_of_assetment_plan = p.subject_of_assetment_plan) AS sumOfAudit, " +
+        // sumOfNc
+        "(SELECT COUNT(*) " +
+        " FROM iso.plan_group_history_detail a " +
+        " INNER JOIN iso.plan_group_history b ON a.plan_group_history_id = b.id " +
+        " INNER JOIN iso.plan c ON c.id = b.plan_id " +
+        " inner join iso.report d on d.id = a.report_id" +
+        " WHERE c.subject_of_assetment_plan = p.subject_of_assetment_plan AND a.result = 'NC') AS sumOfNc, " +
+        // sumOfLy
+        "(SELECT COUNT(*) " +
+        " FROM iso.plan_group_history_detail a " +
+        " INNER JOIN iso.plan_group_history b ON a.plan_group_history_id = b.id " +
+        " INNER JOIN iso.plan c ON c.id = b.plan_id " +
+        " inner join iso.report d on d.id = a.report_id" +
+        " WHERE c.subject_of_assetment_plan = p.subject_of_assetment_plan  AND a.result = 'LY') AS sumOfLy, " +
+        // sumOfFail
+        "(SELECT COUNT(*) " +
+        " FROM iso.plan_group_history_detail a " +
+        " INNER JOIN iso.plan_group_history b ON a.plan_group_history_id = b.id " +
+        " INNER JOIN iso.plan c ON c.id = b.plan_id " +
+        " inner join iso.report d on d.id = a.report_id" +
+        " WHERE c.subject_of_assetment_plan = p.subject_of_assetment_plan AND a.result = 'Không đạt') AS sumOfFail, " +
+        // sumOfPass
+        "(SELECT COUNT(*) " +
+        " FROM iso.plan_group_history_detail a " +
+        " INNER JOIN iso.plan_group_history b ON a.plan_group_history_id = b.id " +
+        " INNER JOIN iso.plan c ON c.id = b.plan_id " +
+        " inner join iso.report d on d.id = a.report_id" +
+        " WHERE c.subject_of_assetment_plan = p.subject_of_assetment_plan AND (a.result = 'Đạt' OR a.result = 'PASS')) AS sumOfPass, " +
+        // total
+        "(SELECT COUNT(*) " +
+        " FROM iso.plan_group_history_detail a " +
+        " INNER JOIN iso.plan_group_history b ON a.plan_group_history_id = b.id " +
+        " INNER JOIN iso.plan c ON c.id = b.plan_id " +
+        " inner join iso.report d on d.id = a.report_id" +
+        " WHERE c.subject_of_assetment_plan = p.subject_of_assetment_plan ) AS total, " +
+        // sumOfUncheck
+        "(SELECT COUNT(*) " +
+        " FROM iso.recheck_remediation_plan_detail rrpd " +
+        " INNER JOIN iso.remediation_plan_detail rpd ON rpd.id = rrpd.remediation_plan_detail_id " +
+        " INNER JOIN iso.remediation_plan rps ON rps.id = rpd.remediation_plan_id " +
+        " INNER JOIN iso.plan c ON c.id = rps.plan_id " +
+        " inner join iso.report d on d.id = rps.report_id" +
+        " WHERE c.subject_of_assetment_plan = p.subject_of_assetment_plan AND rrpd.result = 'Không đạt') AS sumOfUncheck " +
+        "FROM iso.plan_group_history_detail pghd " +
+        "INNER JOIN iso.report rp ON rp.id = pghd.report_id " +
+        "INNER JOIN iso.plan p ON p.id = rp.plan_id " +
+        "WHERE CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0')) BETWEEN ?1 AND ?2 " +
+        " and rp.report_type IN ?3  \n" +
+        "             and p.subject_of_assetment_plan IN ?4   \n" +
+        "             and rp.group_name IN ?5  \n" +
+        "             and rp.test_of_object IN ?6 ",
+        countQuery = "SELECT COUNT(DISTINCT rp.id) " +
+        "FROM iso.plan_group_history_detail pghd " +
+        "INNER JOIN iso.report rp ON rp.id = pghd.report_id " +
+        "INNER JOIN iso.plan p ON p.id = rp.plan_id " +
+        "WHERE CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0')) BETWEEN ?1 AND ?2" +
+        " and rp.report_type IN ?3  \n" +
+        "             and  p.subject_of_assetment_plan IN ?4   \n" +
+        "             and  rp.group_name IN ?5  \n" +
+        "             and  rp.test_of_object IN ?6 ",
+        nativeQuery = true
+    )
+    Page<PlanStatisticalResponse> getPlanStatisticalByManyCriteriaBySubjectAssetmentPlan(
         String timeStart,
         String timeEnd,
         List<String> reportType,
