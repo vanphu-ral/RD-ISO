@@ -83,8 +83,8 @@ export class SummaryDetailComponent implements OnInit {
     this.convertService.query().subscribe(res => {
       this.listEvalReportBase = res.body || [];
     });
-    this.checkerGroupService.getGroupInfo().subscribe(res => {
-      this.listBranch = [...new Map(res.map((item: any) => [item.branchCode, { code: item.branchCode, name: item.branchName }])).values()];
+    this.checkerGroupService.getAllCheckerGroups().subscribe(res => {
+      this.listBranch = [...new Map(res.map((item: any) => [item.code, { code: item.code, name: item.name }])).values()];
       this.listTeams = res.map((item: any) => ({ code: item.groupCode, name: item.groupName }));
       this.reportDto.subjectOfAssetmentPlan = this.listBranch.map(item => item.name);
       this.reportDto.groupName = this.listTeams.map(item => item.name);

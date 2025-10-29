@@ -194,10 +194,10 @@ export class PlanUpdateComponent implements OnInit {
       const checkGroupId = this.checkerGroups.find(x => x.name === this.plan?.subjectOfAssetmentPlan)?.id;
       this.checkTargets = this.checkTargetBases.filter(x => x.checkGroupId === checkGroupId);
       const checkGroupCode = this.checkerGroups.find(x => x.name === this.plan?.subjectOfAssetmentPlan)?.code;
-      this.groupInfo = this.groupInfoBase.filter(x => x.branchCode === checkGroupCode);
+      this.groupInfo = this.checkerGroupBase.filter(x => x.code === checkGroupCode);
     });
 
-    this.checkerGroupService.getGroupInfo().subscribe(res => {
+    this.checkerGroupService.getAllCheckerGroups().subscribe(res => {
       this.groupInfoBase = res;
     });
 
@@ -640,7 +640,7 @@ export class PlanUpdateComponent implements OnInit {
 
   checkGroup() {
     const checkGroupCode = this.checkerGroups.find(x => x.name === this.editForm.get('subjectOfAssetmentPlan')?.value)?.code;
-    this.groupInfo = this.groupInfoBase.filter(x => x.branchCode === checkGroupCode);
+    this.groupInfo = this.groupInfoBase.filter(x => x.code === checkGroupCode);
     if (this.groupInfo.length === 0) {
       Swal.fire({
         title: 'Error',
