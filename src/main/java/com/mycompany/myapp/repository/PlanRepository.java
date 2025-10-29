@@ -200,7 +200,7 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
     );
 
     @Query(
-        value = "SELECT DISTINCT (rp.group_name AS groupName), " +
+        value = "SELECT DISTINCT (rp.group_name) AS groupName, " +
         "CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0')) AS timeStart, " +
         "p.subject_of_assetment_plan AS subjectOfAssetmentPlan, " +
         "rp.report_type AS reportType, " +
@@ -213,7 +213,7 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
         " INNER JOIN iso.plan_group_history b ON a.plan_group_history_id = b.id " +
         " INNER JOIN iso.plan c ON c.id = b.plan_id " +
         " inner join iso.report d on d.id = a.report_id" +
-        " WHERE c.subject_of_assetment_plan = p.subject_of_assetment_plan AND d.report_type = rp.report_type" +
+        " WHERE c.subject_of_assetment_plan = p.subject_of_assetment_plan AND d.report_type = rp.report_type " +
         " AND CONCAT(YEAR(c.time_start), '-', LPAD(MONTH(c.time_start), 2, '0')) = CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0'))) AS sumOfReport, " +
         // sumOfAudit
         "(SELECT COUNT(DISTINCT a.plan_group_history_id) " +
