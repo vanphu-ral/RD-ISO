@@ -163,7 +163,13 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
         " INNER JOIN iso.remediation_plan_detail rpd ON rpd.id = rrpd.remediation_plan_detail_id " +
         " INNER JOIN iso.remediation_plan rps ON rps.id = rpd.remediation_plan_id " +
         " INNER JOIN iso.plan c ON c.id = rps.plan_id " +
-        " WHERE rps.report_id = rp.id AND rrpd.result = 'Không đạt') AS sumOfUncheck " +
+        " WHERE rps.report_id = rp.id AND rrpd.result = 'Không đạt') AS sumOfUncheck, " +
+        "(SELECT COUNT(*) " +
+        " FROM iso.recheck_remediation_plan_detail rrpd " +
+        " INNER JOIN iso.remediation_plan_detail rpd ON rpd.id = rrpd.remediation_plan_detail_id " +
+        " INNER JOIN iso.remediation_plan rps ON rps.id = rpd.remediation_plan_id " +
+        " INNER JOIN iso.plan c ON c.id = rps.plan_id " +
+        " WHERE rps.report_id = rp.id AND rrpd.result = 'Đạt') AS sumOfCheck " +
         "FROM iso.plan_group_history_detail pghd " +
         "INNER JOIN iso.report rp ON rp.id = pghd.report_id " +
         "INNER JOIN iso.plan p ON p.id = rp.plan_id " +
@@ -194,8 +200,7 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
     );
 
     @Query(
-        value = "SELECT DISTINCT " +
-        "rp.group_name AS groupName, " +
+        value = "SELECT DISTINCT (rp.group_name AS groupName), " +
         "CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0')) AS timeStart, " +
         "p.subject_of_assetment_plan AS subjectOfAssetmentPlan, " +
         "rp.report_type AS reportType, " +
