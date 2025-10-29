@@ -25,6 +25,7 @@ import { PlanGroupService } from 'app/entities/plan-group/service/plan-group.ser
 import { ReportDTO } from '../summary.model';
 import { NoZeroDecimalPipe } from 'app/shared/pipe/no-zero-decimal.pipe';
 import { DatePipe } from '@angular/common';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'jhi-summary-detail',
@@ -80,27 +81,30 @@ export class SummaryDetailComponent implements OnInit {
   ngOnInit(): void {
     this.reportDto.timeStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
     this.reportDto.timeEnd = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
-    this.convertService.query().subscribe(res => {
-      this.listEvalReportBase = res.body || [];
-    });
-    this.checkerGroupService.getAllCheckerGroups().subscribe(res => {
-      this.listBranch = [...new Map(res.map((item: any) => [item.code, { code: item.code, name: item.name }])).values()];
-      this.listTeams = res.map((item: any) => ({ code: item.groupCode, name: item.groupName }));
+    const convert$ = this.convertService.query();
+    const checkerGroup$ = this.checkerGroupService.getAllCheckerGroups();
+    const reportType$ = this.reportTypeService.getAllCheckTargets();
+    const evaluator$ = this.evaluatorService.getAllCheckTargets();
+    const checkTarget$ = this.checkTargetService.query();
+    forkJoin({
+      convert: convert$,
+      checkerGroup: checkerGroup$,
+      reportType: reportType$,
+      evaluator: evaluator$,
+      checkTarget: checkTarget$,
+    }).subscribe(({ convert, checkerGroup, reportType, evaluator, checkTarget }) => {
+      this.listEvalReportBase = convert.body || [];
+      this.listBranch = [...new Map(checkerGroup.map((item: any) => [item.code, { code: item.code, name: item.name }])).values()];
+      this.listTeams = checkerGroup.map((item: any) => ({ code: item.groupCode, name: item.groupName }));
       this.reportDto.subjectOfAssetmentPlan = this.listBranch.map(item => item.name);
       this.reportDto.groupName = this.listTeams.map(item => item.name);
-    });
-    this.reportTypeService.getAllCheckTargets().subscribe(res => {
-      this.listReportType = res;
+      this.listReportType = reportType;
       this.reportDto.reportType = this.listReportType.map(item => item.name);
-    });
-    this.evaluatorService.getAllCheckTargets().subscribe(res => {
-      this.listEvaluator = res;
-    });
-    this.checkTargetService.query().subscribe(res => {
-      this.listTestOfObject = res.body || [];
+      this.listEvaluator = evaluator;
+      this.listTestOfObject = checkTarget.body || [];
       this.reportDto.testOfObject = this.listTestOfObject.map(item => item.name);
+      this.loadData(0, this.pageSize);
     });
-    this.loadData(0, this.pageSize);
   }
 
   loadData(page: number = 0, size: number = 10) {
