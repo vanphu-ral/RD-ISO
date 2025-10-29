@@ -1,6 +1,6 @@
 export interface ReportDTO {
-  timeStart?: Date;
-  timeEnd?: Date;
+  timeStart?: any;
+  timeEnd?: any;
   groupName?: any[];
   testOfObject?: any[];
   reportType?: any[];
