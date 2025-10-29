@@ -228,6 +228,7 @@ export class InspectionPlanComponent implements OnInit {
     data.status = 'Đang xử lý';
     const arrSubmit = this.selectedRows.map(item => {
       return {
+        reportId: item.reportId,
         criterialGroupName: item.criterialGroupName,
         criterialName: item.criterialName,
         convertScore: item.convertScore,

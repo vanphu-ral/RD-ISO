@@ -16,6 +16,9 @@ public class RemediationPlanDetail implements Serializable {
     @Column(name = "remediation_plan_id")
     private Long remediationPlanId;
 
+    @Column(name = "report_id")
+    private Long reportId;
+
     @Column(name = "criterial_name")
     private String criterialName;
 
@@ -162,5 +165,13 @@ public class RemediationPlanDetail implements Serializable {
 
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public Long getReportId() {
+        return reportId;
+    }
+
+    public void setReportId(Long reportId) {
+        this.reportId = reportId;
     }
 }
