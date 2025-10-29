@@ -43,6 +43,8 @@ export class CheckerGroupService {
 
   create(checkerGroup: NewCheckerGroup): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(checkerGroup);
+    copy.factoryCode = '00';
+    copy.factoryName = 'Xưởng LED';
     return this.http
       .post<RestCheckerGroup>(this.resourceUrl, copy, { observe: 'response' })
       .pipe(map(res => this.convertResponseFromServer(res)));

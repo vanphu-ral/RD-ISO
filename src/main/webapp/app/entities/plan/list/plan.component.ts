@@ -1118,14 +1118,12 @@ export class PlanComponent implements OnInit {
   }
 
   onFrequencySelect(selectedFrequencies: string[]): void {
-    if (!selectedFrequencies || selectedFrequencies.length === 0) return;
+    if (!selectedFrequencies) selectedFrequencies = [];
     this.planGrDetail.forEach(report => {
-      if (selectedFrequencies.includes(report.frequency)) {
-        report.hasEvaluation = 0;
-        this.onEvaluationToggle(report);
-      } else {
+      if (selectedFrequencies.length === 0 || !selectedFrequencies.includes(report.frequency)) {
         report.hasEvaluation = 1;
-        this.onEvaluationToggle(report);
+      } else {
+        report.hasEvaluation = 0;
       }
     });
   }

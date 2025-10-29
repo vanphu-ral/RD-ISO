@@ -12,6 +12,7 @@ import { CheckerGroupService } from '../service/checker-group.service';
 import { CheckerGroupFormService, CheckerGroupFormGroup } from './checker-group-form.service';
 import { Account } from 'app/core/auth/account.model';
 import { AccountService } from 'app/core/auth/account.service';
+import { RadioButton, RadioButtonModule } from 'primeng/radiobutton';
 import dayjs from 'dayjs/esm';
 import Swal from 'sweetalert2';
 
@@ -19,7 +20,7 @@ import Swal from 'sweetalert2';
   standalone: true,
   selector: 'jhi-checker-group-update',
   templateUrl: './checker-group-update.component.html',
-  imports: [SharedModule, FormsModule, ReactiveFormsModule],
+  imports: [SharedModule, FormsModule, ReactiveFormsModule, RadioButtonModule],
 })
 export class CheckerGroupUpdateComponent implements OnInit {
   isSaving = false;
@@ -55,12 +56,12 @@ export class CheckerGroupUpdateComponent implements OnInit {
         });
       }
     });
-    this.editForm.get('code')?.addValidators([Validators.required]);
-    this.editForm.get('code')?.setAsyncValidators([this.duplicateNameValidator.bind(this)]);
-    this.editForm.get('code')?.updateValueAndValidity();
-    this.editForm.get('name')?.addValidators([Validators.required]);
-    this.editForm.get('name')?.setAsyncValidators([this.duplicateNameValidator.bind(this)]);
-    this.editForm.get('name')?.updateValueAndValidity();
+    this.editForm.get('groupCode')?.addValidators([Validators.required]);
+    this.editForm.get('groupCode')?.setAsyncValidators([this.duplicateNameValidator.bind(this)]);
+    this.editForm.get('groupCode')?.updateValueAndValidity();
+    this.editForm.get('groupName')?.addValidators([Validators.required]);
+    this.editForm.get('groupName')?.setAsyncValidators([this.duplicateNameValidator.bind(this)]);
+    this.editForm.get('groupName')?.updateValueAndValidity();
   }
 
   previousState(): void {

@@ -43,7 +43,7 @@
             formControlName="checkGroupId"
             name="checkGroupId"
           >
-            <option *ngFor="let item of checkGroups" [value]="item.id">{{ item.name }}</option>
+            <option *ngFor="let item of checkGroups" [value]="item.id">{{ item.name }} - {{ item.groupName }}</option>
           </select>
         </div>
 

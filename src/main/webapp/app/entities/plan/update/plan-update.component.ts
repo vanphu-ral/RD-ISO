@@ -106,6 +106,7 @@ export class PlanUpdateComponent implements OnInit {
   checkTargets: any[] = [];
   checkTargetBases: any[] = [];
   checkerGroups: any[] = [];
+  checkerGroupBase: any[] = [];
   groupInfo: any[] = [];
   groupInfoBase: any[] = [];
   reportTypes: any[] = [];
@@ -188,7 +189,8 @@ export class PlanUpdateComponent implements OnInit {
     });
 
     this.checkerGroupService.getAllCheckerGroups().subscribe(res => {
-      this.checkerGroups = res;
+      this.checkerGroupBase = res;
+      this.checkerGroups = [...new Map(res.map((item: any) => [item.code, { code: item.code, name: item.name }])).values()];
       const checkGroupId = this.checkerGroups.find(x => x.name === this.plan?.subjectOfAssetmentPlan)?.id;
       this.checkTargets = this.checkTargetBases.filter(x => x.checkGroupId === checkGroupId);
       const checkGroupCode = this.checkerGroups.find(x => x.name === this.plan?.subjectOfAssetmentPlan)?.code;
@@ -617,8 +619,9 @@ export class PlanUpdateComponent implements OnInit {
   }
 
   checkValid() {
-    const checkGroupId = this.checkerGroups.find(x => x.name === this.editForm.get('subjectOfAssetmentPlan')?.value)?.id;
-    this.checkTargets = this.checkTargetBases.filter(x => x.checkGroupId === checkGroupId);
+    const checkGroupCode = this.checkerGroupBase.find(x => x.name === this.editForm.get('subjectOfAssetmentPlan')?.value)?.code;
+    const groupIds = this.checkerGroupBase.filter(group => group.code === checkGroupCode).map(group => group.id);
+    this.checkTargets = this.checkTargetBases.filter(person => groupIds.includes(person.checkGroupId));
     this.listReports.forEach(report => {
       const found = this.checkTargets.find(x => x.name === report.testOfObject);
       if (!found) {
@@ -649,8 +652,9 @@ export class PlanUpdateComponent implements OnInit {
   }
 
   checkTarget() {
-    const checkGroupId = this.checkerGroups.find(x => x.name === this.editForm.get('subjectOfAssetmentPlan')?.value)?.id;
-    this.checkTargets = this.checkTargetBases.filter(x => x.checkGroupId === checkGroupId);
+    const checkGroupCode = this.checkerGroupBase.find(x => x.name === this.editForm.get('subjectOfAssetmentPlan')?.value)?.code;
+    const groupIds = this.checkerGroupBase.filter(group => group.code === checkGroupCode).map(group => group.id);
+    this.checkTargets = this.checkTargetBases.filter(person => groupIds.includes(person.checkGroupId));
     if (this.checkTargets.length === 0) {
       Swal.fire({
         title: 'Error',
