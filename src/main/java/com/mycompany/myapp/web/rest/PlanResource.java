@@ -452,7 +452,6 @@ public class PlanResource {
             reportType,
             subjectOfAssetmentPlan,
             groupName,
-            testOfObject,
             pageable
         );
     }
