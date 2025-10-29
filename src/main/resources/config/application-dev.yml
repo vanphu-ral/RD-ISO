@@ -32,9 +32,9 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mariadb://localhost:3306/ISO?useLegacyDatetimeCode=false
+    url: jdbc:mariadb://172.168.6.99:3308/ISO?useLegacyDatetimeCode=false
     username: root
-    password:
+    password: Rangdong@123
     hikari:
       poolName: Hikari
       auto-commit: false

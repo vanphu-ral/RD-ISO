@@ -473,8 +473,6 @@ public class PlanResource {
             dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7),
             reportType,
             subjectOfAssetmentPlan,
-            groupName,
-            testOfObject,
             pageable
         );
     }

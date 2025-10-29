@@ -1,5 +1,7 @@
 package com.mycompany.myapp.domain;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+
 public interface PlanStatisticalResponse {
     Integer getPlanGroupHistoryId();
     String getPlanGroupHistoryCode();
@@ -25,4 +27,6 @@ public interface PlanStatisticalResponse {
     Integer getSumOfPass();
     Integer getTotal();
     Integer getSumOfUncheck();
+    Integer getSumOfCheck();
+    Integer getSumOfReport();
 }
