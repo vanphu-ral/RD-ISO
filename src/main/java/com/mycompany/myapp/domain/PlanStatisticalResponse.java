@@ -19,14 +19,15 @@ public interface PlanStatisticalResponse {
     Integer getSumOfFail();
     String getPlanName();
     Integer getPlanId();
-    String getSubjectOfAssetmentPlan();
-    String getReportType();
-    String getChecker();
-    String getGroupName();
-    String getTimeStart();
-    Integer getSumOfPass();
+    String getSubjectOfAssetmentPlan(); // nganh
+    String getReportType(); // loai bien ban
+    String getChecker(); // nguoi kiem tra
+    String getGroupName(); // ten nganh
+    String getTimeStart(); // thoi gian bat dau
+    Integer getSumOfPass(); // tong so tieu chi pass
     Integer getTotal();
-    Integer getSumOfUncheck();
-    Integer getSumOfCheck();
-    Integer getSumOfReport();
+    Integer getSumOfUncheck(); // tong so loi chua khac phuc
+    Integer getSumOfCheck(); // tong so loi da khac phuc
+    Integer getSumOfReport(); // tong so bien ban kiem tra
+    Integer getSumOfCreateReport(); // tong so bien ban da tao bao cao
 }

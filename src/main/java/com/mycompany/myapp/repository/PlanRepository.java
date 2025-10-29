@@ -127,6 +127,14 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
         " INNER JOIN iso.plan_group_history b ON a.plan_group_history_id = b.id " +
         " INNER JOIN iso.plan c ON c.id = b.plan_id " +
         " WHERE a.report_id = rp.id) AS sumOfAudit, " +
+        // sumOfCreate report
+        "(SELECT COUNT(DISTINCT (b.id)) " +
+        " FROM iso.plan_group_history_detail a " +
+        " INNER JOIN iso.plan_group_history b ON a.plan_group_history_id = b.id " +
+        " INNER JOIN iso.plan c ON c.id = b.plan_id " +
+        " inner join iso.report d on d.id = a.report_id" +
+        " WHERE d.id = rp.id " +
+        " AND b.has_report_create = 1 ) AS sumOfCreateReport, " +
         // sumOfNc
         "(SELECT COUNT(*) " +
         " FROM iso.plan_group_history_detail a " +
@@ -212,8 +220,17 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
         " INNER JOIN iso.plan_group_history b ON a.plan_group_history_id = b.id " +
         " INNER JOIN iso.plan c ON c.id = b.plan_id " +
         " inner join iso.report d on d.id = a.report_id" +
-        " WHERE c.subject_of_assetment_plan = p.subject_of_assetment_plan AND d.report_type = rp.report_type " +
+        " WHERE d.group_name = rp.group_name AND c.subject_of_assetment_plan = p.subject_of_assetment_plan AND d.report_type = rp.report_type " +
         " AND CONCAT(YEAR(c.time_start), '-', LPAD(MONTH(c.time_start), 2, '0')) = CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0'))) AS sumOfReport, " +
+        // sumOfCreate report
+        "(SELECT COUNT(DISTINCT (b.id)) " +
+        " FROM iso.plan_group_history_detail a " +
+        " INNER JOIN iso.plan_group_history b ON a.plan_group_history_id = b.id " +
+        " INNER JOIN iso.plan c ON c.id = b.plan_id " +
+        " inner join iso.report d on d.id = a.report_id" +
+        " WHERE d.group_name = rp.group_name AND c.subject_of_assetment_plan = p.subject_of_assetment_plan AND d.report_type = rp.report_type" +
+        " AND CONCAT(YEAR(c.time_start), '-', LPAD(MONTH(c.time_start), 2, '0')) = CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0'))" +
+        " AND b.has_report_create = 1 ) AS sumOfCreateReport, " +
         // sumOfAudit
         "(SELECT COUNT(DISTINCT a.plan_group_history_id) " +
         " FROM iso.plan_group_history_detail a " +
@@ -327,6 +344,15 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
         " inner join iso.report d on d.id = a.report_id" +
         " WHERE c.subject_of_assetment_plan = p.subject_of_assetment_plan AND d.report_type = rp.report_type" +
         " AND CONCAT(YEAR(c.time_start), '-', LPAD(MONTH(c.time_start), 2, '0')) = CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0'))) AS sumOfReport, " +
+        // sumOfCreate report
+        "(SELECT COUNT(DISTINCT (b.id)) " +
+        " FROM iso.plan_group_history_detail a " +
+        " INNER JOIN iso.plan_group_history b ON a.plan_group_history_id = b.id " +
+        " INNER JOIN iso.plan c ON c.id = b.plan_id " +
+        " inner join iso.report d on d.id = a.report_id" +
+        " WHERE c.subject_of_assetment_plan = p.subject_of_assetment_plan AND d.report_type = rp.report_type" +
+        " AND CONCAT(YEAR(c.time_start), '-', LPAD(MONTH(c.time_start), 2, '0')) = CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0'))" +
+        " AND b.has_report_create = 1 ) AS sumOfCreateReport, " +
         // sumOfNc
         "(SELECT COUNT(*) " +
         " FROM iso.plan_group_history_detail a " +
