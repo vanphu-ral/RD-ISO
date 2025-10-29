@@ -76,14 +76,11 @@
           styleClass="w-full"
         />
       </div>
-      <div class="col col-container-child mx-2">
-        <label for="searchBtn"> <br /></label>
-        <p-button id="searchBtn" label="Tìm kiếm" icon="pi pi-search" class="mt-4" (click)="loadData()"></p-button>
-      </div>
     </div>
   </div>
 
   <div class="d-flex justify-content-end">
+    <button pButton type="button" label="Tìm kiếm" icon="pi pi-search" class="p-button-infor" (click)="loadData()"></button>
     <button pButton type="button" label="Xuất Excel" icon="pi pi-file-excel" class="p-button-success"></button>
   </div>
 
@@ -139,6 +136,16 @@
           <td>{{ row.sumOfPass }}</td>
           <td>{{ row.sumOfFail }}</td>
           <td>{{ row.sumOfUncheck }}</td>
+          <td>
+            <button
+              pButton
+              pRipple
+              type="button"
+              icon="pi pi-eye"
+              class="p-button-rounded p-button-success mr-2"
+              (click)="showDialogGeneralCheckPlan(row)"
+            ></button>
+          </td>
         </tr>
       </ng-template>
       <ng-template pTemplate="empty">
@@ -149,3 +156,149 @@
     </p-table>
   </div>
 </div>
+
+<!-- view detail -->
+
+<p-dialog
+  header="Tổng hợp biên bản kiểm tra"
+  [resizable]="false"
+  [modal]="true"
+  [maximizable]="true"
+  appendTo="body"
+  [(visible)]="dialogGeneralCheckPlan"
+  [style]="{ width: '80vw' }"
+  [contentStyle]="{ height: '70vh' }"
+>
+  <div class="col-container">
+    <div class="col-m4-25 col-container-child">
+      <label for="">Mã BBKT</label>
+      <input type="text" class="inp-style" [(ngModel)]="reportSelected.reportCode" readonly />
+    </div>
+
+    <div class="col-m4-25 col-container-child">
+      <label for="">Tên BBKT</label>
+      <input type="text" class="inp-style" [(ngModel)]="reportSelected.reportName" readonly />
+    </div>
+
+    <div class="col-m4-25 col-container-child">
+      <label for="">Đối tượng kế hoạch đánh giá</label>
+      <input type="text" class="inp-style" [(ngModel)]="reportSelected.testOfObject" readonly />
+    </div>
+
+    <div class="col-m4-25 col-container-child">
+      <label for="">Kiểu quy đổi</label>
+      <input type="text" class="inp-style" [(ngModel)]="reportSelected.convertScore" readonly />
+    </div>
+  </div>
+  <p-table
+    [value]="checkPlanDetails"
+    [paginator]="true"
+    [rows]="100"
+    [responsive]="true"
+    styleClass="p-datatable-gridlines"
+    [rowsPerPageOptions]="[5, 10, 20]"
+    [autoLayout]="true"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="text-center border">STT</th>
+        <th class="text-center border">Điểm theo đợt kiểm tra</th>
+        <th class="text-center border">Mã kế hoạch</th>
+        <th class="text-center border">Tên kế hoạch</th>
+        <th class="text-center border">Ngày kiểm tra</th>
+        <ng-container *ngIf="reportSelected.convertScore == 'Tính điểm'; else buocNhayTH">
+          <th class="text-center border">NC</th>
+          <th class="text-center border">LY</th>
+        </ng-container>
+        <ng-template #buocNhayTH>
+          <th class="text-center border">Không đạt</th>
+        </ng-template>
+        <th class="text-center border">Tuỳ chọn</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-reportSum let-index="rowIndex">
+      <tr>
+        <td class="text-center border">{{ index + 1 }}</td>
+        <td class="text-center border">{{ totalPointSummarize(reportSum) }}</td>
+        <td class="text-center border">{{ reportSum.planGroupHistoryCode }}</td>
+        <td class="text-center border">{{ reportSum.planGroupHistoryName }}</td>
+        <td class="text-center border">{{ reportSum.checkDate }}</td>
+        <ng-container *ngIf="reportSelected.convertScore == 'Tính điểm'; else buocNhay">
+          <td class="text-center border">{{ reportSum.sumOfNc }}</td>
+          <td class="text-center border">{{ reportSum.sumOfLy }}</td>
+        </ng-container>
+        <ng-template #buocNhay>
+          <td class="text-center border">{{ reportSum.sumOfFail }}</td>
+        </ng-template>
+        <td class="text-center border">
+          <div class="action-buttons">
+            <p-button
+              icon="pi pi-reply"
+              aria-label="check"
+              styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+              [severity]="'info'"
+              title="Chi tiết"
+              (onClick)="showDialogSummaryOfCriteriaConclusion(reportSum)"
+            />
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<p-dialog
+  header="Tổng hợp kết luận tiêu chí"
+  [resizable]="false"
+  [modal]="true"
+  [maximizable]="true"
+  appendTo="body"
+  [(visible)]="dialogSummaryOfCriteriaConclusion"
+  [style]="{ width: '80vw' }"
+  [contentStyle]="{ height: '70vh' }"
+>
+  <p-table [value]="criteriaSummaries">
+    <ng-template
+      pTemplate="header"
+      [paginator]="true"
+      [rows]="100"
+      [responsive]="true"
+      styleClass="p-datatable-gridlines"
+      [rowsPerPageOptions]="[5, 10, 20]"
+      [autoLayout]="true"
+    >
+      <tr>
+        <th class="text-center border">STT</th>
+        <th class="text-center border">Nhóm tiêu chí</th>
+        <th class="text-center border">Tên tiêu chí</th>
+        <th class="text-center border">Kết luận</th>
+        <th class="text-center border">Nội dung đánh giá</th>
+        <th class="text-center border">Hình ảnh đánh giá</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-criteria let-index="rowIndex">
+      <tr>
+        <td class="text-center border">{{ index + 1 }}</td>
+        <td class="text-start border">{{ criteria.criterialGroupName }}</td>
+        <td class="text-start border">{{ criteria.criterialName }}</td>
+        <td class="text-center border">{{ criteria.result }}</td>
+        <td class="text-center border">{{ criteria.note }}</td>
+        <td class="text-center border">
+          <p-button (onClick)="showDialogViewImg(criteria.image)" label="Xem ảnh" />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<p-dialog header="Xem ảnh báo cáo" [(visible)]="dialogViewImage" [modal]="true" [style]="{ width: '70vw' }" [baseZIndex]="1100">
+  <ng-container *ngIf="listImgReports && listImgReports.length > 0; else notImg">
+    <ng-container *ngFor="let file of listImgReports">
+      <img *ngIf="isImage(file)" [src]="'content/images/bbkt/' + file" class="img-fluid mb-3" alt="Report Image" />
+      <video *ngIf="isVideo(file)" [src]="'content/videos/bbkt/' + file" controls class="video-fluid mb-3"></video>
+    </ng-container>
+  </ng-container>
+  <ng-template #notImg>
+    <h1>Chưa có ảnh đánh giá</h1>
+  </ng-template>
+</p-dialog>

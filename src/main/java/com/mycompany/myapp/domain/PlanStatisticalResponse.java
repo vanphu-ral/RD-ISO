@@ -16,6 +16,7 @@ public interface PlanStatisticalResponse {
     Integer getSumOfLy();
     Integer getSumOfFail();
     String getPlanName();
+    Integer getPlanId();
     String getSubjectOfAssetmentPlan();
     String getReportType();
     String getChecker();

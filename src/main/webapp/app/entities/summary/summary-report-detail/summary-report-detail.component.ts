@@ -23,6 +23,8 @@ import { ReportTypeService } from 'app/entities/report-type/service/report-type.
 import { DatePipe } from '@angular/common';
 import { EvaluatorService } from 'app/entities/evaluator/service/evaluator.service';
 import { CheckTargetService } from 'app/entities/check-target/service/check-target.service';
+import { ReportService } from 'app/entities/report/service/report.service';
+import { PlanGroupService } from 'app/entities/plan-group/service/plan-group.service';
 
 @Component({
   selector: 'jhi-summary-report-detail',
@@ -66,6 +68,16 @@ export class SummaryReportDetailComponent implements OnInit {
   pageSize: number = 10;
   loading = false;
 
+  // dialog view detail
+  dialogGeneralCheckPlan = false;
+  dialogSummaryOfCriteriaConclusion = false;
+  reportSelected: any = {};
+  checkPlanDetails: any[] = [];
+  summaryOfCriteriaConclusion: any[] = [];
+  criteriaSummaries: any[] = [];
+  dialogViewImage = false;
+  listImgReports: any[] = [];
+
   constructor(
     private summaryService: SummaryService,
     private convertService: ConvertService,
@@ -73,6 +85,8 @@ export class SummaryReportDetailComponent implements OnInit {
     private reportTypeService: ReportTypeService,
     private evaluatorService: EvaluatorService,
     private checkTargetService: CheckTargetService,
+    private reportService: ReportService,
+    private planGrService: PlanGroupService,
   ) {}
 
   ngOnInit(): void {
@@ -151,5 +165,42 @@ export class SummaryReportDetailComponent implements OnInit {
     } else {
       return data.scoreScale;
     }
+  }
+
+  // view detail function
+  showDialogGeneralCheckPlan(data: any): void {
+    this.reportSelected = data;
+    this.reportService.getAllStatisticalByReportId(data.planId, data.reportId).subscribe(res => {
+      this.checkPlanDetails = res.body;
+    });
+    this.dialogGeneralCheckPlan = true;
+  }
+
+  totalPointSummarize(data: any) {
+    if (this.reportSelected.convertScore == 'Tính điểm') {
+      const markNC = this.listEvalReportBase.find((item: any) => item.name == 'NC');
+      const markLC = this.listEvalReportBase.find((item: any) => item.name == 'LY');
+      const totalPointSummarize = this.reportSelected.scoreScale - (data.sumOfLy * markLC.mark + data.sumOfNc * markNC.mark);
+      return totalPointSummarize;
+    } else {
+      return this.reportSelected.scoreScale;
+    }
+  }
+
+  showDialogSummaryOfCriteriaConclusion(data: any): void {
+    this.planGrService.findAllDetailByHistoryAndReportId(data.planGroupHistoryId, this.reportSelected.reportId).subscribe(res => {
+      this.criteriaSummaries = res.body || [];
+      this.criteriaSummaries.sort((a: any, b: any) => {
+        if (a.criterialGroupName < b.criterialGroupName) return -1;
+        if (a.criterialGroupName > b.criterialGroupName) return 1;
+        return 0;
+      });
+    });
+    this.dialogSummaryOfCriteriaConclusion = true;
+  }
+
+  showDialogViewImg(data: any) {
+    this.listImgReports = JSON.parse(data);
+    this.dialogViewImage = true;
   }
 }

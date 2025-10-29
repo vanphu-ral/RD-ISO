@@ -110,6 +110,7 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
     @Query(
         value = "SELECT DISTINCT rp.id AS reportId, " +
         "p.name AS planName, " +
+        "p.id AS planId, " +
         "p.time_start AS timeStart, " +
         "p.subject_of_assetment_plan AS subjectOfAssetmentPlan, " +
         "rp.report_type AS reportType, " +
