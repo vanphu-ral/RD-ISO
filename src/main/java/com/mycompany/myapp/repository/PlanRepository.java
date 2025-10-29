@@ -204,7 +204,6 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
         "CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0')) AS timeStart, " +
         "p.subject_of_assetment_plan AS subjectOfAssetmentPlan, " +
         "rp.report_type AS reportType, " +
-        "rp.test_of_object AS testOfObject, " +
         "rp.convert_score AS convertScore, " +
         "rp.score_scale AS scoreScale, " +
         // sumOfReport
