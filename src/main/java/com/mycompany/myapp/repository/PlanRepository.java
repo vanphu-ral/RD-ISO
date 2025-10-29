@@ -284,9 +284,8 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
 
     @Query(
         value = "SELECT DISTINCT " +
-        "rp.group_name AS groupName, " +
-        "CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0')) AS timeStart, " +
         "p.subject_of_assetment_plan AS subjectOfAssetmentPlan, " +
+        "CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0')) AS timeStart, " +
         "rp.report_type AS reportType, " +
         "rp.checker AS checker, " +
         "rp.test_of_object AS testOfObject, " +
