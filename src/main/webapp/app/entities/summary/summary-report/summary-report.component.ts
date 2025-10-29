@@ -4,7 +4,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormatMediumDatetimePipe } from 'app/shared/date';
 import { SortByDirective, SortDirective } from 'app/shared/sort';
-import { SharedModule } from 'primeng/api';
+import { MessageService, SharedModule } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CalendarModule } from 'primeng/calendar';
 import { DialogModule } from 'primeng/dialog';
@@ -26,6 +26,8 @@ import { ReportDTO } from '../summary.model';
 import { NoZeroDecimalPipe } from 'app/shared/pipe/no-zero-decimal.pipe';
 import { DatePipe } from '@angular/common';
 import { forkJoin } from 'rxjs';
+import * as XLSX from 'xlsx';
+import dayjs from 'dayjs/esm';
 
 @Component({
   selector: 'jhi-summary-report',
@@ -52,6 +54,7 @@ import { forkJoin } from 'rxjs';
   ],
   templateUrl: './summary-report.component.html',
   styleUrls: ['./summary-report.component.scss'],
+  providers: [MessageService],
 })
 export class SummaryReportComponent implements OnInit {
   data: any[] = [];
@@ -76,6 +79,7 @@ export class SummaryReportComponent implements OnInit {
     private reportTypeService: ReportTypeService,
     private evaluatorService: EvaluatorService,
     private checkTargetService: CheckTargetService,
+    private messageService: MessageService,
   ) {}
 
   ngOnInit(): void {
@@ -157,5 +161,69 @@ export class SummaryReportComponent implements OnInit {
     } else {
       return data.scoreScale;
     }
+  }
+
+  // export excel
+  exportExcel(): void {
+    if (!this.data || this.data.length === 0) {
+      this.messageService?.add({
+        severity: 'warn',
+        summary: 'Cảnh báo',
+        detail: 'Không có dữ liệu để xuất Excel!',
+      });
+      return;
+    }
+
+    // --- Format ngày helper ---
+    const formatDate = (date: string | Date): string => (date ? dayjs(date).format('DD/MM/YYYY HH:mm') : '');
+
+    // --- Chuẩn bị dữ liệu xuất ---
+    const exportData = this.data.map((row, index) => ({
+      STT: index + 1,
+      'Thời gian kế hoạch KT': formatDate(row.timeStart),
+      Ngành: row.subjectOfAssetmentPlan,
+      'Tổng BBKT phát hành': row.sumOfReport,
+      'Loại BB Kiểm tra': row.reportType,
+      'Tổng số đợt kiểm tra': row.sumOfAudit,
+      'Tổng số báo cáo được tạo': row.sumOfCreateReport,
+      'Tổng điểm': this.getTotalPoint(row),
+      'Điểm trung bình': this.getTotalPointAvg(row),
+      'Kiểu tính điểm': row.convertScore,
+      'Tổng NC': row.sumOfNc,
+      'Tổng LY': row.sumOfLy,
+      'Tổng đạt': row.sumOfPass,
+      'Tổng không đạt': row.sumOfFail,
+      'Tổng số lỗi đã khắc phục': row.sumOfCheck,
+      'Tổng lỗi chưa khắc phục': row.sumOfUncheck,
+    }));
+
+    // --- Tạo worksheet ---
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
+
+    // --- Thiết lập độ rộng cột tự động ---
+    const headerKeys = Object.keys(exportData[0]);
+    ws['!cols'] = headerKeys.map(key => ({
+      wch: Math.max(15, key.length + 5), // auto width
+    }));
+
+    // --- In đậm & căn giữa dòng tiêu đề ---
+    const headerStyle = {
+      font: { bold: true },
+      alignment: { horizontal: 'center', vertical: 'center' },
+    };
+    headerKeys.forEach((_, colIndex) => {
+      const cellAddress = XLSX.utils.encode_cell({ r: 0, c: colIndex });
+      if (ws[cellAddress]) {
+        ws[cellAddress].s = headerStyle;
+      }
+    });
+
+    // --- Tạo workbook ---
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Báo cáo BBKT');
+
+    // --- Xuất file ---
+    const fileName = `BaoCao_BBKT_${dayjs().format('YYYYMMDD_HHmm')}.xlsx`;
+    XLSX.writeFile(wb, fileName);
   }
 }
