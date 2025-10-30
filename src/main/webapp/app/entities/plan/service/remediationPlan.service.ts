@@ -88,4 +88,18 @@ export class RemediationPlanService {
   getRemediationPlanWithFullDetails(id: number): Observable<HttpResponse<any>> {
     return this.http.get<any>(`${this.resourceUrl}/remediation-plans/${id}/details`, { observe: 'response' });
   }
+
+  createAutoPlanFix(data: any): Observable<any> {
+    return this.http.put<any>(`${this.resourceUrl}/create-with-details`, data, { observe: 'response' });
+  }
+
+  deleteCriteriaAuto(reportId: number, criterialName: string, criterialGroupName: string): Observable<HttpResponse<void>> {
+    const params = {
+      reportId: reportId.toString(),
+      criterialName,
+      criterialGroupName,
+    };
+
+    return this.http.delete<void>(`${this.resourceUrl}/detail`, { params, observe: 'response' });
+  }
 }

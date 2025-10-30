@@ -41,6 +41,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SidebarModule } from 'primeng/sidebar';
 import { NoZeroDecimalPipe } from 'app/shared/pipe/no-zero-decimal.pipe';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { RemediationPlanService } from '../service/remediationPlan.service';
 
 @Component({
   standalone: true,
@@ -133,6 +134,7 @@ export class PlanComponent implements OnInit {
   sidebarVisible: boolean = false;
   checkAll: boolean = false;
   selectedFrequencies: string[] = [];
+  IsHasRemediationPlan: boolean = false;
 
   trackId = (_index: number, item: IPlan): number => this.planService.getPlanIdentifier(item);
 
@@ -154,6 +156,7 @@ export class PlanComponent implements OnInit {
     private primengConfig: PrimeNGConfig,
     private layoutService: LayoutService,
     protected reportService: ReportService,
+    private remediationPlanService: RemediationPlanService,
   ) {}
 
   ngOnInit(): void {
@@ -496,6 +499,7 @@ export class PlanComponent implements OnInit {
             result: item.hasEvaluation == 0 ? item.result : item.result ?? (this.report.convertScore === 'Tính điểm' ? 'PASS' : 'Đạt'),
           };
         });
+        this.IsHasRemediationPlan = this.planGrDetail.some(item => item.fixed === 1);
       });
     } else {
       this.report.detail = typeof this.report.detail === 'string' ? JSON.parse(this.report.detail) : this.report.detail;
@@ -510,6 +514,7 @@ export class PlanComponent implements OnInit {
           result: row.hasEvaluation == 0 ? row.result : row.result ?? (this.report.convertScore === 'Tính điểm' ? 'PASS' : 'Đạt'),
         };
       });
+      this.IsHasRemediationPlan = this.planGrDetail.some(item => item.fixed === 1);
     }
     this.dialogCheckPlanChild = true;
   }
@@ -798,6 +803,53 @@ export class PlanComponent implements OnInit {
         convertScore: this.report.convertScore,
         image: JSON.stringify(item.image),
       }));
+      const arrCriterialFix = arrRptGrDetail.filter(item => item.fixed == 1);
+      const planFix = {
+        code: `RP-FIXAUTO-${this.report.id}-${this.fallbackUUID()}`,
+        name: `AUTO FIX - ${this.account.login}-${dayjs().toISOString()}`,
+        reportId: this.report.id,
+        planId: this.planParent.id,
+        repairDate: dayjs().toISOString(),
+        createdAt: dayjs().toISOString(),
+        createdBy: this.account.login,
+        type: 'single',
+        status: 'Đã hoàn thành',
+        details: arrCriterialFix,
+      };
+      if (arrCriterialFix.length > 0) {
+        if (this.IsHasRemediationPlan) {
+          const result = await Swal.fire({
+            title: 'Bạn có muốn lưu khắc phục vào kế hoạch trước đó?',
+            showCancelButton: true,
+            confirmButtonText: 'Lưu vào kế hoạch cũ',
+            cancelButtonText: 'Bỏ qua',
+            reverseButtons: true,
+          });
+          if (result.isConfirmed) {
+            await this.remediationPlanService.createAutoPlanFix(planFix).toPromise();
+          } else if (result.isDismissed) {
+            console.log('Người dùng không lưu vào kế hoạch trước đó');
+          }
+        } else {
+          await this.remediationPlanService.createAutoPlanFix(planFix).toPromise();
+        }
+      }
+      // if(arrCriterialFix.length > 0) {
+      //   if (this.IsHasRemediationPlan) {
+      //     Swal.fire({
+      //       title: 'Bạn có muốn lưu khắc phục vào kế hoạch trước đó?',
+      //       showCancelButton: true,
+      //       confirmButtonText: `Accept`,
+      //       cancelButtonText: `Cancel`,
+      //     }).then(async result => {
+      //       if (result.value) {
+      //         await this.remediationPlanService.createAutoPlanFix(planFix).toPromise();
+      //       }
+      //     });
+      //   } else {
+      //     await this.remediationPlanService.createAutoPlanFix(planFix).toPromise();
+      //   }
+      // }
       const uploadPromises = this.selectedFiles.flatMap(fileGroup =>
         fileGroup.files.map(file => {
           const safeFileName = this.sanitizeFileName(file.name);
@@ -848,6 +900,38 @@ export class PlanComponent implements OnInit {
     } catch (error) {
       console.error('Lỗi khi lưu dữ liệu:', error);
       Swal.fire('Lỗi', 'Đã xảy ra lỗi khi lưu dữ liệu.', 'error');
+    }
+  }
+
+  onChangeFix(data: any) {
+    if (!this.IsHasRemediationPlan) return;
+    if (data.fixed == 0) {
+      Swal.fire({
+        title: 'Bạn có muốn xóa tiêu trí này khỏi kế hoạch khắc phục?',
+        showCancelButton: true,
+        confirmButtonText: `Delete`,
+        cancelButtonText: `Cancel`,
+      }).then(result => {
+        if (result.value) {
+          this.remediationPlanService.deleteCriteriaAuto(data.reportId, data.criterialName, data.criterialGroupName).subscribe(() => {
+            const Toast = Swal.mixin({
+              toast: true,
+              position: 'center-end',
+              showConfirmButton: false,
+              timer: 1500,
+              timerProgressBar: true,
+              didOpen(toast) {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+              },
+            });
+            Toast.fire({
+              icon: 'success',
+              title: 'Xóa dữ liệu thành công',
+            });
+          });
+        }
+      });
     }
   }
 
