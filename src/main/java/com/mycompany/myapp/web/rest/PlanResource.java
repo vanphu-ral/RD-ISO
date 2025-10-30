@@ -419,14 +419,10 @@ public class PlanResource {
     public Page<PlanStatisticalResponse> getStatistics(@RequestBody ReportDTO dto, @PageableDefault(size = 10) Pageable pageable) {
         System.out.println(dto.getTimeStart().substring(0, 10) + " 00:00:00.000000");
         System.out.println(dto.getTimeEnd().substring(0, 10) + " 23:59:59.999999");
-        //        String reportType = dto.getReportType() == null ? "" : dto.getReportType();
-        List<String> reportType = dto.getReportType();
-        //        String subjectOfAssetmentPlan = dto.getSubjectOfAssetmentPlan() == null ? "" : dto.getSubjectOfAssetmentPlan();
-        List<String> subjectOfAssetmentPlan = dto.getSubjectOfAssetmentPlan();
-        //        String groupName = dto.getGroupName() == null ? "" : dto.getGroupName();
-        List<String> groupName = dto.getGroupName();
-        //        String testOfObject = dto.getTestOfObject() == null ? "" : dto.getTestOfObject();
-        List<String> testOfObject = dto.getTestOfObject();
+        List<String> reportType = dto.getReportType() == null ? new ArrayList<>() : dto.getReportType();
+        List<String> subjectOfAssetmentPlan = dto.getSubjectOfAssetmentPlan() == null ? new ArrayList<>() : dto.getSubjectOfAssetmentPlan();
+        List<String> groupName = dto.getGroupName() == null ? new ArrayList<>() : dto.getGroupName();
+        List<String> testOfObject = dto.getTestOfObject() == null ? new ArrayList<>() : dto.getTestOfObject();
         return planRepository.getPlanStatisticalByManyCriteria(
             dto.getTimeStart().substring(0, 10) + " 00:00:00.000000",
             dto.getTimeEnd().substring(0, 10) + " 23:59:59.999999",
@@ -442,10 +438,9 @@ public class PlanResource {
     public Page<PlanStatisticalResponse> getStatisticsByGroup(@RequestBody ReportDTO dto, @PageableDefault(size = 10) Pageable pageable) {
         System.out.println(dto.getTimeStart().substring(0, 4) + "-" + dto.getTimeStart().substring(5, 7));
         System.out.println(dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7));
-        List<String> reportType = dto.getReportType();
-        List<String> subjectOfAssetmentPlan = dto.getSubjectOfAssetmentPlan();
-        List<String> groupName = dto.getGroupName();
-        List<String> testOfObject = dto.getTestOfObject();
+        List<String> reportType = dto.getReportType() == null ? new ArrayList<>() : dto.getReportType();
+        List<String> subjectOfAssetmentPlan = dto.getSubjectOfAssetmentPlan() == null ? new ArrayList<>() : dto.getSubjectOfAssetmentPlan();
+        List<String> groupName = dto.getGroupName() == null ? new ArrayList<>() : dto.getGroupName();
         return planRepository.getPlanStatisticalByManyCriteriaByGroup(
             dto.getTimeStart().substring(0, 4) + "-" + dto.getTimeStart().substring(5, 7),
             dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7),
@@ -463,10 +458,8 @@ public class PlanResource {
     ) {
         System.out.println(dto.getTimeStart().substring(0, 4) + "-" + dto.getTimeStart().substring(5, 7));
         System.out.println(dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7));
-        List<String> reportType = dto.getReportType();
-        List<String> subjectOfAssetmentPlan = dto.getSubjectOfAssetmentPlan();
-        List<String> groupName = dto.getGroupName();
-        List<String> testOfObject = dto.getTestOfObject();
+        List<String> reportType = dto.getReportType() == null ? new ArrayList<>() : dto.getReportType();
+        List<String> subjectOfAssetmentPlan = dto.getSubjectOfAssetmentPlan() == null ? new ArrayList<>() : dto.getSubjectOfAssetmentPlan();
         return planRepository.getPlanStatisticalByManyCriteriaBySubjectAssetmentPlan(
             dto.getTimeStart().substring(0, 4) + "-" + dto.getTimeStart().substring(5, 7),
             dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7),
