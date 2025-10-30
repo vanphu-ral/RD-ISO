@@ -327,8 +327,9 @@ public class RemediationPlanResource {
         return ResponseEntity.ok(exists);
     }
 
-    @DeleteMapping("/detail")
+    @DeleteMapping("/detail/{id}")
     public ResponseEntity<Void> deleteRemediationPlanDetail(
+        @RequestParam("id") Long id,
         @RequestParam("reportId") Long reportId,
         @RequestParam("criterialName") String criterialName,
         @RequestParam("criterialGroupName") String criterialGroupName
@@ -340,17 +341,12 @@ public class RemediationPlanResource {
             "Khắc phục nhanh"
         ); // Tìm RemediationPlanDetail cần xóa
         recheckRemediationPlanDetailRepository.deleteByRemediationPlanDetailId(detail.getId()); // Xóa các RecheckRemediationPlanDetail liên quan
-        Long id = detail.getRemediationPlanId();
+        Long remediationPlanId = detail.getRemediationPlanId();
         remediationPlanDetailRepository.delete(detail); // Xóa RemediationPlanDetail
-        PlanGroupHistoryDetail planGroupHistoryDetail =
-            planGroupHistoryDetailRepository.findByReportIdAndCriterialNameAndCriterialGroupName(
-                reportId,
-                criterialName,
-                criterialGroupName
-            );
+        PlanGroupHistoryDetail planGroupHistoryDetail = planGroupHistoryDetailRepository.findById(id).orElseThrow();
         planGroupHistoryDetail.setFixed(0); // Cập nhật lại trạng thái Fixed về 0 (chưa khắc phục)
         planGroupHistoryDetailRepository.save(planGroupHistoryDetail); // Cập nhật lại PlanGroupHistoryDetail
-        Integer count = remediationPlanDetailRepository.countByRemediationPlanId(id); // Kiểm tra còn RemediationPlanDetail nào không
+        Integer count = remediationPlanDetailRepository.countByRemediationPlanId(remediationPlanId); // Kiểm tra còn RemediationPlanDetail nào không
         if (count == 0) {
             remediationPlanRepository.deleteById(id);
         }
