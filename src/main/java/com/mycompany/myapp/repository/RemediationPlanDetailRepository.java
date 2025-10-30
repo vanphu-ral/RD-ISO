@@ -23,10 +23,16 @@ public interface RemediationPlanDetailRepository extends JpaRepository<Remediati
     List<RemediationPlanDetail> findAllByReportId(@Param("reportId") Long reportId);
 
     Integer countByRemediationPlanId(Long remediationPlanId);
-    Boolean existsByReportIdAndCriterialNameAndCriterialGroupName(Long reportId, String criterialName, String criterialGroupName);
-    RemediationPlanDetail findByReportIdAndCriterialNameAndCriterialGroupName(
+    Boolean existsByReportIdAndCriterialNameAndCriterialGroupNameAndNote(
         Long reportId,
         String criterialName,
-        String criterialGroupName
+        String criterialGroupName,
+        String note
+    );
+    RemediationPlanDetail findByReportIdAndCriterialNameAndCriterialGroupNameAndNote(
+        Long reportId,
+        String criterialName,
+        String criterialGroupName,
+        String note
     );
 }
