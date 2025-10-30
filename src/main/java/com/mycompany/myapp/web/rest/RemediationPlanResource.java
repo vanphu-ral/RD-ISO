@@ -205,6 +205,7 @@ public class RemediationPlanResource {
             remediationPlan.setRepairDate(remediationPlanDto.getRepairDate());
             remediationPlan.setType(remediationPlanDto.getType());
             remediationPlan.setStatus(remediationPlanDto.getStatus());
+            remediationPlan.setCreatedAt(remediationPlanDto.getRepairDate());
             remediationPlan = remediationPlanRepository.save(remediationPlan);
 
             // 2. Lưu từng RemediationPlanDetail và các RecheckRemediationPlanDetail liên quan
@@ -223,7 +224,7 @@ public class RemediationPlanResource {
                 detail.setUserHandle(detailDto.getCreatedBy());
                 detail = remediationPlanDetailRepository.save(detail);
 
-                // Lưu các RecheckRemediationPlanDetail nếu có
+                // Mặc định tạo một RecheckRemediationPlanDetail "Đạt" khi tạo mới RemediationPlanDetail
                 RecheckRemediationPlanDetail recheck = new RecheckRemediationPlanDetail();
                 recheck.setRemediationPlanDetailId(detail.getId());
                 recheck.setResult("Đạt");
@@ -232,7 +233,7 @@ public class RemediationPlanResource {
                 recheck.setNote(null);
                 recheck.setStatus("Đã hoàn thành");
                 recheck.setCreatedBy(detailDto.getCreatedBy());
-                recheck.setCreatedAt(ZonedDateTime.from(LocalDateTime.now()));
+                recheck.setCreatedAt(remediationPlanDto.getRepairDate());
                 recheckRemediationPlanDetailRepository.save(recheck);
             }
 
