@@ -184,7 +184,7 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
         "WHERE p.time_start BETWEEN ?1 AND ?2 " +
         " and rp.report_type IN ?3  \n" +
         "             and p.subject_of_assetment_plan IN ?4   \n" +
-        "             and rp.group_name IN ?5  \n" +
+        "             and ( rp.group_name IS NULL OR rp.group_name IN ?5)  \n" +
         "             and rp.test_of_object IN ?6 ",
         countQuery = "SELECT COUNT(DISTINCT rp.id) " +
         "FROM iso.plan_group_history_detail pghd " +
@@ -193,7 +193,7 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
         "WHERE p.time_start BETWEEN ?1 AND ?2 " +
         " and rp.report_type IN ?3  \n" +
         "             and  p.subject_of_assetment_plan IN ?4   \n" +
-        "             and  rp.group_name IN ?5  \n" +
+        "             and ( rp.group_name IS NULL OR rp.group_name IN ?5)  \n" +
         "             and  rp.test_of_object IN ?6 ",
         nativeQuery = true
     )
