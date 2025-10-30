@@ -242,4 +242,41 @@ public class RemediationPlanResource {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Có lỗi xảy ra: " + e.getMessage());
         }
     }
+
+    @GetMapping("/check-existence")
+    public ResponseEntity<Boolean> checkRemediationPlanExistence(
+        @RequestParam("reportId") Long reportId,
+        @RequestParam("criterialName") String criterialName,
+        @RequestParam("criterialGroupName") String criterialGroupName
+    ) {
+        boolean exists = remediationPlanDetailRepository.existsByReportIdAndCriterialNameAndCriterialGroupName(
+            reportId,
+            criterialName,
+            criterialGroupName
+        );
+        return ResponseEntity.ok(exists);
+    }
+
+    @DeleteMapping("/detail")
+    public ResponseEntity<Void> deleteRemediationPlanDetail(
+        @RequestParam("reportId") Long reportId,
+        @RequestParam("criterialName") String criterialName,
+        @RequestParam("criterialGroupName") String criterialGroupName
+    ) {
+        RemediationPlanDetail detail = remediationPlanDetailRepository.findByReportIdAndCriterialNameAndCriterialGroupName(
+            reportId,
+            criterialName,
+            criterialGroupName
+        );
+        recheckRemediationPlanDetailRepository.deleteByRemediationPlanDetailId(detail.getId());
+        Long id = detail.getRemediationPlanId();
+        remediationPlanDetailRepository.delete(detail);
+        Integer count = remediationPlanDetailRepository.countByRemediationPlanId(id);
+        if (count == 0) {
+            remediationPlanRepository.deleteById(id);
+        }
+        return ResponseEntity.noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, "remediationPlanDetail", "deleted"))
+            .build();
+    }
 }

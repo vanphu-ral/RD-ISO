@@ -22,4 +22,6 @@ public interface RecheckRemediationPlanDetailRepository extends JpaRepository<Re
         nativeQuery = true
     )
     List<RecheckRemediationPlanDetail> findAllByReportId(@Param("reportId") Long reportId);
+
+    void deleteByRemediationPlanDetailId(Long remediationPlanDetailId);
 }
