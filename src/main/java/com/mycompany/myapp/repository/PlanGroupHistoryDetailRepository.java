@@ -16,4 +16,9 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
     List<PlanGroupHistoryDetail> findAllByReportIdIn(List<Long> reportIds);
 
     List<PlanGroupHistoryDetail> findAllByPlanGroupHistoryIdAndReportId(Long planGroupHistoryId, Long reportId);
+    PlanGroupHistoryDetail findByReportIdAndCriterialNameAndCriterialGroupName(
+        Long reportId,
+        String criterialName,
+        String criterialGroupName
+    );
 }

@@ -1,8 +1,10 @@
 package com.mycompany.myapp.web.rest;
 
+import com.mycompany.myapp.domain.PlanGroupHistoryDetail;
 import com.mycompany.myapp.domain.RecheckRemediationPlanDetail;
 import com.mycompany.myapp.domain.RemediationPlan;
 import com.mycompany.myapp.domain.RemediationPlanDetail;
+import com.mycompany.myapp.repository.PlanGroupHistoryDetailRepository;
 import com.mycompany.myapp.repository.RecheckRemediationPlanDetailRepository;
 import com.mycompany.myapp.repository.RemediationPlanDetailRepository;
 import com.mycompany.myapp.repository.RemediationPlanRepository;
@@ -47,6 +49,9 @@ public class RemediationPlanResource {
 
     @Autowired
     private RecheckRemediationPlanDetailRepository recheckRemediationPlanDetailRepository;
+
+    @Autowired
+    private PlanGroupHistoryDetailRepository planGroupHistoryDetailRepository;
 
     @GetMapping("")
     public List<RemediationPlan> getAllRemediationPlan() {
@@ -333,14 +338,23 @@ public class RemediationPlanResource {
             criterialName,
             criterialGroupName,
             "Khắc phục nhanh"
-        );
-        recheckRemediationPlanDetailRepository.deleteByRemediationPlanDetailId(detail.getId());
+        ); // Tìm RemediationPlanDetail cần xóa
+        recheckRemediationPlanDetailRepository.deleteByRemediationPlanDetailId(detail.getId()); // Xóa các RecheckRemediationPlanDetail liên quan
         Long id = detail.getRemediationPlanId();
-        remediationPlanDetailRepository.delete(detail);
-        Integer count = remediationPlanDetailRepository.countByRemediationPlanId(id);
+        remediationPlanDetailRepository.delete(detail); // Xóa RemediationPlanDetail
+        PlanGroupHistoryDetail planGroupHistoryDetail =
+            planGroupHistoryDetailRepository.findByReportIdAndCriterialNameAndCriterialGroupName(
+                reportId,
+                criterialName,
+                criterialGroupName
+            );
+        planGroupHistoryDetail.setFixed(0); // Cập nhật lại trạng thái Fixed về 0 (chưa khắc phục)
+        planGroupHistoryDetailRepository.save(planGroupHistoryDetail); // Cập nhật lại PlanGroupHistoryDetail
+        Integer count = remediationPlanDetailRepository.countByRemediationPlanId(id); // Kiểm tra còn RemediationPlanDetail nào không
         if (count == 0) {
             remediationPlanRepository.deleteById(id);
         }
+
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, "remediationPlanDetail", "deleted"))
             .build();
