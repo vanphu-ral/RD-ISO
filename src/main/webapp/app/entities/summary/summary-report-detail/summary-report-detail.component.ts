@@ -4,7 +4,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormatMediumDatetimePipe } from 'app/shared/date';
 import { SortByDirective, SortDirective } from 'app/shared/sort';
-import { SharedModule } from 'primeng/api';
+import { MessageService, SharedModule } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CalendarModule } from 'primeng/calendar';
 import { DialogModule } from 'primeng/dialog';
@@ -25,6 +25,9 @@ import { EvaluatorService } from 'app/entities/evaluator/service/evaluator.servi
 import { CheckTargetService } from 'app/entities/check-target/service/check-target.service';
 import { ReportService } from 'app/entities/report/service/report.service';
 import { PlanGroupService } from 'app/entities/plan-group/service/plan-group.service';
+import * as XLSX from 'xlsx';
+import dayjs from 'dayjs/esm';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'jhi-summary-report-detail',
@@ -51,6 +54,7 @@ import { PlanGroupService } from 'app/entities/plan-group/service/plan-group.ser
   ],
   templateUrl: './summary-report-detail.component.html',
   styleUrls: ['./summary-report-detail.component.scss'],
+  providers: [MessageService],
 })
 export class SummaryReportDetailComponent implements OnInit {
   data: any[] = [];
@@ -87,32 +91,36 @@ export class SummaryReportDetailComponent implements OnInit {
     private checkTargetService: CheckTargetService,
     private reportService: ReportService,
     private planGrService: PlanGroupService,
+    private messageService: MessageService,
   ) {}
 
   ngOnInit(): void {
     this.reportDto.timeStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
     this.reportDto.timeEnd = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
-    this.convertService.query().subscribe(res => {
-      this.listEvalReportBase = res.body || [];
-    });
-    this.checkerGroupService.getGroupInfo().subscribe(res => {
-      this.listBranch = [...new Map(res.map((item: any) => [item.branchCode, { code: item.branchCode, name: item.branchName }])).values()];
-      this.listTeams = res.map((item: any) => ({ code: item.groupCode, name: item.groupName }));
+    const convert$ = this.convertService.query();
+    const checkerGroup$ = this.checkerGroupService.getAllCheckerGroups();
+    const reportType$ = this.reportTypeService.getAllCheckTargets();
+    const evaluator$ = this.evaluatorService.getAllCheckTargets();
+    const checkTarget$ = this.checkTargetService.query();
+    forkJoin({
+      convert: convert$,
+      checkerGroup: checkerGroup$,
+      reportType: reportType$,
+      evaluator: evaluator$,
+      checkTarget: checkTarget$,
+    }).subscribe(({ convert, checkerGroup, reportType, evaluator, checkTarget }) => {
+      this.listEvalReportBase = convert.body || [];
+      this.listBranch = [...new Map(checkerGroup.map((item: any) => [item.code, { code: item.code, name: item.name }])).values()];
+      this.listTeams = checkerGroup.map((item: any) => ({ code: item.groupCode, name: item.groupName }));
       this.reportDto.subjectOfAssetmentPlan = this.listBranch.map(item => item.name);
       this.reportDto.groupName = this.listTeams.map(item => item.name);
-    });
-    this.reportTypeService.getAllCheckTargets().subscribe(res => {
-      this.listReportType = res;
+      this.listReportType = reportType;
       this.reportDto.reportType = this.listReportType.map(item => item.name);
-    });
-    this.evaluatorService.getAllCheckTargets().subscribe(res => {
-      this.listEvaluator = res;
-    });
-    this.checkTargetService.query().subscribe(res => {
-      this.listTestOfObject = res.body || [];
+      this.listEvaluator = evaluator;
+      this.listTestOfObject = checkTarget.body || [];
       this.reportDto.testOfObject = this.listTestOfObject.map(item => item.name);
+      this.loadData(0, this.pageSize);
     });
-    this.loadData(0, this.pageSize);
   }
 
   loadData(page: number = 0, size: number = 10) {
@@ -165,6 +173,73 @@ export class SummaryReportDetailComponent implements OnInit {
     } else {
       return data.scoreScale;
     }
+  }
+
+  // export excel
+  exportExcel(): void {
+    if (!this.data || this.data.length === 0) {
+      this.messageService?.add({
+        severity: 'warn',
+        summary: 'Cảnh báo',
+        detail: 'Không có dữ liệu để xuất Excel!',
+      });
+      return;
+    }
+
+    // --- Format ngày helper ---
+    const formatDate = (date: string | Date): string => (date ? dayjs(date).format('DD/MM/YYYY HH:mm') : '');
+
+    // --- Chuẩn bị dữ liệu xuất ---
+    const exportData = this.data.map((row, index) => ({
+      STT: index + 1,
+      'Thời gian kế hoạch KT': formatDate(row.timeStart),
+      'Tên kế hoạch KT': row.planName,
+      'Tên BBKT': row.reportName,
+      'Người kiểm tra': row.checker,
+      Ngành: row.subjectOfAssetmentPlan,
+      'Tên tổ': row.groupName,
+      'Người được kiểm tra': row.testOfObject,
+      'Loại BB Kiểm tra': row.reportType,
+      'Tổng số đợt kiểm tra': row.sumOfAudit,
+      'Tổng số báo cáo được tạo': row.sumOfCreateReport,
+      'Tổng điểm': this.getTotalPoint(row),
+      'Điểm trung bình': this.getTotalPointAvg(row),
+      'Kiểu tính điểm': row.convertScore,
+      'Tổng NC': row.sumOfNc,
+      'Tổng LY': row.sumOfLy,
+      'Tổng đạt': row.sumOfPass,
+      'Tổng không đạt': row.sumOfFail,
+      'Tổng lỗi chưa khắc phục': row.sumOfUncheck,
+    }));
+
+    // --- Tạo worksheet ---
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
+
+    // --- Thiết lập độ rộng cột tự động ---
+    const headerKeys = Object.keys(exportData[0]);
+    ws['!cols'] = headerKeys.map(key => ({
+      wch: Math.max(15, key.length + 5), // auto width
+    }));
+
+    // --- In đậm & căn giữa dòng tiêu đề ---
+    const headerStyle = {
+      font: { bold: true },
+      alignment: { horizontal: 'center', vertical: 'center' },
+    };
+    headerKeys.forEach((_, colIndex) => {
+      const cellAddress = XLSX.utils.encode_cell({ r: 0, c: colIndex });
+      if (ws[cellAddress]) {
+        ws[cellAddress].s = headerStyle;
+      }
+    });
+
+    // --- Tạo workbook ---
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Báo cáo BBKT');
+
+    // --- Xuất file ---
+    const fileName = `BaoCao_BBKT_${dayjs().format('YYYYMMDD_HHmm')}.xlsx`;
+    XLSX.writeFile(wb, fileName);
   }
 
   // view detail function

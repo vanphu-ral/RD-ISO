@@ -6,11 +6,11 @@
     <div class="col-container">
       <div class="col col-container-child mx-2">
         <label for="field_timeStart">Thời gian bắt đầu</label>
-        <p-calendar appendTo="body" [(ngModel)]="reportDto.timeStart" dateFormat="dd/mm/yy" />
+        <p-calendar appendTo="body" [(ngModel)]="reportDto.timeStart" dateFormat="dd/mm/yy" [showTime]="false" [hourFormat]="'24'" />
       </div>
       <div class="col col-container-child mx-2">
         <label for="field_timeEnd">Thời gian kết thúc</label>
-        <p-calendar appendTo="body" [(ngModel)]="reportDto.timeEnd" dateFormat="dd/mm/yy" />
+        <p-calendar appendTo="body" [(ngModel)]="reportDto.timeEnd" dateFormat="dd/mm/yy" [showTime]="false" [hourFormat]="'24'" />
       </div>
       <div class="col col-container-child mx-2">
         <label for="field_selectedBranches">Bộ phận được kiểm tra</label>
@@ -81,7 +81,7 @@
 
   <div class="d-flex justify-content-end">
     <button pButton type="button" label="Tìm kiếm" icon="pi pi-search" class="p-button-infor" (click)="loadData()"></button>
-    <button pButton type="button" label="Xuất Excel" icon="pi pi-file-excel" class="p-button-success"></button>
+    <button pButton type="button" label="Xuất Excel" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()"></button>
   </div>
 
   <div class="table-reposive">
@@ -108,6 +108,7 @@
           <th pSortableColumn="testOfObject">Người được kiểm tra <p-sortIcon field="testOfObject"></p-sortIcon></th>
           <th pSortableColumn="reportType">Loại BB Kiểm tra <p-sortIcon field="reportType"></p-sortIcon></th>
           <th pSortableColumn="sumOfAudit">Tổng số đợt kiểm tra <p-sortIcon field="sumOfAudit"></p-sortIcon></th>
+          <th pSortableColumn="sumOfCreateReport">Tổng số báo cáo được tạo <p-sortIcon field="sumOfCreateReport"></p-sortIcon></th>
           <th>Tổng điểm</th>
           <th>Điểm trung bình</th>
           <th pSortableColumn="sumOfNc">Tổng NC <p-sortIcon field="sumOfNc"></p-sortIcon></th>
@@ -129,6 +130,7 @@
           <td>{{ row.testOfObject }}</td>
           <td>{{ row.reportType }}</td>
           <td>{{ row.sumOfAudit }}</td>
+          <td>{{ row.sumOfCreateReport }}</td>
           <td>{{ getTotalPoint(row) }}</td>
           <td>{{ getTotalPointAvg(row) | noZeroDecimal }}</td>
           <td>{{ row.sumOfNc }}</td>
