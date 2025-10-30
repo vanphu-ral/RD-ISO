@@ -327,7 +327,7 @@ public class RemediationPlanResource {
         return ResponseEntity.ok(exists);
     }
 
-    @DeleteMapping("/detail/{id}")
+    @DeleteMapping("/detail")
     public ResponseEntity<Void> deleteRemediationPlanDetail(
         @RequestParam("id") Long id,
         @RequestParam("reportId") Long reportId,
