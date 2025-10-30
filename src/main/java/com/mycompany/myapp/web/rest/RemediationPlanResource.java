@@ -9,6 +9,9 @@ import com.mycompany.myapp.repository.RemediationPlanRepository;
 import com.mycompany.myapp.service.dto.RecheckRemediationPlanDetailDTO;
 import com.mycompany.myapp.service.dto.RemediationPlanDetailDTO;
 import com.mycompany.myapp.service.dto.RemediationPlanResponseDTO;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -216,22 +219,21 @@ public class RemediationPlanResource {
                 detail.setStatus(detailDto.getStatus());
                 detail.setPlanTimeComplete(detailDto.getPlanTimeComplete());
                 detail.setDetail(detailDto.getDetail());
-                detail.setUserHandle(detailDto.getUserHandle());
+                detail.setReportId(detailDto.getReportId());
+                detail.setUserHandle(detailDto.getCreatedBy());
                 detail = remediationPlanDetailRepository.save(detail);
 
                 // Lưu các RecheckRemediationPlanDetail nếu có
-                if (detailDto.getRecheckDetails() != null) {
-                    for (RecheckRemediationPlanDetailDTO recheckDto : detailDto.getRecheckDetails()) {
-                        RecheckRemediationPlanDetail recheck = new RecheckRemediationPlanDetail();
-                        recheck.setRemediationPlanDetailId(detail.getId());
-                        recheck.setResult(recheckDto.getResult());
-                        recheck.setImage(recheckDto.getImage());
-                        recheck.setReason(recheckDto.getReason());
-                        recheck.setNote(recheckDto.getNote());
-                        recheck.setStatus(recheckDto.getStatus());
-                        recheckRemediationPlanDetailRepository.save(recheck);
-                    }
-                }
+                RecheckRemediationPlanDetail recheck = new RecheckRemediationPlanDetail();
+                recheck.setRemediationPlanDetailId(detail.getId());
+                recheck.setResult("Đạt");
+                recheck.setImage(null);
+                recheck.setReason(null);
+                recheck.setNote(null);
+                recheck.setStatus("Đã hoàn thành");
+                recheck.setCreatedBy(detailDto.getCreatedBy());
+                recheck.setCreatedAt(ZonedDateTime.from(LocalDateTime.now()));
+                recheckRemediationPlanDetailRepository.save(recheck);
             }
 
             return ResponseEntity.status(HttpStatus.CREATED).body(remediationPlan.getId());
