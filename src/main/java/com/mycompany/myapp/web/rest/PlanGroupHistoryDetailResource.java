@@ -2,8 +2,7 @@ package com.mycompany.myapp.web.rest;
 
 import com.mycompany.myapp.domain.PlanGroupHistory;
 import com.mycompany.myapp.domain.PlanGroupHistoryDetail;
-import com.mycompany.myapp.repository.PlanGroupHistoryDetailRepository;
-import com.mycompany.myapp.repository.ReportRepository;
+import com.mycompany.myapp.repository.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +20,15 @@ public class PlanGroupHistoryDetailResource {
 
     @Autowired
     private PlanGroupHistoryDetailRepository planGroupHistoryDetailRepository;
+
+    @Autowired
+    private RemediationPlanRepository remediationPlanRepository;
+
+    @Autowired
+    private RemediationPlanDetailRepository remediationPlanDetailRepository;
+
+    @Autowired
+    private RecheckRemediationPlanDetailRepository recheckRemediationPlanDetailRepository;
 
     @Autowired
     private ReportRepository reportRepository;

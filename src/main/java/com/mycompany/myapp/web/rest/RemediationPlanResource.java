@@ -190,7 +190,7 @@ public class RemediationPlanResource {
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    @PostMapping("/create-with-details")
+    @PutMapping("/create-with-details")
     public ResponseEntity<?> createRemediationPlanWithDetails(@RequestBody RemediationPlanResponseDTO remediationPlanDto) {
         try {
             // 1. Lưu RemediationPlan
