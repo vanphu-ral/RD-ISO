@@ -904,6 +904,7 @@ export class PlanComponent implements OnInit {
   }
 
   onChangeFix(data: any) {
+    console.log(data);
     if (!this.IsHasRemediationPlan) return;
     if (data.fixed == 0) {
       Swal.fire({
@@ -913,23 +914,25 @@ export class PlanComponent implements OnInit {
         cancelButtonText: `Cancel`,
       }).then(result => {
         if (result.value) {
-          this.remediationPlanService.deleteCriteriaAuto(data.reportId, data.criterialName, data.criterialGroupName).subscribe(() => {
-            const Toast = Swal.mixin({
-              toast: true,
-              position: 'center-end',
-              showConfirmButton: false,
-              timer: 1500,
-              timerProgressBar: true,
-              didOpen(toast) {
-                toast.onmouseenter = Swal.stopTimer;
-                toast.onmouseleave = Swal.resumeTimer;
-              },
+          this.remediationPlanService
+            .deleteCriteriaAuto(data.id, data.reportId, data.criterialName, data.criterialGroupName)
+            .subscribe(() => {
+              const Toast = Swal.mixin({
+                toast: true,
+                position: 'center-end',
+                showConfirmButton: false,
+                timer: 1500,
+                timerProgressBar: true,
+                didOpen(toast) {
+                  toast.onmouseenter = Swal.stopTimer;
+                  toast.onmouseleave = Swal.resumeTimer;
+                },
+              });
+              Toast.fire({
+                icon: 'success',
+                title: 'Xóa dữ liệu thành công',
+              });
             });
-            Toast.fire({
-              icon: 'success',
-              title: 'Xóa dữ liệu thành công',
-            });
-          });
         }
       });
     }

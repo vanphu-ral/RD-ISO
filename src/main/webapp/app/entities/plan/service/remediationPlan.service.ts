@@ -93,8 +93,9 @@ export class RemediationPlanService {
     return this.http.put<any>(`${this.resourceUrl}/create-with-details`, data, { observe: 'response' });
   }
 
-  deleteCriteriaAuto(reportId: number, criterialName: string, criterialGroupName: string): Observable<HttpResponse<void>> {
+  deleteCriteriaAuto(id: number, reportId: number, criterialName: string, criterialGroupName: string): Observable<HttpResponse<void>> {
     const params = {
+      id: id.toString(),
       reportId: reportId.toString(),
       criterialName,
       criterialGroupName,
