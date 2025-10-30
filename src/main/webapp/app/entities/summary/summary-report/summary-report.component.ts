@@ -156,7 +156,7 @@ export class SummaryReportComponent implements OnInit {
     if (data.convertScore == 'Tính điểm') {
       const markNC = this.listEvalReportBase.find((item: any) => item.name == 'NC');
       const markLC = this.listEvalReportBase.find((item: any) => item.name == 'LY');
-      const totalPointSummarize = data.scoreScale - (data.sumOfLy * markLC.mark + data.sumOfNc * markNC.mark);
+      const totalPointSummarize = data.scoreScale * data.sumOfReport - (data.sumOfLy * markLC.mark + data.sumOfNc * markNC.mark);
       return totalPointSummarize;
     } else {
       return data.scoreScale;
@@ -185,7 +185,7 @@ export class SummaryReportComponent implements OnInit {
       'Tổng BBKT phát hành': row.sumOfReport,
       'Loại BB Kiểm tra': row.reportType,
       'Tổng số đợt kiểm tra': row.sumOfAudit,
-      'Tổng số báo cáo được tạo': row.sumOfCreateReport,
+      'Tổng số lần lập biên bản': row.sumOfCreateReport,
       'Tổng điểm': this.getTotalPoint(row),
       'Điểm trung bình': this.getTotalPointAvg(row),
       'Kiểu tính điểm': row.convertScore,
