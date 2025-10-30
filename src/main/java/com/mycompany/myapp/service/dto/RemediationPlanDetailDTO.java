@@ -16,6 +16,7 @@ public class RemediationPlanDetailDTO {
     private ZonedDateTime planTimeComplete;
     private String userHandle;
     private String detail;
+    private Long reportId; // Mã báo cáo liên quan
     private ZonedDateTime createdAt;
     private ZonedDateTime updatedAt;
     private String createdBy;
@@ -58,6 +59,14 @@ public class RemediationPlanDetailDTO {
         this.updatedAt = updatedAt;
         this.createdBy = createdBy;
         this.recheckDetails = recheckDetails;
+    }
+
+    public Long getReportId() {
+        return reportId;
+    }
+
+    public void setReportId(Long reportId) {
+        this.reportId = reportId;
     }
 
     // Getters and Setters

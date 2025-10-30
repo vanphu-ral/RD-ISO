@@ -40,6 +40,8 @@ import { LayoutService } from 'app/layouts/service/layout.service';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SidebarModule } from 'primeng/sidebar';
 import { NoZeroDecimalPipe } from 'app/shared/pipe/no-zero-decimal.pipe';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { RemediationPlanService } from '../service/remediationPlan.service';
 
 @Component({
   standalone: true,
@@ -70,6 +72,7 @@ import { NoZeroDecimalPipe } from 'app/shared/pipe/no-zero-decimal.pipe';
     ConfirmDialogModule,
     SidebarModule,
     NoZeroDecimalPipe,
+    MultiSelectModule,
   ],
   providers: [SummarizePlanComponent, ConfirmationService],
 })
@@ -130,6 +133,8 @@ export class PlanComponent implements OnInit {
   selectedReport: any = null;
   sidebarVisible: boolean = false;
   checkAll: boolean = false;
+  selectedFrequencies: string[] = [];
+  IsHasRemediationPlan: boolean = false;
 
   trackId = (_index: number, item: IPlan): number => this.planService.getPlanIdentifier(item);
 
@@ -151,6 +156,7 @@ export class PlanComponent implements OnInit {
     private primengConfig: PrimeNGConfig,
     private layoutService: LayoutService,
     protected reportService: ReportService,
+    private remediationPlanService: RemediationPlanService,
   ) {}
 
   ngOnInit(): void {
@@ -192,53 +198,6 @@ export class PlanComponent implements OnInit {
       dateFormat: 'dd/mm/yy',
       firstDayOfWeek: 1,
     });
-
-    // this.planService.getPlanDetail().subscribe(res => {
-    //   this.planDetailResults = res.map((item: any) => ({
-    //     ...item,
-    //     timeStart: item.timeStart ? new Date(item.timeStart) : null,
-    //     timeEnd: item.timeEnd ? new Date(item.timeEnd) : null,
-    //     createdAt: item.createdAt ? new Date(item.createdAt) : null,
-    //     updatedAt: item.updatedAt ? new Date(item.updatedAt) : null,
-    //   }));
-    //   this.loadTreeNodes();
-    // });
-
-    // combineLatest([
-    //   this.planService.getPlanDetail(),
-    //   this.evaluatorService.getAllCheckTargets(),
-    //   this.activatedRoute.queryParamMap.pipe(
-    //     tap(() => this.fillComponentAttributeFromRoute(this.activatedRoute.snapshot.queryParamMap, this.activatedRoute.snapshot.data))
-    //   )
-    // ])
-    //   .subscribe(([planDetailRes, evaluatorsRes]) => {
-    //     this.evaluators = evaluatorsRes;
-    //     this.planDetailResults = planDetailRes.map((item: any) => ({
-    //       ...item,
-    //       timeStart: item.timeStart ? new Date(item.timeStart) : null,
-    //       timeEnd: item.timeEnd ? new Date(item.timeEnd) : null,
-    //       createdAt: item.createdAt ? new Date(item.createdAt) : null,
-    //       updatedAt: item.updatedAt ? new Date(item.updatedAt) : null,
-    //       planDetail: item.planDetail.map((detail: any) => ({
-    //         ...detail,
-    //         reviewer: this.evaluators.find(evalua => evalua.username === detail.checker)?.name // Gán reviewer ngay khi load
-    //       }))
-    //     }));
-    //     this.loadTreeNodes();
-    //   });
-    // this.evaluatorService.getAllCheckTargets().subscribe(res => {
-    //   this.evaluators = res;
-    // });
-    // this.convertService.query().subscribe(res => {
-    //   this.listEvalReportBase = res.body;
-    // });
-    // this.frequencyService.getAllCheckFrequency().subscribe(res => {
-    //   this.listOfFrequency = res;
-    // });
-    // this.accountService.identity().subscribe(account => {
-    //   this.account = account;
-    // });
-
     forkJoin({
       evaluators: this.evaluatorService.getAllCheckTargets(),
       converts: this.convertService.query(),
@@ -339,7 +298,7 @@ export class PlanComponent implements OnInit {
           });
           this.totalRecords = this.planDetailResults.length;
           this.isLoading = false;
-          this.preloadFullData();
+          // this.preloadFullData();
         }
       },
     });
@@ -408,13 +367,9 @@ export class PlanComponent implements OnInit {
   onRowExpand(event: any): void {
     const rowData = event.data;
     this.expandedRows[rowData.id] = true;
+    this.loadPlanDetailsByPlanId(rowData.id);
     // Cập nhật dữ liệu cho planDetail của hàng đang mở rộng
-    rowData.planDetail.forEach((detail: any) => {
-      const evaluator = this.evaluators.find(evalua => evalua.username === detail.checker);
-      if (evaluator) {
-        detail.reviewer = evaluator.name;
-      }
-    });
+
     // Không cần gọi loadPlanDetails() nữa
   }
 
@@ -431,6 +386,20 @@ export class PlanComponent implements OnInit {
         globalFilter: this.dt2.globalFilter,
       });
     }
+  }
+
+  loadPlanDetailsByPlanId(planId: number): void {
+    this.planService.getAllStatisReportByPlanId(planId).subscribe((res: any) => {
+      res.body.forEach((detail: any) => {
+        const evaluator = this.evaluators.find(evalua => evalua.username === detail.checker);
+        if (evaluator) {
+          detail.reviewer = evaluator.name;
+        }
+        this.planDetailResults[this.planDetailResults.findIndex(item => item.id === planId)].planDetail = res.body;
+      });
+      this.loadTreeNodes();
+      this.cdr.detectChanges();
+    });
   }
 
   loadPlanDetails(planId: number): void {
@@ -530,6 +499,7 @@ export class PlanComponent implements OnInit {
             result: item.hasEvaluation == 0 ? item.result : item.result ?? (this.report.convertScore === 'Tính điểm' ? 'PASS' : 'Đạt'),
           };
         });
+        this.IsHasRemediationPlan = this.planGrDetail.some(item => item.fixed === 1);
       });
     } else {
       this.report.detail = typeof this.report.detail === 'string' ? JSON.parse(this.report.detail) : this.report.detail;
@@ -544,6 +514,7 @@ export class PlanComponent implements OnInit {
           result: row.hasEvaluation == 0 ? row.result : row.result ?? (this.report.convertScore === 'Tính điểm' ? 'PASS' : 'Đạt'),
         };
       });
+      this.IsHasRemediationPlan = this.planGrDetail.some(item => item.fixed === 1);
     }
     this.dialogCheckPlanChild = true;
   }
@@ -832,6 +803,53 @@ export class PlanComponent implements OnInit {
         convertScore: this.report.convertScore,
         image: JSON.stringify(item.image),
       }));
+      const arrCriterialFix = arrRptGrDetail.filter(item => item.fixed == 1);
+      const planFix = {
+        code: `RP-FIXAUTO-${this.report.id}-${this.fallbackUUID()}`,
+        name: `AUTO FIX - ${this.account.login}-${dayjs().toISOString()}`,
+        reportId: this.report.id,
+        planId: this.planParent.id,
+        repairDate: dayjs().toISOString(),
+        createdAt: dayjs().toISOString(),
+        createdBy: this.account.login,
+        type: 'single',
+        status: 'Đã hoàn thành',
+        details: arrCriterialFix,
+      };
+      if (arrCriterialFix.length > 0) {
+        if (this.IsHasRemediationPlan) {
+          const result = await Swal.fire({
+            title: 'Bạn có muốn lưu khắc phục vào kế hoạch trước đó?',
+            showCancelButton: true,
+            confirmButtonText: 'Lưu vào kế hoạch cũ',
+            cancelButtonText: 'Bỏ qua',
+            reverseButtons: true,
+          });
+          if (result.isConfirmed) {
+            await this.remediationPlanService.createAutoPlanFix(planFix).toPromise();
+          } else if (result.isDismissed) {
+            console.log('Người dùng không lưu vào kế hoạch trước đó');
+          }
+        } else {
+          await this.remediationPlanService.createAutoPlanFix(planFix).toPromise();
+        }
+      }
+      // if(arrCriterialFix.length > 0) {
+      //   if (this.IsHasRemediationPlan) {
+      //     Swal.fire({
+      //       title: 'Bạn có muốn lưu khắc phục vào kế hoạch trước đó?',
+      //       showCancelButton: true,
+      //       confirmButtonText: `Accept`,
+      //       cancelButtonText: `Cancel`,
+      //     }).then(async result => {
+      //       if (result.value) {
+      //         await this.remediationPlanService.createAutoPlanFix(planFix).toPromise();
+      //       }
+      //     });
+      //   } else {
+      //     await this.remediationPlanService.createAutoPlanFix(planFix).toPromise();
+      //   }
+      // }
       const uploadPromises = this.selectedFiles.flatMap(fileGroup =>
         fileGroup.files.map(file => {
           const safeFileName = this.sanitizeFileName(file.name);
@@ -885,6 +903,41 @@ export class PlanComponent implements OnInit {
     }
   }
 
+  onChangeFix(data: any) {
+    console.log(data);
+    if (!this.IsHasRemediationPlan) return;
+    if (data.fixed == 0) {
+      Swal.fire({
+        title: 'Bạn có muốn xóa tiêu trí này khỏi kế hoạch khắc phục?',
+        showCancelButton: true,
+        confirmButtonText: `Delete`,
+        cancelButtonText: `Cancel`,
+      }).then(result => {
+        if (result.value) {
+          this.remediationPlanService
+            .deleteCriteriaAuto(data.id, data.reportId, data.criterialName, data.criterialGroupName)
+            .subscribe(() => {
+              const Toast = Swal.mixin({
+                toast: true,
+                position: 'center-end',
+                showConfirmButton: false,
+                timer: 1500,
+                timerProgressBar: true,
+                didOpen(toast) {
+                  toast.onmouseenter = Swal.stopTimer;
+                  toast.onmouseleave = Swal.resumeTimer;
+                },
+              });
+              Toast.fire({
+                icon: 'success',
+                title: 'Xóa dữ liệu thành công',
+              });
+            });
+        }
+      });
+    }
+  }
+
   // Xuất excel
   exportSingleItemToExcel(selectedParentItem: any): void {
     if (!selectedParentItem || !selectedParentItem.id) {
@@ -923,7 +976,8 @@ export class PlanComponent implements OnInit {
       '', // Cột trống để thụt lề
       'Mã BBKT',
       'Tên BBKT',
-      'Đối tượng kiểm tra',
+      'Tổ được kiểm tra',
+      'Người được kiểm tra',
       'Loại BBKT',
       'Số lần thực hiện kiểm tra',
       'Thang điểm',
@@ -975,6 +1029,7 @@ export class PlanComponent implements OnInit {
           '', // Cột thụt lề
           detail.code,
           detail.name,
+          detail.groupName,
           detail.testOfObject,
           detail.reportType,
           detail.sumOfAudit,
@@ -1149,6 +1204,17 @@ export class PlanComponent implements OnInit {
     this.loadPlanDetails(data.id);
   }
 
+  onFrequencySelect(selectedFrequencies: string[]): void {
+    if (!selectedFrequencies) selectedFrequencies = [];
+    this.planGrDetail.forEach(report => {
+      if (selectedFrequencies.length === 0 || !selectedFrequencies.includes(report.frequency)) {
+        report.hasEvaluation = 1;
+      } else {
+        report.hasEvaluation = 0;
+      }
+    });
+  }
+
   onEvaluationToggle(item: any): void {
     if (item.hasEvaluation === 0) {
       item.result = null;
@@ -1161,6 +1227,12 @@ export class PlanComponent implements OnInit {
   toggleAllEvaluations() {
     this.planGrDetail.forEach(report => {
       report.hasEvaluation = this.checkAll ? 0 : 1;
+      if (report.hasEvaluation === 0) {
+        report.result = null;
+        report.note = '';
+        report.image = []; // hoặc null, tùy theo kiểu dữ liệu
+      }
+      // this.onEvaluationToggle(report);
     });
   }
 
@@ -1174,6 +1246,7 @@ export class PlanComponent implements OnInit {
     this.selectedPlan = plan;
     this.planService.getAllStatisReportByPlanId(plan.id).subscribe(res => {
       this.listReportByPlan = res.body;
+      this.selectedPlan.planDetail = this.listReportByPlan;
       this.listReportByPlan = this.listReportByPlan.map((item: any) => {
         return { ...item, reviewer: this.evaluators.find(evalua => evalua.username == item.checker).name };
       });

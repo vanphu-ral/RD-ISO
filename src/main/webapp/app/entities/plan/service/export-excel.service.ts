@@ -119,8 +119,13 @@ export class ExportExcelService {
       `- LY: là có thực hiện nhưng chưa đúng do chưa hiểu, hoặc các lỗi liên quan đến ghi chép, cập nhật dữ liệu chậm -> trừ ${markLY.mark} điểm/1 lỗi LY`,
     ]);
     topRows.push(['']);
-    topRows.push([`Tổ SX: ${report.testOfObject}`, '', `Ngành: ${checkGroupByTestOfObject.name}`]);
-    topRows.push(['SK:']);
+    topRows.push([
+      `Ngành: ${checkGroupByTestOfObject.name}`,
+      '',
+      `Tổ được kiểm tra: ${report.groupName}`,
+      '',
+      `Người được kiểm tra: ${report.testOfObject}`,
+    ]);
     const numberOfTopRows = topRows.length;
 
     let headerRow1 = ['Nhóm tiêu chí', 'Tiêu chí', 'Tần suất'];

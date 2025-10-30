@@ -177,7 +177,9 @@ public class ReportResource {
                 if (report.getConvertScore() != null) {
                     existingReport.setConvertScore(report.getConvertScore());
                 }
-
+                if (report.getGroupName() != null) {
+                    existingReport.setGroupName(report.getGroupName());
+                }
                 return existingReport;
             })
             .map(reportRepository::save);

@@ -1,14 +1,19 @@
 package com.mycompany.myapp.web.rest;
 
+import com.mycompany.myapp.domain.PlanGroupHistoryDetail;
 import com.mycompany.myapp.domain.RecheckRemediationPlanDetail;
 import com.mycompany.myapp.domain.RemediationPlan;
 import com.mycompany.myapp.domain.RemediationPlanDetail;
+import com.mycompany.myapp.repository.PlanGroupHistoryDetailRepository;
 import com.mycompany.myapp.repository.RecheckRemediationPlanDetailRepository;
 import com.mycompany.myapp.repository.RemediationPlanDetailRepository;
 import com.mycompany.myapp.repository.RemediationPlanRepository;
 import com.mycompany.myapp.service.dto.RecheckRemediationPlanDetailDTO;
 import com.mycompany.myapp.service.dto.RemediationPlanDetailDTO;
 import com.mycompany.myapp.service.dto.RemediationPlanResponseDTO;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,6 +49,9 @@ public class RemediationPlanResource {
 
     @Autowired
     private RecheckRemediationPlanDetailRepository recheckRemediationPlanDetailRepository;
+
+    @Autowired
+    private PlanGroupHistoryDetailRepository planGroupHistoryDetailRepository;
 
     @GetMapping("")
     public List<RemediationPlan> getAllRemediationPlan() {
@@ -188,5 +196,163 @@ public class RemediationPlanResource {
         responseDto.setDetails(detailDTOs);
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
+
+    @PutMapping("/create-with-details")
+    public ResponseEntity<?> createRemediationPlanWithDetails(@RequestBody RemediationPlanResponseDTO remediationPlanDto) {
+        try {
+            Long existingPlanId = null;
+            Boolean found = false;
+            for (RemediationPlanDetailDTO detailDto : remediationPlanDto.getDetails()) {
+                if (
+                    remediationPlanDetailRepository.existsByReportIdAndCriterialNameAndCriterialGroupNameAndNote(
+                        detailDto.getReportId(),
+                        detailDto.getCriterialName(),
+                        detailDto.getCriterialGroupName(),
+                        "Khắc phục nhanh"
+                    )
+                ) {
+                    RemediationPlanDetail existingDetail =
+                        remediationPlanDetailRepository.findByReportIdAndCriterialNameAndCriterialGroupNameAndNote(
+                            detailDto.getReportId(),
+                            detailDto.getCriterialName(),
+                            detailDto.getCriterialGroupName(),
+                            "Khắc phục nhanh"
+                        );
+                    existingPlanId = existingDetail.getRemediationPlanId();
+                    found = true;
+                    break;
+                }
+            }
+            if (found) {
+                // 2. Lưu từng RemediationPlanDetail và các RecheckRemediationPlanDetail liên quan
+                for (RemediationPlanDetailDTO detailDto : remediationPlanDto.getDetails()) {
+                    if (
+                        !remediationPlanDetailRepository.existsByReportIdAndCriterialNameAndCriterialGroupNameAndNote(
+                            detailDto.getReportId(),
+                            detailDto.getCriterialName(),
+                            detailDto.getCriterialGroupName(),
+                            "Khắc phục nhanh"
+                        )
+                    ) {
+                        RemediationPlanDetail detail = new RemediationPlanDetail();
+                        detail.setRemediationPlanId(existingPlanId);
+                        detail.setCriterialName(detailDto.getCriterialName());
+                        detail.setCriterialGroupName(detailDto.getCriterialGroupName());
+                        detail.setConvertScore(detailDto.getConvertScore());
+                        detail.setNote("Khắc phục nhanh");
+                        detail.setSolution(detailDto.getSolution());
+                        detail.setStatus(detailDto.getStatus());
+                        detail.setPlanTimeComplete(detailDto.getPlanTimeComplete());
+                        detail.setDetail(detailDto.getDetail());
+                        detail.setReportId(detailDto.getReportId());
+                        detail.setUserHandle(detailDto.getCreatedBy());
+                        detail = remediationPlanDetailRepository.save(detail);
+
+                        // Mặc định tạo một RecheckRemediationPlanDetail "Đạt" khi tạo mới RemediationPlanDetail
+                        RecheckRemediationPlanDetail recheck = new RecheckRemediationPlanDetail();
+                        recheck.setRemediationPlanDetailId(detail.getId());
+                        recheck.setResult("Đạt");
+                        recheck.setImage(null);
+                        recheck.setReason(null);
+                        recheck.setNote(null);
+                        recheck.setStatus("Đã hoàn thành");
+                        recheck.setCreatedBy(detailDto.getCreatedBy());
+                        recheck.setCreatedAt(remediationPlanDto.getRepairDate());
+                        recheckRemediationPlanDetailRepository.save(recheck);
+                    }
+                }
+                return ResponseEntity.status(HttpStatus.CREATED).body(existingPlanId);
+            } else {
+                // 1. Lưu RemediationPlan
+                RemediationPlan remediationPlan = new RemediationPlan();
+                remediationPlan.setCode(remediationPlanDto.getCode());
+                remediationPlan.setName(remediationPlanDto.getName());
+                remediationPlan.setReportId(remediationPlanDto.getReportId());
+                remediationPlan.setPlanId(remediationPlanDto.getPlanId());
+                remediationPlan.setRepairDate(remediationPlanDto.getRepairDate());
+                remediationPlan.setType(remediationPlanDto.getType());
+                remediationPlan.setStatus(remediationPlanDto.getStatus());
+                remediationPlan.setCreatedAt(remediationPlanDto.getRepairDate());
+                remediationPlan = remediationPlanRepository.save(remediationPlan);
+
+                // 2. Lưu từng RemediationPlanDetail và các RecheckRemediationPlanDetail liên quan
+                for (RemediationPlanDetailDTO detailDto : remediationPlanDto.getDetails()) {
+                    RemediationPlanDetail detail = new RemediationPlanDetail();
+                    detail.setRemediationPlanId(remediationPlan.getId());
+                    detail.setCriterialName(detailDto.getCriterialName());
+                    detail.setCriterialGroupName(detailDto.getCriterialGroupName());
+                    detail.setConvertScore(detailDto.getConvertScore());
+                    detail.setNote("Khắc phục nhanh");
+                    detail.setSolution(detailDto.getSolution());
+                    detail.setStatus(detailDto.getStatus());
+                    detail.setPlanTimeComplete(detailDto.getPlanTimeComplete());
+                    detail.setDetail(detailDto.getDetail());
+                    detail.setReportId(detailDto.getReportId());
+                    detail.setUserHandle(detailDto.getCreatedBy());
+                    detail = remediationPlanDetailRepository.save(detail);
+
+                    // Mặc định tạo một RecheckRemediationPlanDetail "Đạt" khi tạo mới RemediationPlanDetail
+                    RecheckRemediationPlanDetail recheck = new RecheckRemediationPlanDetail();
+                    recheck.setRemediationPlanDetailId(detail.getId());
+                    recheck.setResult("Đạt");
+                    recheck.setImage(null);
+                    recheck.setReason(null);
+                    recheck.setNote(null);
+                    recheck.setStatus("Đã hoàn thành");
+                    recheck.setCreatedBy(detailDto.getCreatedBy());
+                    recheck.setCreatedAt(remediationPlanDto.getRepairDate());
+                    recheckRemediationPlanDetailRepository.save(recheck);
+                }
+
+                return ResponseEntity.status(HttpStatus.CREATED).body(remediationPlan.getId());
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Có lỗi xảy ra: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/check-existence")
+    public ResponseEntity<Boolean> checkRemediationPlanExistence(
+        @RequestParam("reportId") Long reportId,
+        @RequestParam("criterialName") String criterialName,
+        @RequestParam("criterialGroupName") String criterialGroupName
+    ) {
+        boolean exists = remediationPlanDetailRepository.existsByReportIdAndCriterialNameAndCriterialGroupNameAndNote(
+            reportId,
+            criterialName,
+            criterialGroupName,
+            "Khắc phục nhanh"
+        );
+        return ResponseEntity.ok(exists);
+    }
+
+    @DeleteMapping("/detail")
+    public ResponseEntity<Void> deleteRemediationPlanDetail(
+        @RequestParam("id") Long id,
+        @RequestParam("reportId") Long reportId,
+        @RequestParam("criterialName") String criterialName,
+        @RequestParam("criterialGroupName") String criterialGroupName
+    ) {
+        RemediationPlanDetail detail = remediationPlanDetailRepository.findByReportIdAndCriterialNameAndCriterialGroupNameAndNote(
+            reportId,
+            criterialName,
+            criterialGroupName,
+            "Khắc phục nhanh"
+        ); // Tìm RemediationPlanDetail cần xóa
+        recheckRemediationPlanDetailRepository.deleteByRemediationPlanDetailId(detail.getId()); // Xóa các RecheckRemediationPlanDetail liên quan
+        Long remediationPlanId = detail.getRemediationPlanId();
+        remediationPlanDetailRepository.delete(detail); // Xóa RemediationPlanDetail
+        PlanGroupHistoryDetail planGroupHistoryDetail = planGroupHistoryDetailRepository.findById(id).orElseThrow();
+        planGroupHistoryDetail.setFixed(0); // Cập nhật lại trạng thái Fixed về 0 (chưa khắc phục)
+        planGroupHistoryDetailRepository.save(planGroupHistoryDetail); // Cập nhật lại PlanGroupHistoryDetail
+        Integer count = remediationPlanDetailRepository.countByRemediationPlanId(remediationPlanId); // Kiểm tra còn RemediationPlanDetail nào không
+        if (count == 0) {
+            remediationPlanRepository.deleteById(id);
+        }
+
+        return ResponseEntity.noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, "remediationPlanDetail", "deleted"))
+            .build();
     }
 }

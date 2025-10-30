@@ -47,6 +47,9 @@ public class Report implements Serializable {
     @Column(name = "report_type_id")
     private Long reportTypeId;
 
+    @Column(name = "group_name")
+    private String groupName;
+
     @Column(name = "group_report")
     private Integer groupReport;
 
@@ -102,6 +105,14 @@ public class Report implements Serializable {
     }
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
 
     public Long getId() {
         return this.id;

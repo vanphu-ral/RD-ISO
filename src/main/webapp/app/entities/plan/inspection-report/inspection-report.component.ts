@@ -289,6 +289,7 @@ export class InspectionReportComponent implements OnInit {
   saveRemediationPlan(data: any) {
     data.code = this.generateCode();
     data.reportId = this.report.id;
+    data.planId = this.report.planId;
     data.repairDate = dayjs(data.repairDate).toISOString();
     data.createdAt = dayjs();
     data.type = 'Single';
@@ -300,6 +301,7 @@ export class InspectionReportComponent implements OnInit {
           ...item,
           remediationPlanId: res.body,
           convertScore: item.detail[0].convertScore,
+          reportId: this.report.id,
           detail: JSON.stringify(item.detail),
           planTimeComplete: dayjs(item.planTimeComplete).toISOString(),
           createdAt: dayjs(),

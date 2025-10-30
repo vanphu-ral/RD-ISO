@@ -7,6 +7,7 @@ import com.mycompany.myapp.domain.ReportResponse;
 import com.mycompany.myapp.repository.PlanRepository;
 import com.mycompany.myapp.repository.ReportRepository;
 import com.mycompany.myapp.service.dto.PlanDetailDTO;
+import com.mycompany.myapp.service.dto.ReportDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.io.IOException;
 import java.net.URI;
@@ -18,6 +19,10 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -408,5 +413,59 @@ public class PlanResource {
     @GetMapping("plan-detail-summarize/{planId}")
     public List<ReportResponse> getPlanDetailByPlanId(@PathVariable Long planId) {
         return reportRepository.getDetailByPlanId(planId);
+    }
+
+    @PostMapping("/statistical")
+    public Page<PlanStatisticalResponse> getStatistics(@RequestBody ReportDTO dto, @PageableDefault(size = 10) Pageable pageable) {
+        System.out.println(dto.getTimeStart().substring(0, 10) + " 00:00:00.000000");
+        System.out.println(dto.getTimeEnd().substring(0, 10) + " 23:59:59.999999");
+        List<String> reportType = dto.getReportType() == null ? new ArrayList<>() : dto.getReportType();
+        List<String> subjectOfAssetmentPlan = dto.getSubjectOfAssetmentPlan() == null ? new ArrayList<>() : dto.getSubjectOfAssetmentPlan();
+        List<String> groupName = dto.getGroupName() == null ? new ArrayList<>() : dto.getGroupName();
+        List<String> testOfObject = dto.getTestOfObject() == null ? new ArrayList<>() : dto.getTestOfObject();
+        return planRepository.getPlanStatisticalByManyCriteria(
+            dto.getTimeStart().substring(0, 10) + " 00:00:00.000000",
+            dto.getTimeEnd().substring(0, 10) + " 23:59:59.999999",
+            reportType,
+            subjectOfAssetmentPlan,
+            groupName,
+            testOfObject,
+            pageable
+        );
+    }
+
+    @PostMapping("/statistical/by-group")
+    public Page<PlanStatisticalResponse> getStatisticsByGroup(@RequestBody ReportDTO dto, @PageableDefault(size = 10) Pageable pageable) {
+        System.out.println(dto.getTimeStart().substring(0, 4) + "-" + dto.getTimeStart().substring(5, 7));
+        System.out.println(dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7));
+        List<String> reportType = dto.getReportType() == null ? new ArrayList<>() : dto.getReportType();
+        List<String> subjectOfAssetmentPlan = dto.getSubjectOfAssetmentPlan() == null ? new ArrayList<>() : dto.getSubjectOfAssetmentPlan();
+        List<String> groupName = dto.getGroupName() == null ? new ArrayList<>() : dto.getGroupName();
+        return planRepository.getPlanStatisticalByManyCriteriaByGroup(
+            dto.getTimeStart().substring(0, 4) + "-" + dto.getTimeStart().substring(5, 7),
+            dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7),
+            reportType,
+            subjectOfAssetmentPlan,
+            groupName,
+            pageable
+        );
+    }
+
+    @PostMapping("/statistical/by-subject-assetment-plan")
+    public Page<PlanStatisticalResponse> getPlanStatisticalByManyCriteriaBySubjectAssetmentPlan(
+        @RequestBody ReportDTO dto,
+        @PageableDefault(size = 10) Pageable pageable
+    ) {
+        System.out.println(dto.getTimeStart().substring(0, 4) + "-" + dto.getTimeStart().substring(5, 7));
+        System.out.println(dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7));
+        List<String> reportType = dto.getReportType() == null ? new ArrayList<>() : dto.getReportType();
+        List<String> subjectOfAssetmentPlan = dto.getSubjectOfAssetmentPlan() == null ? new ArrayList<>() : dto.getSubjectOfAssetmentPlan();
+        return planRepository.getPlanStatisticalByManyCriteriaBySubjectAssetmentPlan(
+            dto.getTimeStart().substring(0, 4) + "-" + dto.getTimeStart().substring(5, 7),
+            dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7),
+            reportType,
+            subjectOfAssetmentPlan,
+            pageable
+        );
     }
 }

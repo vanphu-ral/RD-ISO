@@ -32,7 +32,10 @@ type CheckerGroupFormDefaults = Pick<NewCheckerGroup, 'id' | 'createdAt' | 'upda
 
 type CheckerGroupFormGroupContent = {
   id: FormControl<CheckerGroupFormRawValue['id'] | NewCheckerGroup['id']>;
+  code: FormControl<CheckerGroupFormRawValue['code']>;
   name: FormControl<CheckerGroupFormRawValue['name']>;
+  groupCode: FormControl<CheckerGroupFormRawValue['groupCode']>;
+  groupName: FormControl<CheckerGroupFormRawValue['groupName']>;
   status: FormControl<CheckerGroupFormRawValue['status']>;
   createdAt: FormControl<CheckerGroupFormRawValue['createdAt']>;
   updatedAt: FormControl<CheckerGroupFormRawValue['updatedAt']>;
@@ -56,7 +59,10 @@ export class CheckerGroupFormService {
           validators: [Validators.required],
         },
       ),
+      code: new FormControl(checkerGroupRawValue.code),
       name: new FormControl(checkerGroupRawValue.name),
+      groupCode: new FormControl(checkerGroupRawValue.groupCode),
+      groupName: new FormControl(checkerGroupRawValue.groupName),
       status: new FormControl(checkerGroupRawValue.status),
       createdAt: new FormControl(checkerGroupRawValue.createdAt),
       updatedAt: new FormControl(checkerGroupRawValue.updatedAt),

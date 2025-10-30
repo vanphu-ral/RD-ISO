@@ -121,6 +121,11 @@ const routes: Routes = [
       },
     ],
   },
+  {
+    path: 'summarize',
+    data: { pageTitle: 'isoApp.summarizeReport.home.title' },
+    loadChildren: () => import('./summary/summary.routes'),
+  },
 ];
 
 export default routes;

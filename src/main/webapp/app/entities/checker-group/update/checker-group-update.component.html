@@ -14,7 +14,21 @@
         }
 
         <div class="mb-3">
-          <label class="form-label" for="field_name">Tên</label>
+          <label class="form-label" for="field_code">Mã ngành</label>
+          <input
+            type="text"
+            class="form-control"
+            name="code"
+            id="field_code"
+            data-cy="code"
+            formControlName="code"
+            [ngClass]="{ 'is-invalid': editForm.get('code')?.invalid && editForm.get('code')?.touched }"
+            required
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_name">Tên ngành</label>
           <input
             type="text"
             class="form-control"
@@ -25,15 +39,49 @@
             [ngClass]="{ 'is-invalid': editForm.get('name')?.invalid && editForm.get('name')?.touched }"
             required
           />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_groupCode">Mã tổ</label>
+          <input
+            type="text"
+            class="form-control"
+            name="groupCode"
+            id="field_groupCode"
+            data-cy="groupCode"
+            formControlName="groupCode"
+            [ngClass]="{ 'is-invalid': editForm.get('groupCode')?.invalid && editForm.get('groupCode')?.touched }"
+            required
+          />
           <div
             class="error-message"
-            *ngIf="editForm.get('name')?.invalid && (editForm.get('name')?.touched || editForm.get('name')?.dirty)"
+            *ngIf="editForm.get('groupCode')?.invalid && (editForm.get('groupCode')?.touched || editForm.get('groupCode')?.dirty)"
           >
-            <span *ngIf="editForm.get('name')?.errors?.['required']">Tên không được để trống </span>
-            <span *ngIf="editForm.get('name')?.errors?.['duplicate']">Tên này đã tồn tại</span>
+            <span *ngIf="editForm.get('groupCode')?.errors?.['required']">Mã tổ không được để trống </span>
+            <span *ngIf="editForm.get('groupCode')?.errors?.['duplicate']">Mã tổ này đã tồn tại</span>
           </div>
         </div>
 
+        <div class="mb-3">
+          <label class="form-label" for="field_groupName">Tên tổ</label>
+          <input
+            type="text"
+            class="form-control"
+            name="groupName"
+            id="field_groupName"
+            data-cy="groupName"
+            formControlName="groupName"
+            [ngClass]="{ 'is-invalid': editForm.get('groupName')?.invalid && editForm.get('groupName')?.touched }"
+            required
+          />
+          <div
+            class="error-message"
+            *ngIf="editForm.get('groupName')?.invalid && (editForm.get('groupName')?.touched || editForm.get('groupName')?.dirty)"
+          >
+            <span *ngIf="editForm.get('groupName')?.errors?.['required']">Tên tổ không được để trống </span>
+            <span *ngIf="editForm.get('groupName')?.errors?.['duplicate']">Tên tổ này đã tồn tại</span>
+          </div>
+        </div>
         <div class="mb-3">
           <label class="form-label" for="field_status">Trạng thái</label>
           <select class="form-control form-select" name="status" id="field_status" data-cy="status" formControlName="status">

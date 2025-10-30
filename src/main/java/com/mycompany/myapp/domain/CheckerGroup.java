@@ -15,13 +15,27 @@ public class CheckerGroup implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
     @Column(name = "name")
     private String name;
+
+    @Column(name = "code")
+    private String code;
+
+    @Column(name = "group_code")
+    private String groupCode;
+
+    @Column(name = "group_name")
+    private String groupName;
+
+    @Column(name = "factory_code")
+    private String factoryCode;
+
+    @Column(name = "factory_name")
+    private String factoryName;
 
     @Column(name = "status")
     private String status;
@@ -59,8 +73,48 @@ public class CheckerGroup implements Serializable {
         return this;
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getGroupCode() {
+        return groupCode;
+    }
+
+    public void setGroupCode(String groupCode) {
+        this.groupCode = groupCode;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public String getFactoryCode() {
+        return factoryCode;
+    }
+
+    public void setFactoryCode(String factoryCode) {
+        this.factoryCode = factoryCode;
+    }
+
+    public String getFactoryName() {
+        return factoryName;
+    }
+
+    public void setFactoryName(String factoryName) {
+        this.factoryName = factoryName;
     }
 
     public String getStatus() {

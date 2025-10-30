@@ -19,11 +19,15 @@
         <input type="text" id="maBBKT" class="form-control" readonly [(ngModel)]="report.reportType" />
       </div>
       <div class="col-md-4 col-sm-6">
-        <label for="doiTuongKiemTra">Đối tượng kiểm tra</label>
+        <label for="doiTuongKiemTra">Người kiểm tra kiểm tra</label>
         <input type="text" id="doiTuongKiemTra" class="form-control" readonly [(ngModel)]="report.checker" />
       </div>
       <div class="col-md-4 col-sm-6">
-        <label for="doiTuongKHDanhGia">Đối tượng kế hoạch đánh giá</label>
+        <label for="toDuocKiemTra">Tổ được kiểm tra hoạch đánh giá</label>
+        <input type="text" id="toDuocKiemTra" class="form-control" readonly [(ngModel)]="report.groupName" />
+      </div>
+      <div class="col-md-4 col-sm-6">
+        <label for="doiTuongKHDanhGia">Người được kiểm tra hoạch đánh giá</label>
         <input type="text" id="doiTuongKHDanhGia" class="form-control" readonly [(ngModel)]="report.testOfObject" />
       </div>
       <div class="col-md-4 col-sm-6"></div>

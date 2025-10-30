@@ -47,6 +47,9 @@ public class PlanGroupHistoryDetail implements Serializable {
     @Column(name = "has_evaluation")
     private Integer hasEvaluation;
 
+    @Column(name = "fixed")
+    private Integer fixed;
+
     @Column(name = "status")
     private String status;
 
@@ -185,5 +188,13 @@ public class PlanGroupHistoryDetail implements Serializable {
 
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public Integer getFixed() {
+        return fixed;
+    }
+
+    public void setFixed(Integer fixed) {
+        this.fixed = fixed;
     }
 }

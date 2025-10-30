@@ -192,7 +192,10 @@
     <ng-template pTemplate="header">
       <tr>
         <th class="text-center border">STT</th>
-        <th class="text-center border">Tên</th>
+        <th class="text-center border">Mã ngành</th>
+        <th class="text-center border">Tên ngành</th>
+        <th class="text-center border">Mã tổ</th>
+        <th class="text-center border">Tên tổ</th>
         <th class="text-center border">Trạng thái</th>
         <th class="text-center border">Thời gian tạo</th>
         <th class="text-center border">Thời gian cập nhật</th>
@@ -206,7 +209,31 @@
             <p-inputIcon>
               <i class="pi pi-search"></i>
             </p-inputIcon>
+            <input pInputText type="text" placeholder="Search" style="padding-left: 30px" (input)="onSearch('code', $event)" />
+          </p-iconField>
+        </th>
+        <th class="text-center border">
+          <p-iconField iconPosition="left" class="ml-auto">
+            <p-inputIcon>
+              <i class="pi pi-search"></i>
+            </p-inputIcon>
             <input pInputText type="text" placeholder="Search" style="padding-left: 30px" (input)="onSearch('name', $event)" />
+          </p-iconField>
+        </th>
+        <th class="text-center border">
+          <p-iconField iconPosition="left" class="ml-auto">
+            <p-inputIcon>
+              <i class="pi pi-search"></i>
+            </p-inputIcon>
+            <input pInputText type="text" placeholder="Search" style="padding-left: 30px" (input)="onSearch('groupCode', $event)" />
+          </p-iconField>
+        </th>
+        <th class="text-center border">
+          <p-iconField iconPosition="left" class="ml-auto">
+            <p-inputIcon>
+              <i class="pi pi-search"></i>
+            </p-inputIcon>
+            <input pInputText type="text" placeholder="Search" style="padding-left: 30px" (input)="onSearch('groupName', $event)" />
           </p-iconField>
         </th>
         <th class="text-center border">
@@ -247,7 +274,10 @@
     <ng-template pTemplate="body" let-checkerGroup let-index="rowIndex">
       <tr>
         <td class="text-center border">{{ index + 1 }}</td>
+        <td class="text-center border">{{ checkerGroup.code }}</td>
         <td class="text-center border">{{ checkerGroup.name }}</td>
+        <td class="text-center border">{{ checkerGroup.groupCode }}</td>
+        <td class="text-center border">{{ checkerGroup.groupName }}</td>
         <td class="text-center border"><p-tag [value]="checkerGroup.status" [severity]="getSeverity(checkerGroup.status)" /></td>
         <td class="text-center border">{{ checkerGroup.createdAt | formatMediumDatetime }}</td>
         <td class="text-center border">{{ checkerGroup.updatedAt | formatMediumDatetime }}</td>
@@ -267,6 +297,7 @@
               [routerLink]="['/checker-group', checkerGroup.id, 'edit']"
               class="btn btn-primary btn-sm compact-btn"
               style="border-radius: 8px"
+              *ngIf="checkerGroup.factoryCode != '01'"
               data-cy="entityEditButton"
             >
               <fa-icon icon="pencil-alt"></fa-icon>

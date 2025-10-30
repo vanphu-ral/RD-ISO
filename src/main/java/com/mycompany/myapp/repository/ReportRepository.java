@@ -88,6 +88,7 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
         "    ,rp.checker AS checker\n" +
         "    ,rp.status AS status\n" +
         "    ,rp.frequency AS frequency\n" +
+        "    ,rp.group_name AS groupName\n" +
         "    ,rp.report_type AS reportType\n" +
         "    ,rp.report_type_id AS reportTypeId\n" +
         "    ,rp.group_report AS groupReport\n" +
