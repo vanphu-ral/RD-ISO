@@ -775,6 +775,33 @@ export class PlanComponent implements OnInit {
     });
   }
 
+  savePlanGr(data: any) {
+    data.code = this.generateCode(this.planParent.id);
+    data.planId = this.planParent.id;
+    data.checkDate = dayjs(data.checkDate).toISOString();
+    data.type = 'single';
+    data.createdAt = dayjs();
+    data.status = 'Mới tạo';
+    this.planService.createGroupHistory(data).subscribe(res => {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'center-end',
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
+        didOpen(toast) {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+        },
+      });
+      Toast.fire({
+        icon: 'success',
+        title: 'Lưu dữ liệu thành công',
+      });
+      this.loadEvalTable(this.report.id);
+    });
+  }
+
   async savePlanGrAndDetail() {
     // Gán các giá trị khởi tạo nếu là tạo mới
     if (this.planGroup.id === undefined || this.planGroup.id === null) {
@@ -834,22 +861,6 @@ export class PlanComponent implements OnInit {
           await this.remediationPlanService.createAutoPlanFix(planFix).toPromise();
         }
       }
-      // if(arrCriterialFix.length > 0) {
-      //   if (this.IsHasRemediationPlan) {
-      //     Swal.fire({
-      //       title: 'Bạn có muốn lưu khắc phục vào kế hoạch trước đó?',
-      //       showCancelButton: true,
-      //       confirmButtonText: `Accept`,
-      //       cancelButtonText: `Cancel`,
-      //     }).then(async result => {
-      //       if (result.value) {
-      //         await this.remediationPlanService.createAutoPlanFix(planFix).toPromise();
-      //       }
-      //     });
-      //   } else {
-      //     await this.remediationPlanService.createAutoPlanFix(planFix).toPromise();
-      //   }
-      // }
       const uploadPromises = this.selectedFiles.flatMap(fileGroup =>
         fileGroup.files.map(file => {
           const safeFileName = this.sanitizeFileName(file.name);
@@ -1211,6 +1222,9 @@ export class PlanComponent implements OnInit {
         report.hasEvaluation = 1;
       } else {
         report.hasEvaluation = 0;
+        report.result = null;
+        report.note = '';
+        report.image = [];
       }
     });
   }
