@@ -347,8 +347,11 @@ public class PlanResource {
             planDetailDTO.setCreatedAt(plan.getCreatedAt());
             planDetailDTO.setUpdatedAt(plan.getUpdatedAt());
             planDetailDTO.setUpdateBy(plan.getUpdateBy());
-            List<ReportResponse> response = this.reportRepository.getDetailByPlanId(plan.getId());
-            planDetailDTO.setPlanDetail(response);
+            PlanStatisticalResponse statisticalResponse = this.planRepository.getAllPlanStatisticalByPlan(plan.getId());
+            planDetailDTO.setSumOfLy(statisticalResponse.getSumOfLy());
+            planDetailDTO.setSumOfFail(statisticalResponse.getSumOfFail());
+            planDetailDTO.setSumOfNc(statisticalResponse.getSumOfNc());
+            planDetailDTO.setSumOfPass(statisticalResponse.getSumOfPass());
             planDetailDTOS.add(planDetailDTO);
         }
         Collections.reverse(planDetailDTOS);

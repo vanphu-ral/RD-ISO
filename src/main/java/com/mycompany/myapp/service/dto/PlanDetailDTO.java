@@ -60,8 +60,53 @@ public class PlanDetailDTO {
 
     private String updateBy;
     private List<ReportResponse> planDetail;
+    private Integer sumOfNc;
+    private Integer sumOfLy;
+    private Integer sumOfPass;
+    private Integer sumOfFail;
+    private Integer sumOfScore;
 
     public PlanDetailDTO() {}
+
+    public Integer getSumOfNc() {
+        return sumOfNc;
+    }
+
+    public void setSumOfNc(Integer sumOfNc) {
+        this.sumOfNc = sumOfNc;
+    }
+
+    public Integer getSumOfLy() {
+        return sumOfLy;
+    }
+
+    public void setSumOfLy(Integer sumOfLy) {
+        this.sumOfLy = sumOfLy;
+    }
+
+    public Integer getSumOfPass() {
+        return sumOfPass;
+    }
+
+    public void setSumOfPass(Integer sumOfPass) {
+        this.sumOfPass = sumOfPass;
+    }
+
+    public Integer getSumOfFail() {
+        return sumOfFail;
+    }
+
+    public void setSumOfFail(Integer sumOfFail) {
+        this.sumOfFail = sumOfFail;
+    }
+
+    public Integer getSumOfScore() {
+        return sumOfScore;
+    }
+
+    public void setSumOfScore(Integer sumOfScore) {
+        this.sumOfScore = sumOfScore;
+    }
 
     public Long getId() {
         return id;
