@@ -276,7 +276,7 @@ public class PlanResource {
     /**
      * Lay du lieu plan di kem thong tin chi tiet
      */
-    @GetMapping("/plan-detail-new")
+    @GetMapping("/plan-detail")
     public Page<PlanDetailDTO> getPlanDetail(PlanFilter filter, Pageable pageable) {
         Page<Plan> plans = planRepository.findAll(PlanSpecification.buildFilter(filter), pageable);
 
@@ -309,12 +309,16 @@ public class PlanResource {
             dto.setCreatedAt(plan.getCreatedAt());
             dto.setUpdatedAt(plan.getUpdatedAt());
             dto.setUpdateBy(plan.getUpdateBy());
-            dto.setPlanDetail(reportRepository.getDetailByPlanId(plan.getId()));
+            PlanStatisticalResponse statisticalResponse = this.planRepository.getAllPlanStatisticalByPlan(plan.getId());
+            dto.setSumOfLy(statisticalResponse.getSumOfLy());
+            dto.setSumOfFail(statisticalResponse.getSumOfFail());
+            dto.setSumOfNc(statisticalResponse.getSumOfNc());
+            dto.setSumOfPass(statisticalResponse.getSumOfPass());
             return dto;
         });
     }
 
-    @GetMapping("plan-detail")
+    @GetMapping("plan-detail-old")
     public List<PlanDetailDTO> getPlanDetail() {
         List<Plan> plans = this.planRepository.findAll();
         List<PlanDetailDTO> planDetailDTOS = new ArrayList<>();
