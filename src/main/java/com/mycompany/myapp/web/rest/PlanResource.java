@@ -8,6 +8,8 @@ import com.mycompany.myapp.repository.PlanRepository;
 import com.mycompany.myapp.repository.ReportRepository;
 import com.mycompany.myapp.service.dto.PlanDetailDTO;
 import com.mycompany.myapp.service.dto.ReportDTO;
+import com.mycompany.myapp.web.filter.PlanFilter;
+import com.mycompany.myapp.web.filter.PlanSpecification;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.io.IOException;
 import java.net.URI;
@@ -16,12 +18,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -272,6 +276,44 @@ public class PlanResource {
     /**
      * Lay du lieu plan di kem thong tin chi tiet
      */
+    @GetMapping("/plan-detail-new")
+    public Page<PlanDetailDTO> getPlanDetail(PlanFilter filter, Pageable pageable) {
+        Page<Plan> plans = planRepository.findAll(PlanSpecification.buildFilter(filter), pageable);
+
+        return plans.map(plan -> {
+            PlanDetailDTO dto = new PlanDetailDTO();
+            dto.setId(plan.getId());
+            dto.setCode(plan.getCode());
+            dto.setName(plan.getName());
+            dto.setSubjectOfAssetmentPlan(plan.getSubjectOfAssetmentPlan());
+            dto.setFrequency(plan.getFrequency());
+            dto.setTimeStart(plan.getTimeStart());
+            dto.setTimeEnd(plan.getTimeEnd());
+            dto.setStatusPlan(plan.getStatusPlan());
+            dto.setTestObject(plan.getTestObject());
+            dto.setReportTypeId(plan.getReportTypeId());
+            dto.setReportTypeName(plan.getReportTypeName());
+            dto.setNumberOfCheck(plan.getNumberOfCheck());
+            dto.setImplementer(plan.getImplementer());
+            dto.setPaticipant(plan.getPaticipant());
+            dto.setCheckerGroup(plan.getCheckerGroup());
+            dto.setCheckerName(plan.getCheckerName());
+            dto.setCheckerGroupId(plan.getCheckerGroupId());
+            dto.setCheckerId(plan.getCheckerId());
+            dto.setGross(plan.getGross());
+            dto.setTimeCheck(plan.getTimeCheck());
+            dto.setNameResult(plan.getNameResult());
+            dto.setScriptId(plan.getScriptId());
+            dto.setCreateBy(plan.getCreateBy());
+            dto.setStatus(plan.getStatus());
+            dto.setCreatedAt(plan.getCreatedAt());
+            dto.setUpdatedAt(plan.getUpdatedAt());
+            dto.setUpdateBy(plan.getUpdateBy());
+            dto.setPlanDetail(reportRepository.getDetailByPlanId(plan.getId()));
+            return dto;
+        });
+    }
+
     @GetMapping("plan-detail")
     public List<PlanDetailDTO> getPlanDetail() {
         List<Plan> plans = this.planRepository.findAll();
