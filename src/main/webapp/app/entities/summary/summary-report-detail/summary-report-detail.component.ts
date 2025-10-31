@@ -201,7 +201,7 @@ export class SummaryReportDetailComponent implements OnInit {
       'Người được kiểm tra': row.testOfObject,
       'Loại BB Kiểm tra': row.reportType,
       'Tổng số đợt kiểm tra': row.sumOfAudit,
-      'Tổng số báo cáo được tạo': row.sumOfCreateReport,
+      'Tổng số lần lập biên bản': row.sumOfCreateReport,
       'Tổng điểm': this.getTotalPoint(row),
       'Điểm trung bình': this.getTotalPointAvg(row),
       'Kiểu tính điểm': row.convertScore,

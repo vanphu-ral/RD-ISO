@@ -605,7 +605,7 @@
         <th class="text-center border">Tên kế hoạch</th>
         <th class="text-center border">Người kiểm tra</th>
         <th class="text-center border">Ngày kiểm tra</th>
-        <th class="text-center border">Tạo báo cáo</th>
+        <th class="text-center border">Lập biên bản</th>
         <th class="text-center border">Tuỳ chọn</th>
       </tr>
     </ng-template>
@@ -661,6 +661,13 @@
         <td class="text-center border">
           <div class="action-buttons mx-1">
             <p-button
+              icon="pi pi-save"
+              aria-label="Save"
+              styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+              [severity]="'info'"
+              (onClick)="savePlanGr(item)"
+            />
+            <p-button
               icon="pi pi-check"
               aria-label="Check"
               styleClass="p-button-rounded p-button-info p-button-sm mr-2"
@@ -700,7 +707,7 @@
       <tr>
         <th class="text-center border">Tên kế hoạch</th>
         <th class="text-center border">Người kiểm tra</th>
-        <th class="text-center border">Tạo báo cáo</th>
+        <th class="text-center border">Lập biên bản</th>
         <th class="text-center border">Ngày kiểm tra</th>
         <th class="text-center border">Tuỳ chọn</th>
       </tr>
