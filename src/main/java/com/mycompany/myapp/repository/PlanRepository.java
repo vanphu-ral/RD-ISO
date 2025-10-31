@@ -109,7 +109,7 @@ public interface PlanRepository extends JpaRepository<Plan, Long>, JpaSpecificat
         "),\n" +
         "recheck_plan_details AS(\n" +
         "SELECT \n" +
-        "c.id,\n" +
+        "c.id as plan_id,\n" +
         "rps.report_id,\n" +
         "rrpd.result\n" +
         " FROM iso.recheck_remediation_plan_detail AS rrpd\n" +
