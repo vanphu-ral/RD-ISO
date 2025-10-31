@@ -278,7 +278,7 @@ public class PlanResource {
      */
     @GetMapping("/plan-detail")
     public Page<PlanDetailDTO> getPlanDetail(PlanFilter filter, Pageable pageable) {
-        Page<Plan> plans = planRepository.findAll(PlanSpecification.buildFilter(filter), pageable, Sort.by(Sort.Direction.DESC, "id"));
+        Page<Plan> plans = planRepository.findAll(PlanSpecification.buildFilter(filter), pageable);
 
         return plans.map(plan -> {
             PlanDetailDTO dto = new PlanDetailDTO();
