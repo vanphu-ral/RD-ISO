@@ -11,6 +11,8 @@ import com.mycompany.myapp.service.dto.ReportDTO;
 import com.mycompany.myapp.web.filter.PlanFilter;
 import com.mycompany.myapp.web.filter.PlanSpecification;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -22,9 +24,7 @@ import java.util.function.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -50,6 +50,9 @@ public class PlanResource {
     //private static final String UPLOAD_DIR = "src/main/webapp/content/images/bbkt/";
     private final String uploadDir;
     private final String videoDir;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
@@ -276,46 +279,94 @@ public class PlanResource {
     /**
      * Lay du lieu plan di kem thong tin chi tiet
      */
+    @Transactional
     @GetMapping("/plan-detail")
-    public Page<PlanDetailDTO> getPlanDetail(PlanFilter filter, Pageable pageable) {
-        Page<Plan> plans = planRepository.findAll(PlanSpecification.buildFilter(filter), pageable);
+    public Page<PlanDetailDTO> getPlanDetail(@RequestParam Map<String, Object> filters, @RequestParam int page) {
+        var cb = entityManager.getCriteriaBuilder();
+        var cq = cb.createQuery(Plan.class);
+        var root = cq.from(Plan.class);
 
-        return plans.map(plan -> {
-            PlanDetailDTO dto = new PlanDetailDTO();
-            dto.setId(plan.getId());
-            dto.setCode(plan.getCode());
-            dto.setName(plan.getName());
-            dto.setSubjectOfAssetmentPlan(plan.getSubjectOfAssetmentPlan());
-            dto.setFrequency(plan.getFrequency());
-            dto.setTimeStart(plan.getTimeStart());
-            dto.setTimeEnd(plan.getTimeEnd());
-            dto.setStatusPlan(plan.getStatusPlan());
-            dto.setTestObject(plan.getTestObject());
-            dto.setReportTypeId(plan.getReportTypeId());
-            dto.setReportTypeName(plan.getReportTypeName());
-            dto.setNumberOfCheck(plan.getNumberOfCheck());
-            dto.setImplementer(plan.getImplementer());
-            dto.setPaticipant(plan.getPaticipant());
-            dto.setCheckerGroup(plan.getCheckerGroup());
-            dto.setCheckerName(plan.getCheckerName());
-            dto.setCheckerGroupId(plan.getCheckerGroupId());
-            dto.setCheckerId(plan.getCheckerId());
-            dto.setGross(plan.getGross());
-            dto.setTimeCheck(plan.getTimeCheck());
-            dto.setNameResult(plan.getNameResult());
-            dto.setScriptId(plan.getScriptId());
-            dto.setCreateBy(plan.getCreateBy());
-            dto.setStatus(plan.getStatus());
-            dto.setCreatedAt(plan.getCreatedAt());
-            dto.setUpdatedAt(plan.getUpdatedAt());
-            dto.setUpdateBy(plan.getUpdateBy());
-            PlanStatisticalResponse statisticalResponse = this.planRepository.getAllPlanStatisticalByPlan(plan.getId());
-            dto.setSumOfLy(statisticalResponse.getSumOfLy());
-            dto.setSumOfFail(statisticalResponse.getSumOfFail());
-            dto.setSumOfNc(statisticalResponse.getSumOfNc());
-            dto.setSumOfPass(statisticalResponse.getSumOfPass());
-            return dto;
+        List<Predicate> predicates = new ArrayList<>();
+        filters.forEach((key, value) -> {
+            if (value != null) {
+                switch (key) {
+                    case "code",
+                        "name",
+                        "frequency",
+                        "subjectOfAssetmentPlan",
+                        "testObject",
+                        "reportTypeName",
+                        "implementer",
+                        "paticipant",
+                        "checkerGroup",
+                        "checkerName",
+                        "nameResult",
+                        "createBy",
+                        "updateBy" -> predicates.add((Predicate) cb.like(root.get(key), "%" + value + "%"));
+                    case "status", "statusPlan", "reportTypeId", "checkerGroupId", "checkerId", "scriptId" -> predicates.add(
+                        (Predicate) cb.equal(root.get(key), value)
+                    );
+                    // Add more fields as needed
+                }
+            }
         });
+
+        cq.where(predicates.toArray(new jakarta.persistence.criteria.Predicate[0]));
+        cq.orderBy(cb.desc(root.get("id")));
+        var query = entityManager.createQuery(cq);
+        query.setFirstResult(page * 10);
+        query.setMaxResults(10);
+
+        List<Plan> plans = query.getResultList();
+        List<PlanDetailDTO> dtos = plans
+            .stream()
+            .map(plan -> {
+                PlanDetailDTO dto = new PlanDetailDTO();
+                dto.setId(plan.getId());
+                dto.setCode(plan.getCode());
+                dto.setName(plan.getName());
+                dto.setSubjectOfAssetmentPlan(plan.getSubjectOfAssetmentPlan());
+                dto.setFrequency(plan.getFrequency());
+                dto.setTimeStart(plan.getTimeStart());
+                dto.setTimeEnd(plan.getTimeEnd());
+                dto.setStatusPlan(plan.getStatusPlan());
+                dto.setTestObject(plan.getTestObject());
+                dto.setReportTypeId(plan.getReportTypeId());
+                dto.setReportTypeName(plan.getReportTypeName());
+                dto.setNumberOfCheck(plan.getNumberOfCheck());
+                dto.setImplementer(plan.getImplementer());
+                dto.setPaticipant(plan.getPaticipant());
+                dto.setCheckerGroup(plan.getCheckerGroup());
+                dto.setCheckerName(plan.getCheckerName());
+                dto.setCheckerGroupId(plan.getCheckerGroupId());
+                dto.setCheckerId(plan.getCheckerId());
+                dto.setGross(plan.getGross());
+                dto.setTimeCheck(plan.getTimeCheck());
+                dto.setNameResult(plan.getNameResult());
+                dto.setScriptId(plan.getScriptId());
+                dto.setCreateBy(plan.getCreateBy());
+                dto.setStatus(plan.getStatus());
+                dto.setCreatedAt(plan.getCreatedAt());
+                dto.setUpdatedAt(plan.getUpdatedAt());
+                dto.setUpdateBy(plan.getUpdateBy());
+
+                PlanStatisticalResponse stats = planRepository.getAllPlanStatisticalByPlan(plan.getId());
+                dto.setSumOfLy(stats.getSumOfLy());
+                dto.setSumOfFail(stats.getSumOfFail());
+                dto.setSumOfNc(stats.getSumOfNc());
+                dto.setSumOfPass(stats.getSumOfPass());
+
+                return dto;
+            })
+            .toList();
+
+        // Optional: count query for total records
+        var countQuery = cb.createQuery(Long.class);
+        var countRoot = countQuery.from(Plan.class);
+        countQuery.select(cb.count(countRoot)).where(predicates.toArray(new jakarta.persistence.criteria.Predicate[0]));
+        Long total = entityManager.createQuery(countQuery).getSingleResult();
+
+        return new PageImpl<>(dtos, PageRequest.of(page, 10), total);
     }
 
     @GetMapping("plan-detail-old")

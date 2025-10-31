@@ -17,8 +17,6 @@ import org.springframework.stereotype.Repository;
 @SuppressWarnings("unused")
 @Repository
 public interface PlanRepository extends JpaRepository<Plan, Long>, JpaSpecificationExecutor<Plan> {
-    Page<Plan> findAll(Specification<Plan> specification, Pageable pageable, Sort sort);
-
     @Query(
         value = "" +
         "WITH temp_table AS (\n" +
@@ -128,7 +126,9 @@ public interface PlanRepository extends JpaRepository<Plan, Long>, JpaSpecificat
         "       (SELECT COUNT(result) FROM temp_table_2 tb WHERE tb.plan_id = p.id  AND result = 'LY') AS sumOfLy,\n" +
         "       (SELECT COUNT(result) FROM temp_table_2 tb WHERE tb.plan_id = p.id  AND result = 'Không đạt') AS sumOfFail,\n" +
         "       (SELECT COUNT(result) FROM temp_table_2 tb WHERE tb.plan_id = p.id  AND (result = 'Đạt' OR result ='PASS')) AS sumOfPass,\n" +
-        "       (SELECT COUNT(result) FROM temp_table_2 tb WHERE tb.plan_id = p.id ) AS total\n" +
+        "       (SELECT COUNT(result) FROM temp_table_2 tb WHERE tb.plan_id = p.id ) AS total," +
+        "(SELECT\tCOUNT(result) FROM recheck_plan_details rpds WHERE rpds.plan_id = p.id AND rpds.result ='Không đạt') AS sumOfUncheck,\n" +
+        "       (SELECT\tCOUNT(result) FROM recheck_plan_details rpds WHERE rpds.plan_id = p.id AND rpds.result ='Không đạt') AS sumOfCheck\n" +
         "FROM iso.plan_group_history_detail pghd\n" +
         "RIGHT JOIN iso.report rp ON rp.id = pghd.report_id\n" +
         "RIGHT JOIN iso.plan p ON p.id = rp.plan_id\n" +
