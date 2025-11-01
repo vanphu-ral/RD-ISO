@@ -302,7 +302,7 @@ public class PlanResource {
                         "checkerName",
                         "nameResult",
                         "createBy",
-                        "updateBy" -> predicates.add((Predicate) cb.like(root.get(key), "%" + value + "%"));
+                        "updateBy" -> predicates.add(cb.like(root.get(key), "%" + value + "%"));
                     case "status", "statusPlan", "reportTypeId", "checkerGroupId", "checkerId", "scriptId" -> predicates.add(
                         (Predicate) cb.equal(root.get(key), value)
                     );
