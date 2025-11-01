@@ -128,7 +128,7 @@ public interface PlanRepository extends JpaRepository<Plan, Long>, JpaSpecificat
         "       (SELECT COUNT(result) FROM temp_table_2 tb WHERE tb.plan_id = p.id  AND result ='PASS') AS sumOfPass,\n" +
         "       (SELECT COUNT(result) FROM temp_table_2 tb WHERE tb.plan_id = p.id  AND result = 'Đạt' ) AS sumOfDat,\n" +
         "       (SELECT COUNT(result) FROM temp_table_2 tb WHERE tb.plan_id = p.id ) AS total," +
-        "(SELECT SUM(score_scale) FROM iso.report AS report where report.plan_id = p.id ) as sumOfScoreScale," +
+        "(SELECT SUM(report.score_scale) FROM iso.report AS report where report.plan_id = p.id ) as sumOfScoreScale," +
         "(SELECT\tCOUNT(result) FROM recheck_plan_details rpds WHERE rpds.plan_id = p.id AND rpds.result ='Không đạt') AS sumOfUncheck,\n" +
         "       (SELECT\tCOUNT(result) FROM recheck_plan_details rpds WHERE rpds.plan_id = p.id AND rpds.result ='Không đạt') AS sumOfCheck\n" +
         "FROM iso.plan_group_history_detail pghd\n" +
