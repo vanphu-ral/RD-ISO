@@ -68,6 +68,15 @@ public class PlanDetailDTO {
     private Integer sumOfCheck;
     private Integer sumOfUncheck;
     private Integer sumOfDat;
+    private Integer sumOfScoreScale;
+
+    public Integer getSumOfScoreScale() {
+        return sumOfScoreScale;
+    }
+
+    public void setSumOfScoreScale(Integer sumOfScoreScale) {
+        this.sumOfScoreScale = sumOfScoreScale;
+    }
 
     public Integer getSumOfDat() {
         return sumOfDat;

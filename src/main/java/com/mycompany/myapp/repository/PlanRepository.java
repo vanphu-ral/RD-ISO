@@ -128,6 +128,7 @@ public interface PlanRepository extends JpaRepository<Plan, Long>, JpaSpecificat
         "       (SELECT COUNT(result) FROM temp_table_2 tb WHERE tb.plan_id = p.id  AND result ='PASS') AS sumOfPass,\n" +
         "       (SELECT COUNT(result) FROM temp_table_2 tb WHERE tb.plan_id = p.id  AND result = 'Đạt' ) AS sumOfDat,\n" +
         "       (SELECT COUNT(result) FROM temp_table_2 tb WHERE tb.plan_id = p.id ) AS total," +
+        "(SELECT SUM(score_scale) FROM iso.report AS report where report.plan_id = p.id ) as sumOfScoreScale," +
         "(SELECT\tCOUNT(result) FROM recheck_plan_details rpds WHERE rpds.plan_id = p.id AND rpds.result ='Không đạt') AS sumOfUncheck,\n" +
         "       (SELECT\tCOUNT(result) FROM recheck_plan_details rpds WHERE rpds.plan_id = p.id AND rpds.result ='Không đạt') AS sumOfCheck\n" +
         "FROM iso.plan_group_history_detail pghd\n" +
@@ -267,6 +268,12 @@ public interface PlanRepository extends JpaRepository<Plan, Long>, JpaSpecificat
         "rp.report_type AS reportType, " +
         "rp.convert_score AS convertScore, " +
         "rp.score_scale AS scoreScale, " +
+        // sumOfScoreScale
+        "(SELECT SUM(d.score_scale) " +
+        " FROM iso.report AS d " +
+        " INNER JOIN iso.plan c ON c.id = d.plan_id " +
+        " WHERE d.group_name = rp.group_name AND c.subject_of_assetment_plan = p.subject_of_assetment_plan AND d.report_type = rp.report_type " +
+        " AND CONCAT(YEAR(c.time_start), '-', LPAD(MONTH(c.time_start), 2, '0')) = CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0'))) AS sumOfScoreScale, " +
         // sumOfReport
         "(SELECT COUNT(DISTINCT (d.id)) " +
         " FROM iso.plan_group_history_detail a " +
@@ -389,6 +396,12 @@ public interface PlanRepository extends JpaRepository<Plan, Long>, JpaSpecificat
         "rp.report_type AS reportType, " +
         "rp.convert_score AS convertScore, " +
         "rp.score_scale AS scoreScale, " +
+        // sumOfScoreScale
+        "(SELECT SUM(d.score_scale) " +
+        " FROM iso.report AS d " +
+        " INNER JOIN iso.plan c ON c.id = d.plan_id " +
+        " WHERE c.subject_of_assetment_plan = p.subject_of_assetment_plan AND d.report_type = rp.report_type" +
+        " AND CONCAT(YEAR(c.time_start), '-', LPAD(MONTH(c.time_start), 2, '0')) = CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0'))) AS sumOfScoreScale, " +
         // sumOfAudit
         "(SELECT COUNT(DISTINCT a.plan_group_history_id) " +
         " FROM iso.plan_group_history_detail a " +

@@ -409,6 +409,7 @@ public class PlanResource {
             planDetailDTO.setSumOfPass(statisticalResponse.getSumOfPass());
             planDetailDTO.setSumOfCheck(statisticalResponse.getSumOfCheck());
             planDetailDTO.setSumOfUncheck(statisticalResponse.getSumOfUncheck());
+            planDetailDTO.setSumOfScoreScale(statisticalResponse.getSumOfScoreScale());
             planDetailDTOS.add(planDetailDTO);
         }
         Collections.reverse(planDetailDTOS);
