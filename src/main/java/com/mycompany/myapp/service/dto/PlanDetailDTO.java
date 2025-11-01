@@ -65,6 +65,33 @@ public class PlanDetailDTO {
     private Integer sumOfPass;
     private Integer sumOfFail;
     private Integer sumOfScore;
+    private Integer sumOfCheck;
+    private Integer sumOfUncheck;
+    private Integer sumOfDat;
+
+    public Integer getSumOfDat() {
+        return sumOfDat;
+    }
+
+    public void setSumOfDat(Integer sumOfDat) {
+        this.sumOfDat = sumOfDat;
+    }
+
+    public Integer getSumOfCheck() {
+        return sumOfCheck;
+    }
+
+    public void setSumOfCheck(Integer sumOfCheck) {
+        this.sumOfCheck = sumOfCheck;
+    }
+
+    public Integer getSumOfUncheck() {
+        return sumOfUncheck;
+    }
+
+    public void setSumOfUncheck(Integer sumOfUncheck) {
+        this.sumOfUncheck = sumOfUncheck;
+    }
 
     public PlanDetailDTO() {}
 

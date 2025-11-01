@@ -407,6 +407,8 @@ public class PlanResource {
             planDetailDTO.setSumOfFail(statisticalResponse.getSumOfFail());
             planDetailDTO.setSumOfNc(statisticalResponse.getSumOfNc());
             planDetailDTO.setSumOfPass(statisticalResponse.getSumOfPass());
+            planDetailDTO.setSumOfCheck(statisticalResponse.getSumOfCheck());
+            planDetailDTO.setSumOfUncheck(statisticalResponse.getSumOfUncheck());
             planDetailDTOS.add(planDetailDTO);
         }
         Collections.reverse(planDetailDTOS);
