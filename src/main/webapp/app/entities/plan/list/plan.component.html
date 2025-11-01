@@ -74,11 +74,9 @@
         <th style="padding: 0"></th>
         <th style="padding: 0"></th>
         <th style="padding: 0">
-          <!-- <p-columnFilter type="text" matchMode="contains" field="name" placeholder="Search"></p-columnFilter> -->
           <input pInputText type="text" placeholder="Search" [(ngModel)]="filter.name" class="w-100" (keydown.enter)="onSearch()" />
         </th>
         <th style="padding: 0">
-          <!-- <p-columnFilter type="text" matchMode="contains" field="subjectOfAssetmentPlan" placeholder="Search"></p-columnFilter> -->
           <input
             pInputText
             type="text"
@@ -89,20 +87,15 @@
           />
         </th>
         <th style="padding: 0">
-          <!-- <p-columnFilter field="frequency" matchMode="equals" [showMenu]="false">
-            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-              <p-dropdown
-                [ngModel]="value"
-                [options]="listOfFrequency"
-                optionLabel="name"
-                optionValue="name"
-                (onChange)="filter($event.value)"
-                [showClear]="true"
-              >
-              </p-dropdown>
-            </ng-template>
-          </p-columnFilter> -->
-          <input pInputText type="text" placeholder="Search" [(ngModel)]="filter.frequency" class="w-100" (keydown.enter)="onSearch()" />
+          <p-dropdown
+            [(ngModel)]="filter.frequency"
+            [options]="listOfFrequency"
+            optionLabel="name"
+            optionValue="name"
+            (onChange)="onSearch()"
+            [showClear]="true"
+          >
+          </p-dropdown>
         </th>
         <th style="padding: 0"></th>
         <th style="padding: 0"></th>
@@ -113,40 +106,29 @@
         <th style="padding: 0"></th>
         <th style="padding: 0"></th>
         <th style="padding: 0">
-          <!-- <p-columnFilter type="date" field="timeStart" placeholder="Search"></p-columnFilter> -->
           <input pInputText type="date" placeholder="Search" [(ngModel)]="filter.timeStart" class="w-100" (ngModelChange)="onSearch()" />
         </th>
         <th style="padding: 0">
-          <!-- <p-columnFilter type="date" field="timeEnd" placeholder="Search"></p-columnFilter> -->
           <input pInputText type="date" placeholder="Search" [(ngModel)]="filter.timeEnd" class="w-100" (ngModelChange)="onSearch()" />
         </th>
         <th style="padding: 0">
-          <!-- <p-columnFilter type="text" matchMode="contains" field="createBy" placeholder="Search"></p-columnFilter> -->
           <input pInputText type="text" placeholder="Search" [(ngModel)]="filter.createBy" class="w-100" (keydown.enter)="onSearch()" />
         </th>
         <th style="padding: 0">
-          <!-- <p-columnFilter type="text" matchMode="contains" field="updateBy" placeholder="Search"></p-columnFilter> -->
           <input pInputText type="text" placeholder="Search" [(ngModel)]="filter.updateBy" class="w-100" (keydown.enter)="onSearch()" />
         </th>
         <th style="padding: 0">
-          <!-- <p-columnFilter type="date" field="createdAt" placeholder="Search"></p-columnFilter> -->
           <input pInputText type="date" placeholder="Search" [(ngModel)]="filter.createdAt" class="w-100" (ngModelChange)="onSearch()" />
         </th>
         <th style="padding: 0">
-          <!-- <p-columnFilter type="date" field="updatedAt" placeholder="Search"></p-columnFilter> -->
           <input pInputText type="date" placeholder="Search" [(ngModel)]="filter.updatedAt" class="w-100" (ngModelChange)="onSearch()" />
         </th>
         <th style="padding: 0">
-          <!-- <p-columnFilter field="status" matchMode="equals" [showMenu]="false">
-            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-              <p-dropdown [ngModel]="value" [options]="statuses" (onChange)="filter($event.value)" [showClear]="true">
-                <ng-template let-option pTemplate="item">
-                  <p-tag [value]="option" [severity]="getSeverity(option)" />
-                </ng-template>
-              </p-dropdown>
+          <p-dropdown [(ngModel)]="filter.status" [options]="statuses" (onChange)="onSearch()" [showClear]="true">
+            <ng-template let-option pTemplate="item">
+              <p-tag [value]="option" [severity]="getSeverity(option)" />
             </ng-template>
-          </p-columnFilter> -->
-          <input pInputText type="text" placeholder="Search" [(ngModel)]="filter.status" class="w-100" (keydown.enter)="onSearch()" />
+          </p-dropdown>
         </th>
         <th style="padding: 0"></th>
       </tr>
