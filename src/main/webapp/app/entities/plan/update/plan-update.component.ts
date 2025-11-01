@@ -233,9 +233,15 @@ export class PlanUpdateComponent implements OnInit {
 
     this.isCopyMode = history.state.mode === 'COPY' ? true : false;
     this.activatedRoute.data.pipe(take(1)).subscribe(({ plan }) => {
-      this.checkTargetService.getAllCheckTargets().subscribe(res => {
-        this.checkTargetBases = res;
-        if (this.isCopyMode) plan.code = `PLAN-COPY-${plan.code}`;
+      forkJoin({
+        checkTargets: this.checkTargetService.getAllCheckTargets(),
+        checkerGroups: this.checkerGroupService.getAllCheckerGroups(),
+      }).subscribe(({ checkTargets, checkerGroups }) => {
+        this.checkTargetBases = checkTargets;
+        this.groupInfoBase = checkerGroups;
+        if (this.isCopyMode) {
+          plan.code = `PLAN-COPY-${plan.code}`;
+        }
         this.plan = plan;
         this.checkTargets = [...this.checkTargetBases];
         this.groupInfo = [...this.groupInfoBase];

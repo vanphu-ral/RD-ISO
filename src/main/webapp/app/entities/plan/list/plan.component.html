@@ -29,17 +29,21 @@
     [globalFilterFields]="['code', 'name', 'subjectOfAssetmentPlan', 'frequency', 'timeStart', 'timeEnd', 'statusPlan']"
     stripedRows
     [tableStyle]="columnWidths"
+    [lazy]="true"
     showGridlines
     [paginator]="true"
     [rows]="selectedPageSize"
+    [totalRecords]="totalRecords"
     [rowsPerPageOptions]="pageSizeOptions"
     (onPage)="onPageSizeChange($event)"
+    (onLazyLoad)="onPage($event)"
     [showCurrentPageReport]="true"
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
     [responsive]="true"
     [rowHover]="true"
+    [paginatorDropdownAppendTo]="'body'"
+    [loading]="isLoading"
   >
-    >
     <ng-template pTemplate="header">
       <tr>
         <th></th>
@@ -48,6 +52,14 @@
         <th class="text-center" style="min-width: 300px; padding: 0">Tên kế hoạch</th>
         <th class="text-center" style="min-width: 150px; padding: 0">Bộ phận được KT</th>
         <th class="text-center" style="min-width: 100px; padding: 0">Tần suất</th>
+        <th class="text-center" style="min-width: 80px; padding: 0">Tổng điểm</th>
+        <th class="text-center" style="min-width: 80px; padding: 0">Tổng NC</th>
+        <th class="text-center" style="min-width: 80px; padding: 0">Tổng LY</th>
+        <th class="text-center" style="min-width: 80px; padding: 0">Tổng PASS</th>
+        <th class="text-center" style="min-width: 80px; padding: 0">Tổng Đạt</th>
+        <th class="text-center" style="min-width: 80px; padding: 0">Tổng không đạt</th>
+        <th class="text-center" style="min-width: 80px; padding: 0">Tổng lỗi đã khắc phục</th>
+        <th class="text-center" style="min-width: 80px; padding: 0">Tổng lỗi chưa khắc phục</th>
         <th class="text-center" style="min-width: 180px; padding: 0">Thời gian bắt đầu</th>
         <th class="text-center" style="min-width: 180px; padding: 0">Thời gian kết thúc</th>
         <th class="text-center" style="min-width: 150px; padding: 0">Người tạo</th>
@@ -62,7 +74,8 @@
         <th style="padding: 0"></th>
         <th style="padding: 0"></th>
         <th style="padding: 0">
-          <p-columnFilter type="text" matchMode="contains" field="name" placeholder="Search"></p-columnFilter>
+          <!-- <p-columnFilter type="text" matchMode="contains" field="name" placeholder="Search"></p-columnFilter> -->
+          <input pInputText type="text" placeholder="Search" [(ngModel)]="filter.name" class="w-100" (keydown.enter)="onSearch()" />
         </th>
         <th style="padding: 0">
           <p-columnFilter type="text" matchMode="contains" field="subjectOfAssetmentPlan" placeholder="Search"></p-columnFilter>
@@ -82,6 +95,14 @@
             </ng-template>
           </p-columnFilter>
         </th>
+        <th style="padding: 0"></th>
+        <th style="padding: 0"></th>
+        <th style="padding: 0"></th>
+        <th style="padding: 0"></th>
+        <th style="padding: 0"></th>
+        <th style="padding: 0"></th>
+        <th style="padding: 0"></th>
+        <th style="padding: 0"></th>
         <th style="padding: 0">
           <p-columnFilter type="date" field="timeStart" placeholder="Search"></p-columnFilter>
         </th>
@@ -132,6 +153,14 @@
         <td class="text-start">{{ rowNode.name }}</td>
         <td>{{ rowNode.subjectOfAssetmentPlan }}</td>
         <td>{{ rowNode.frequency }}</td>
+        <td></td>
+        <td>{{ rowNode.sumOfNc }}</td>
+        <td>{{ rowNode.sumOfLy }}</td>
+        <td>{{ rowNode.sumOfPass }}</td>
+        <td>{{ rowNode.sumOfDat ? rowNode.sumOfDat : 0 }}</td>
+        <td>{{ rowNode.sumOfFail }}</td>
+        <td>{{ rowNode.sumOfCheck ? rowNode.sumOfCheck : 0 }}</td>
+        <td>{{ rowNode.sumOfUncheck ? rowNode.sumOfUncheck : 0 }}</td>
         <td>{{ rowNode.timeStart | date: 'dd/MM/yyyy' }}</td>
         <td>{{ rowNode.timeEnd | date: 'dd/MM/yyyy' }}</td>
         <td>{{ rowNode.createBy }}</td>
@@ -210,7 +239,7 @@
     <!-- table con -->
     <ng-template pTemplate="rowexpansion" let-rowNode>
       <tr>
-        <td colspan="17">
+        <td colspan="99">
           <div>
             <!-- <h5>Table con</h5> -->
             <p-table
@@ -243,8 +272,8 @@
               <ng-template pTemplate="header">
                 <tr>
                   <th style="min-width: 30px; padding: 0">STT</th>
-                  <th style="min-width: 150px; padding: 0">Mã BBKT</th>
-                  <th style="min-width: 150px; padding: 0">Tên BBKT</th>
+                  <th style="padding: 0">Mã BBKT</th>
+                  <th style="padding: 0">Tên BBKT</th>
                   <th style="min-width: 100px; padding: 0">Tổ được KT</th>
                   <th style="min-width: 100px; padding: 0">Người được KT</th>
                   <th style="min-width: 150px; padding: 0">Loại BBKT (ID)</th>

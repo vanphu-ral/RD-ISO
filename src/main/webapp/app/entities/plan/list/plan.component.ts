@@ -136,6 +136,11 @@ export class PlanComponent implements OnInit {
   selectedFrequencies: string[] = [];
   IsHasRemediationPlan: boolean = false;
 
+  // filter page
+  filter: any = {};
+  page: number = 0;
+  size: number = 10;
+
   trackId = (_index: number, item: IPlan): number => this.planService.getPlanIdentifier(item);
 
   constructor(
@@ -266,9 +271,21 @@ export class PlanComponent implements OnInit {
     });
   }
 
+  onPage(event: any) {
+    const page = event.first / event.rows;
+    const size = event.rows;
+    this.currentPage = page;
+    this.size = size;
+    this.load(page, size);
+  }
+
   onPageSizeChange(event: any): void {
     this.selectedPageSize = event.rows;
     this.first = event.first;
+  }
+
+  onSearch() {
+    this.load(0, this.size);
   }
 
   delete(plan: IPlan): void {
@@ -282,50 +299,23 @@ export class PlanComponent implements OnInit {
       .subscribe();
   }
 
-  load(): void {
+  load(page: number = 0, size: number = 10): void {
     this.isLoading = true;
-    this.queryBackend().subscribe({
+    this.planService.query(this.filter, page, size).subscribe({
       next: res => {
-        if (res.body) {
-          this.planDetailResults = res.body;
-          this.planDetailResults = this.planDetailResults.map(item => {
-            return {
-              ...item,
-              timeStart: new Date(item.timeStart),
-              timeEnd: new Date(item.timeEnd),
-              createdAt: new Date(item.createdAt),
-            };
-          });
-          this.totalRecords = this.planDetailResults.length;
-          this.isLoading = false;
-          // this.preloadFullData();
-        }
+        this.totalRecords = res.totalElements;
+        this.planDetailResults = res.content || [];
+        this.planDetailResults = this.planDetailResults.map(item => {
+          return {
+            ...item,
+            timeStart: new Date(item.timeStart),
+            timeEnd: new Date(item.timeEnd),
+            createdAt: new Date(item.createdAt),
+          };
+        });
+        this.isLoading = false;
       },
-    });
-  }
-
-  preloadFullData(): void {
-    this.planService.getPlanDetail().subscribe(fullData => {
-      const fullDataMap = new Map(fullData.map((item: any) => [item.id, item]));
-      this.planDetailResults.forEach(item => {
-        const fullDataItem: any = fullDataMap.get(item.id);
-        if (fullDataItem) {
-          Object.assign(item, {
-            ...fullDataItem,
-            timeStart: fullDataItem.timeStart ? new Date(fullDataItem.timeStart) : null,
-            timeEnd: fullDataItem.timeEnd ? new Date(fullDataItem.timeEnd) : null,
-            createdAt: fullDataItem.createdAt ? new Date(fullDataItem.createdAt) : null,
-            updatedAt: fullDataItem.updatedAt ? new Date(fullDataItem.updatedAt) : null,
-            planDetail: fullDataItem.planDetail.map((detail: any) => ({
-              ...detail,
-              reviewer: this.evaluators.find(evalua => evalua.username === detail.checker)?.name,
-            })),
-          });
-        }
-      });
-      this.totalRecords = this.planDetailResults.length;
-      this.loadTreeNodes();
-      this.cdr.detectChanges();
+      error: err => console.error(err),
     });
   }
 
@@ -399,23 +389,6 @@ export class PlanComponent implements OnInit {
       });
       this.loadTreeNodes();
       this.cdr.detectChanges();
-    });
-  }
-
-  loadPlanDetails(planId: number): void {
-    this.planService.getPlanDetail().subscribe(res => {
-      this.planDetailResults = res;
-      this.planDetailResults.forEach(item => {
-        item.planDetail = item.planDetail.map((detail: any) => {
-          return {
-            ...detail,
-            reviewer: this.evaluators.find(evalua => evalua.username == detail.checker).name,
-          };
-        });
-      });
-      setTimeout(() => {
-        this.restorePaginatorState();
-      }, 0);
     });
   }
 
@@ -584,14 +557,6 @@ export class PlanComponent implements OnInit {
 
   protected fillComponentAttributesFromResponseBody(data: IPlan[] | null): IPlan[] {
     return data ?? [];
-  }
-
-  protected queryBackend(): Observable<EntityArrayResponseType> {
-    this.isLoading = true;
-    const queryObject: any = {
-      sort: this.sortService.buildSortParam(this.sortState()),
-    };
-    return this.planService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 
   protected handleNavigation(sortState: SortState): void {
@@ -1212,7 +1177,7 @@ export class PlanComponent implements OnInit {
 
   closeEvalReport(data: any) {
     this.dialogCheckPlan = false;
-    this.loadPlanDetails(data.id);
+    this.loadPlanDetailsByPlanId(data.id);
   }
 
   onFrequencySelect(selectedFrequencies: string[]): void {

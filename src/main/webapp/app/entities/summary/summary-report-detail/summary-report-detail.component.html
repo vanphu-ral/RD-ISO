@@ -113,6 +113,7 @@
           <th>Điểm trung bình</th>
           <th pSortableColumn="sumOfNc">Tổng NC <p-sortIcon field="sumOfNc"></p-sortIcon></th>
           <th pSortableColumn="sumOfLy">Tổng LY <p-sortIcon field="sumOfLy"></p-sortIcon></th>
+          <th pSortableColumn="sumOfLy">Tổng PASS <p-sortIcon field="sumOfLy"></p-sortIcon></th>
           <th pSortableColumn="sumOfPass">Tổng đạt <p-sortIcon field="sumOfPass"></p-sortIcon></th>
           <th pSortableColumn="sumOfFail">Tổng không đạt <p-sortIcon field="sumOfFail"></p-sortIcon></th>
           <th pSortableColumn="sumOfUncheck">Tổng số lỗi chưa khắc phục <p-sortIcon field="sumOfUncheck"></p-sortIcon></th>
@@ -135,7 +136,8 @@
           <td>{{ getTotalPointAvg(row) | noZeroDecimal }}</td>
           <td>{{ row.sumOfNc }}</td>
           <td>{{ row.sumOfLy }}</td>
-          <td>{{ row.sumOfPass }}</td>
+          <td>{{ row.convertScore == 'Tính điểm' ? row.sumOfPass : 0 }}</td>
+          <td>{{ row.convertScore == 'Bước nhảy' ? row.sumOfPass : 0 }}</td>
           <td>{{ row.sumOfFail }}</td>
           <td>{{ row.sumOfUncheck }}</td>
           <td>

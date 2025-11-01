@@ -75,7 +75,7 @@
           <th pSortableColumn="sumOfCreateReport">Tổng số lần lập biên bản <p-sortIcon field="sumOfCreateReport"></p-sortIcon></th>
           <th>Tổng điểm</th>
           <th>Điểm trung bình</th>
-          <th>Kiểu tính điểm</th>
+          <!-- <th>Kiểu tính điểm</th> -->
           <th pSortableColumn="sumOfNc">Tổng NC <p-sortIcon field="sumOfNc"></p-sortIcon></th>
           <th pSortableColumn="sumOfLy">Tổng LY <p-sortIcon field="sumOfLy"></p-sortIcon></th>
           <th pSortableColumn="sumOfPass">Tổng đạt <p-sortIcon field="sumOfPass"></p-sortIcon></th>
@@ -94,7 +94,7 @@
           <td>{{ row.sumOfCreateReport }}</td>
           <td>{{ getTotalPoint(row) }}</td>
           <td>{{ getTotalPointAvg(row) | noZeroDecimal }}</td>
-          <td>{{ row.convertScore }}</td>
+          <!-- <td>{{ row.convertScore }}</td> -->
           <td>{{ row.sumOfNc }}</td>
           <td>{{ row.sumOfLy }}</td>
           <td>{{ row.sumOfPass }}</td>
