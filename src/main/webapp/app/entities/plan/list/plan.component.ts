@@ -1137,6 +1137,13 @@ export class PlanComponent implements OnInit {
     }
   }
 
+  getTotalPointPlan(data: any) {
+    const markNC = this.listEvalReportBase.find((item: any) => item.name == 'NC');
+    const markLC = this.listEvalReportBase.find((item: any) => item.name == 'LY');
+    const totalPointSummarize = data.sumOfScoreScale - (data.sumOfLy * markLC.mark + data.sumOfNc * markNC.mark);
+    return totalPointSummarize;
+  }
+
   getTotalPoint(data: any) {
     if (data.convertScore == 'Tính điểm') {
       const markNC = this.listEvalReportBase.find((item: any) => item.name == 'NC');
