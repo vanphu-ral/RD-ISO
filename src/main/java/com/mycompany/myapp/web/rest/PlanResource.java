@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import org.slf4j.Logger;
@@ -283,7 +284,7 @@ public class PlanResource {
      */
     private List<Predicate> buildPredicates(CriteriaBuilder cb, Root<Plan> root, Map<String, Object> filters) {
         List<Predicate> predicates = new ArrayList<>();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); // hoặc định dạng phù hợp với dữ liệu đầu vào
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.000000"); // hoặc định dạng phù hợp với dữ liệu đầu vào
         filters.forEach((key, value) -> {
             if (value == null || key.equals("size") || key.equals("page")) return;
 
@@ -309,22 +310,12 @@ public class PlanResource {
                 case "checkerGroupId" -> predicates.add(cb.equal(root.get("checkerGroupId"), value));
                 case "checkerId" -> predicates.add(cb.equal(root.get("checkerId"), value));
                 case "scriptId" -> predicates.add(cb.equal(root.get("scriptId"), value));
-                case "timeStart" -> {
-                    try {
-                        LocalDateTime start = LocalDateTime.parse(value.toString(), formatter);
-                        predicates.add(cb.greaterThanOrEqualTo(root.get("timeStart"), start));
-                    } catch (Exception e) {
-                        // log hoặc bỏ qua nếu không parse được
-                    }
-                }
-                case "timeEnd" -> {
-                    try {
-                        LocalDateTime end = LocalDateTime.parse(value.toString(), formatter);
-                        predicates.add(cb.lessThanOrEqualTo(root.get("timeEnd"), end));
-                    } catch (Exception e) {
-                        // log hoặc bỏ qua nếu không parse được
-                    }
-                }
+                case "timeStart" -> predicates.add(
+                    cb.like(cb.function("TO_CHAR", String.class, root.get("timeStart"), cb.literal("YYYY-MM-DD")), "%" + val + "%")
+                );
+                case "timeEnd" -> predicates.add(
+                    cb.like(cb.function("TO_CHAR", String.class, root.get("timeEnd"), cb.literal("YYYY-MM-DD")), "%" + val + "%")
+                );
             }
         });
 
