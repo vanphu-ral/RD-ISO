@@ -13,12 +13,12 @@ import com.mycompany.myapp.web.filter.PlanSpecification;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import org.slf4j.Logger;
@@ -279,45 +279,59 @@ public class PlanResource {
     /**
      * Lay du lieu plan di kem thong tin chi tiet
      */
-    @Transactional
-    @GetMapping("/plan-detail")
-    public Page<PlanDetailDTO> getPlanDetail(@RequestParam Map<String, Object> filters, @RequestParam int page) {
-        var cb = entityManager.getCriteriaBuilder();
-        var cq = cb.createQuery(Plan.class);
-        var root = cq.from(Plan.class);
-
+    private List<Predicate> buildPredicates(CriteriaBuilder cb, Root<Plan> root, Map<String, Object> filters) {
         List<Predicate> predicates = new ArrayList<>();
+
         filters.forEach((key, value) -> {
-            if (value != null) {
-                switch (key) {
-                    case "code",
-                        "name",
-                        "frequency",
-                        "subjectOfAssetmentPlan",
-                        "testObject",
-                        "reportTypeName",
-                        "implementer",
-                        "paticipant",
-                        "checkerGroup",
-                        "checkerName",
-                        "nameResult",
-                        "createBy",
-                        "updateBy" -> predicates.add(cb.like(root.get(key), "%" + value + "%"));
-                    case "status", "statusPlan", "reportTypeId", "checkerGroupId", "checkerId", "scriptId" -> predicates.add(
-                        (Predicate) cb.equal(root.get(key), value)
-                    );
-                    // Add more fields as needed
-                }
+            if (value == null || key.equals("size") || key.equals("page")) return;
+
+            String val = value.toString().toLowerCase();
+
+            switch (key) {
+                case "code" -> predicates.add(cb.like(cb.lower(root.get("code")), "%" + val + "%"));
+                case "name" -> predicates.add(cb.like(cb.lower(root.get("name")), "%" + val + "%"));
+                case "frequency" -> predicates.add(cb.like(cb.lower(root.get("frequency")), "%" + val + "%"));
+                case "subjectOfAssetmentPlan" -> predicates.add(cb.like(cb.lower(root.get("subjectOfAssetmentPlan")), "%" + val + "%"));
+                case "testObject" -> predicates.add(cb.like(cb.lower(root.get("testObject")), "%" + val + "%"));
+                case "reportTypeName" -> predicates.add(cb.like(cb.lower(root.get("reportTypeName")), "%" + val + "%"));
+                case "implementer" -> predicates.add(cb.like(cb.lower(root.get("implementer")), "%" + val + "%"));
+                case "paticipant" -> predicates.add(cb.like(cb.lower(root.get("paticipant")), "%" + val + "%"));
+                case "checkerGroup" -> predicates.add(cb.like(cb.lower(root.get("checkerGroup")), "%" + val + "%"));
+                case "checkerName" -> predicates.add(cb.like(cb.lower(root.get("checkerName")), "%" + val + "%"));
+                case "nameResult" -> predicates.add(cb.like(cb.lower(root.get("nameResult")), "%" + val + "%"));
+                case "createBy" -> predicates.add(cb.like(cb.lower(root.get("createBy")), "%" + val + "%"));
+                case "updateBy" -> predicates.add(cb.like(cb.lower(root.get("updateBy")), "%" + val + "%"));
+                case "status" -> predicates.add(cb.equal(root.get("status"), value));
+                case "statusPlan" -> predicates.add(cb.equal(root.get("statusPlan"), value));
+                case "reportTypeId" -> predicates.add(cb.equal(root.get("reportTypeId"), value));
+                case "checkerGroupId" -> predicates.add(cb.equal(root.get("checkerGroupId"), value));
+                case "checkerId" -> predicates.add(cb.equal(root.get("checkerId"), value));
+                case "scriptId" -> predicates.add(cb.equal(root.get("scriptId"), value));
             }
         });
 
-        cq.where(predicates.toArray(new jakarta.persistence.criteria.Predicate[0]));
+        return predicates;
+    }
+
+    @Transactional
+    @GetMapping("/plan-detail")
+    public Page<PlanDetailDTO> getPlanDetail(@RequestParam Map<String, Object> filters, @RequestParam int page) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+        // Truy vấn chính
+        CriteriaQuery<Plan> cq = cb.createQuery(Plan.class);
+        Root<Plan> root = cq.from(Plan.class);
+        List<Predicate> predicates = buildPredicates(cb, root, filters);
+
+        cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
         cq.orderBy(cb.desc(root.get("id")));
-        var query = entityManager.createQuery(cq);
+
+        TypedQuery<Plan> query = entityManager.createQuery(cq);
         query.setFirstResult(page * 10);
         query.setMaxResults(10);
-
         List<Plan> plans = query.getResultList();
+
+        // Chuyển đổi sang DTO
         List<PlanDetailDTO> dtos = plans
             .stream()
             .map(plan -> {
@@ -355,15 +369,19 @@ public class PlanResource {
                 dto.setSumOfFail(stats.getSumOfFail());
                 dto.setSumOfNc(stats.getSumOfNc());
                 dto.setSumOfPass(stats.getSumOfPass());
+                dto.setSumOfCheck(stats.getSumOfCheck());
+                dto.setSumOfUncheck(stats.getSumOfUncheck());
+                dto.setSumOfScoreScale(stats.getSumOfScoreScale());
 
                 return dto;
             })
             .toList();
 
-        // Optional: count query for total records
-        var countQuery = cb.createQuery(Long.class);
-        var countRoot = countQuery.from(Plan.class);
-        countQuery.select(cb.count(countRoot)).where(predicates.toArray(new jakarta.persistence.criteria.Predicate[0]));
+        // Truy vấn đếm tổng số bản ghi
+        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+        Root<Plan> countRoot = countQuery.from(Plan.class);
+        List<Predicate> countPredicates = buildPredicates(cb, countRoot, filters);
+        countQuery.select(cb.count(countRoot)).where(cb.and(countPredicates.toArray(new Predicate[0])));
         Long total = entityManager.createQuery(countQuery).getSingleResult();
 
         return new PageImpl<>(dtos, PageRequest.of(page, 10), total);
@@ -448,7 +466,7 @@ public class PlanResource {
             List<String> imageExtensions = Arrays.asList("jpg", "jpeg", "png", "gif");
             List<String> videoExtensions = Arrays.asList("mp4", "avi", "mov", "wmv", "flv");
 
-            Path uploadPath;
+            java.nio.file.Path uploadPath;
             String fileType;
 
             if (imageExtensions.contains(fileExtension)) {
@@ -466,7 +484,7 @@ public class PlanResource {
                 log.info("Created upload directory for {}: {}", fileType, uploadPath.toString());
             }
 
-            Path filePath = Paths.get(uploadPath.toString(), fileName);
+            java.nio.file.Path filePath = Paths.get(uploadPath.toString(), fileName);
             Files.write(filePath, file.getBytes());
 
             Map<String, String> response = new HashMap<>();
@@ -492,7 +510,7 @@ public class PlanResource {
     @DeleteMapping("/delete-file")
     public ResponseEntity<String> deleteFile(@RequestParam("fileName") String fileName) {
         try {
-            Path filePath = Paths.get(uploadDir + fileName);
+            java.nio.file.Path filePath = Paths.get(uploadDir + fileName);
             if (!Files.exists(filePath)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found");
             }
