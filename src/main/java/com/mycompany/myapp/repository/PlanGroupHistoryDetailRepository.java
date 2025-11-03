@@ -3,6 +3,10 @@ package com.mycompany.myapp.repository;
 import com.mycompany.myapp.domain.PlanGroupHistory;
 import com.mycompany.myapp.domain.PlanGroupHistoryDetail;
 import java.util.List;
+
+import com.mycompany.myapp.domain.PlanGroupHistoryResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -20,5 +24,50 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         Long reportId,
         String criterialName,
         String criterialGroupName
+    );
+    @Query(value = "SELECT\n" +
+        "    pghd.criterial_name as criterialName,\n" +
+        "    pghd.group_criterial_name as groupCriterialName,\n" +
+        "    (\n" +
+        "        SELECT rrpd.result\n" +
+        "        FROM iso.remediation_plan_detail rpd\n" +
+        "        INNER JOIN iso.recheck_remediation_plan_detail rrpd \n" +
+        "            ON rrpd.remediation_plan_detail_id = rpd.id\n" +
+        "        WHERE rpd.criterial_name = pghd.criterial_name \n" +
+        "            AND rpd.criterial_group_name = pghd.criterial_group_name \n" +
+        "            AND rpd.report_id = pghd.report_id\n" +
+        "        ORDER BY rpd.created_at DESC\n" +
+        "        LIMIT 1\n" +
+        "    ) AS result,\n" +
+        "    (\n" +
+        "        SELECT rrpd.status\n" +
+        "        FROM iso.remediation_plan_detail rpd\n" +
+        "        INNER JOIN iso.recheck_remediation_plan_detail rrpd \n" +
+        "            ON rrpd.remediation_plan_detail_id = rpd.id\n" +
+        "        WHERE rpd.criterial_name = pghd.criterial_name \n" +
+        "            AND rpd.criterial_group_name = pghd.criterial_group_name \n" +
+        "            AND rpd.report_id = pghd.report_id\n" +
+        "        ORDER BY rpd.created_at DESC\n" +
+        "        LIMIT 1\n" +
+        "    ) AS statusRecheck,\n" +
+        "    (\n" +
+        "        SELECT COUNT(rpd.id)\n" +
+        "        FROM iso.remediation_plan_detail rpd\n" +
+        "        INNER JOIN iso.recheck_remediation_plan_detail rrpd \n" +
+        "            ON rrpd.remediation_plan_detail_id = rpd.id\n" +
+        "        WHERE rpd.criterial_name = pghd.criterial_name \n" +
+        "            AND rpd.criterial_group_name = pghd.criterial_group_name \n" +
+        "            AND rpd.report_id = pghd.report_id\n" +
+        "    ) AS sumOfRecheck\n" +
+        "FROM iso.plan_group_history_detail pghd\n" +
+        "WHERE pghd.result NOT IN ('Đạt', 'PASS')\n" +
+        "AND pghd.report_id = :reportId\n" +
+        "AND (:criterialName IS NULL OR pghd.criterial_name LIKE %:criterialName%)\n" +
+        "AND (:groupCriterialName IS NULL OR pghd.group_criterial_name LIKE %:groupCriterialName%)",nativeQuery = true)
+    Page<PlanGroupHistoryResponse> getDetailRecheckByReportIdWithFilter(
+        @Param("reportId") Long reportId,
+        @Param("criterialName") String criterialName,
+        @Param("groupCriterialName") String groupCriterialName,
+        Pageable pageable
     );
 }

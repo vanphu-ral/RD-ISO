@@ -2,12 +2,16 @@ package com.mycompany.myapp.web.rest;
 
 import com.mycompany.myapp.domain.PlanGroupHistory;
 import com.mycompany.myapp.domain.PlanGroupHistoryDetail;
+import com.mycompany.myapp.domain.PlanGroupHistoryResponse;
 import com.mycompany.myapp.repository.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,6 +78,22 @@ public class PlanGroupHistoryDetailResource {
         @RequestParam("reportId") Long reportId
     ) {
         List<PlanGroupHistoryDetail> result = planGroupHistoryDetailRepository.findAllByPlanGroupHistoryIdAndReportId(historyId, reportId);
+        return ResponseEntity.ok(result);
+    }
+    @GetMapping("/recheck-details")
+    public ResponseEntity<Page<PlanGroupHistoryResponse>> getRecheckDetails(
+        @RequestParam Long reportId,
+        @RequestParam(required = false) String criterialName,
+        @RequestParam(required = false) String groupCriterialName,
+        @PageableDefault(size = 10) Pageable pageable) {
+
+        Page<PlanGroupHistoryResponse> result = planGroupHistoryDetailRepository.getDetailRecheckByReportIdWithFilter(
+            reportId,
+            criterialName,
+            groupCriterialName,
+            pageable
+        );
+
         return ResponseEntity.ok(result);
     }
 }
