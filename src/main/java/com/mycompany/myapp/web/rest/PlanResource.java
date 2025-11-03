@@ -385,11 +385,16 @@ public class PlanResource {
                 dto.setSumOfScoreScale(stats.getSumOfScoreScale());
                 List<PlanGroupHistoryResponse> planGroupHistoryResponseList =
                     this.planGroupHistoryDetailRepository.getDetailRecheckByPlanId(plan.getId());
-                for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
-                    if (historyResponse.getResult().equals("Đạt") && historyResponse.getStatusRecheck().equals("Hoàn thành")) {
-                        dto.setSumOfCheck(dto.getSumOfCheck() + 1);
-                    } else {
-                        dto.setSumOfUncheck(dto.getSumOfUncheck() + 1);
+                if (planGroupHistoryResponseList == null || planGroupHistoryResponseList.size() == 0) {
+                    dto.setSumOfCheck(0);
+                    dto.setSumOfUncheck(0);
+                } else {
+                    for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
+                        if (historyResponse.getResult().equals("Đạt") && historyResponse.getStatusRecheck().equals("Hoàn thành")) {
+                            dto.setSumOfCheck(dto.getSumOfCheck() + 1);
+                        } else {
+                            dto.setSumOfUncheck(dto.getSumOfUncheck() + 1);
+                        }
                     }
                 }
                 return dto;
