@@ -127,7 +127,7 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
     );
 
     @Query(
-        value = "SELECT\n" +
+        value = "SELECT \n" +
         "    pghd.criterial_name as criterialName,\n" +
         "    pghd.criterial_group_name as groupCriterialName," +
         "pghd.result as errorType,\n" +
@@ -162,7 +162,7 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         "            AND rpd.criterial_group_name = pghd.criterial_group_name \n" +
         "            AND rpd.report_id = pghd.report_id\n" +
         "    ) AS sumOfRecheck\n" +
-        "FROM iso.plan_group_history_detail pghd" +
+        "FROM iso.plan_group_history_detail pghd " +
         "inner join iso.report as r on r.id = pghd.report_id \n" +
         "WHERE pghd.result NOT IN ('Đạt', 'PASS')\n" +
         "AND r.plan_id = :planId ;\n",
@@ -206,7 +206,7 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         "            AND rpd.criterial_group_name = pghd.criterial_group_name \n" +
         "            AND rpd.report_id = pghd.report_id\n" +
         "    ) AS sumOfRecheck\n" +
-        "FROM iso.plan_group_history_detail pghd" +
+        "FROM iso.plan_group_history_detail pghd " +
         "inner join iso.report as r on r.id = pghd.report_id " +
         "inner join iso.plan as p on p.id = r.plan_id \n" +
         "WHERE pghd.result NOT IN ('Đạt', 'PASS')\n" +
@@ -251,7 +251,7 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         "            AND rpd.criterial_group_name = pghd.criterial_group_name \n" +
         "            AND rpd.report_id = pghd.report_id\n" +
         "    ) AS sumOfRecheck\n" +
-        "FROM iso.plan_group_history_detail pghd" +
+        "FROM iso.plan_group_history_detail pghd " +
         "inner join iso.report as r on r.id = pghd.report_id \n" +
         "inner join iso.plan as p on p.id = r.plan_id \n" +
         "WHERE pghd.result NOT IN ('Đạt', 'PASS')\n" +

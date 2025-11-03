@@ -24,6 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.data.web.PageableDefault;
@@ -59,6 +60,8 @@ public class PlanResource {
 
     private final PlanRepository planRepository;
     private final ReportRepository reportRepository;
+
+    @Autowired
     private PlanGroupHistoryDetailRepository planGroupHistoryDetailRepository;
 
     public PlanResource(
@@ -383,19 +386,29 @@ public class PlanResource {
                 dto.setSumOfNc(stats.getSumOfNc());
                 dto.setSumOfPass(stats.getSumOfPass());
                 dto.setSumOfScoreScale(stats.getSumOfScoreScale());
-                List<PlanGroupHistoryResponse> planGroupHistoryResponseList =
-                    this.planGroupHistoryDetailRepository.getDetailRecheckByPlanId(plan.getId());
+                Integer sumOfCheck = 0;
+                Integer sumOfUncheck = 0;
+                List<PlanGroupHistoryResponse> planGroupHistoryResponseList = planGroupHistoryDetailRepository.getDetailRecheckByPlanId(
+                    plan.getId()
+                );
                 if (planGroupHistoryResponseList == null || planGroupHistoryResponseList.size() == 0) {
                     dto.setSumOfCheck(0);
                     dto.setSumOfUncheck(0);
                 } else {
                     for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
-                        if (historyResponse.getResult().equals("Đạt") && historyResponse.getStatusRecheck().equals("Hoàn thành")) {
-                            dto.setSumOfCheck(dto.getSumOfCheck() + 1);
+                        if (
+                            historyResponse.getResult() != null &&
+                            historyResponse.getStatusRecheck() != null &&
+                            historyResponse.getResult().equals("Đạt") &&
+                            historyResponse.getStatusRecheck().equals("Đã hoàn thành")
+                        ) {
+                            sumOfCheck += 1;
                         } else {
-                            dto.setSumOfUncheck(dto.getSumOfUncheck() + 1);
+                            sumOfUncheck += 1;
                         }
                     }
+                    dto.setSumOfCheck(sumOfCheck);
+                    dto.setSumOfUncheck(sumOfUncheck);
                 }
                 return dto;
             })
@@ -450,8 +463,6 @@ public class PlanResource {
             planDetailDTO.setSumOfNc(statisticalResponse.getSumOfNc());
             planDetailDTO.setSumOfPass(statisticalResponse.getSumOfPass());
             planDetailDTO.setSumOfScoreScale(statisticalResponse.getSumOfScoreScale());
-            List<PlanGroupHistoryResponse> planGroupHistoryResponseList =
-                this.planGroupHistoryDetailRepository.getDetailRecheckByPlanId(plan.getId());
             planDetailDTOS.add(planDetailDTO);
         }
         Collections.reverse(planDetailDTOS);
@@ -601,7 +612,12 @@ public class PlanResource {
                 this.planGroupHistoryDetailRepository.getDetailRecheckByGroup(planStatisticalResponse.getSubjectOfAssetmentPlan());
             if (planGroupHistoryResponseList.size() > 0 || planGroupHistoryResponseList != null) {
                 for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
-                    if (historyResponse.getResult().equals("Đạt") && historyResponse.getStatusRecheck().equals("Hoàn thành")) {
+                    if (
+                        historyResponse.getResult() != null &&
+                        historyResponse.getStatusRecheck() != null &&
+                        historyResponse.getResult().equals("Đạt") &&
+                        historyResponse.getStatusRecheck().equals("Đã hoàn thành")
+                    ) {
                         sumOfCheck += 1;
                     } else {
                         sumOfUncheck += 1;
@@ -643,7 +659,12 @@ public class PlanResource {
                     );
             if (planGroupHistoryResponseList.size() > 0 || planGroupHistoryResponseList != null) {
                 for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
-                    if (historyResponse.getResult().equals("Đạt") && historyResponse.getStatusRecheck().equals("Hoàn thành")) {
+                    if (
+                        historyResponse.getResult() != null &&
+                        historyResponse.getStatusRecheck() != null &&
+                        historyResponse.getResult().equals("Đạt") &&
+                        historyResponse.getStatusRecheck().equals("Đã hoàn thành")
+                    ) {
                         sumOfCheck += 1;
                     } else {
                         sumOfUncheck += 1;
