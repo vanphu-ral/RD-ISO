@@ -28,8 +28,12 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
     @Query(
         value = "SELECT\n" +
         "    pghd.criterial_name as criterialName,\n" +
-        "    pghd.criterial_group_name as groupCriterialName," +
-        "pghd.result as errorType,\n" +
+        "    pghd.criterial_group_name as criterialGroupName," +
+        "pghd.result as errorType," +
+        "pghd.frequency as frequency," +
+        "pghd.convert_score as convertScore," +
+        "pghd.note as note," +
+        "pghd.created_at as createdAt,\n" +
         "    (\n" +
         "        SELECT rrpd.result\n" +
         "        FROM iso.remediation_plan_detail rpd\n" +
@@ -65,20 +69,20 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         "WHERE pghd.result NOT IN ('Đạt', 'PASS')\n" +
         "AND pghd.report_id = :reportId\n" +
         "AND  pghd.criterial_name LIKE %:criterialName%\n" +
-        "AND  pghd.criterial_group_name LIKE %:groupCriterialName%",
+        "AND  pghd.criterial_group_name LIKE %:criterialGroupName%",
         nativeQuery = true
     )
     Page<PlanGroupHistoryResponse> getDetailRecheckByReportIdWithFilter(
         @Param("reportId") Long reportId,
         @Param("criterialName") String criterialName,
-        @Param("groupCriterialName") String groupCriterialName,
+        @Param("criterialGroupName") String criterialGroupName,
         Pageable pageable
     );
 
     @Query(
         value = "SELECT\n" +
         "    pghd.criterial_name as criterialName,\n" +
-        "    pghd.criterial_group_name as groupCriterialName," +
+        "    pghd.criterial_group_name as criterialGroupName," +
         "pghd.result as errorType,\n" +
         "    (\n" +
         "        SELECT rrpd.result\n" +
@@ -116,20 +120,20 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         "WHERE pghd.result NOT IN ('Đạt', 'PASS')\n" +
         "AND r.plan_id = :planId\n" +
         "AND  pghd.criterial_name LIKE %:criterialName%\n" +
-        "AND  pghd.criterial_group_name LIKE %:groupCriterialName%",
+        "AND  pghd.criterial_group_name LIKE %:criterialGroupName%",
         nativeQuery = true
     )
     Page<PlanGroupHistoryResponse> getDetailRecheckByPlanIdWithFilter(
         @Param("planId") Long planId,
         @Param("criterialName") String criterialName,
-        @Param("groupCriterialName") String groupCriterialName,
+        @Param("criterialGroupName") String criterialGroupName,
         Pageable pageable
     );
 
     @Query(
         value = "SELECT \n" +
         "    pghd.criterial_name as criterialName,\n" +
-        "    pghd.criterial_group_name as groupCriterialName," +
+        "    pghd.criterial_group_name as criterialGroupName," +
         "pghd.result as errorType,\n" +
         "    (\n" +
         "        SELECT rrpd.result\n" +
@@ -173,7 +177,7 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
     @Query(
         value = "SELECT\n" +
         "    pghd.criterial_name as criterialName,\n" +
-        "    pghd.criterial_group_name as groupCriterialName," +
+        "    pghd.criterial_group_name as criterialGroupName," +
         "pghd.result as errorType,\n" +
         "    (\n" +
         "        SELECT rrpd.result\n" +
@@ -218,7 +222,7 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
     @Query(
         value = "SELECT\n" +
         "    pghd.criterial_name as criterialName,\n" +
-        "    pghd.criterial_group_name as groupCriterialName," +
+        "    pghd.criterial_group_name as criterialGroupName," +
         "pghd.result as errorType,\n" +
         "    (\n" +
         "        SELECT rrpd.result\n" +
