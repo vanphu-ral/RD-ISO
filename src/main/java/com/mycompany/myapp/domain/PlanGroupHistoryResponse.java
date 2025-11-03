@@ -6,4 +6,5 @@ public interface PlanGroupHistoryResponse {
     String getResult();
     String getStatusRecheck();
     Integer getSumOfRecheck();
+    String getErrorType();
 }

@@ -28,7 +28,8 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
     @Query(
         value = "SELECT\n" +
         "    pghd.criterial_name as criterialName,\n" +
-        "    pghd.criterial_group_name as groupCriterialName,\n" +
+        "    pghd.criterial_group_name as groupCriterialName," +
+        "pghd.result as errorType,\n" +
         "    (\n" +
         "        SELECT rrpd.result\n" +
         "        FROM iso.remediation_plan_detail rpd\n" +
