@@ -2,9 +2,8 @@ package com.mycompany.myapp.repository;
 
 import com.mycompany.myapp.domain.PlanGroupHistory;
 import com.mycompany.myapp.domain.PlanGroupHistoryDetail;
-import java.util.List;
-
 import com.mycompany.myapp.domain.PlanGroupHistoryResponse;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
@@ -25,7 +24,9 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         String criterialName,
         String criterialGroupName
     );
-    @Query(value = "SELECT\n" +
+
+    @Query(
+        value = "SELECT\n" +
         "    pghd.criterial_name as criterialName,\n" +
         "    pghd.group_criterial_name as groupCriterialName,\n" +
         "    (\n" +
@@ -62,8 +63,10 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         "FROM iso.plan_group_history_detail pghd\n" +
         "WHERE pghd.result NOT IN ('Đạt', 'PASS')\n" +
         "AND pghd.report_id = :reportId\n" +
-        "AND (:criterialName IS NULL OR pghd.criterial_name LIKE %:criterialName%)\n" +
-        "AND (:groupCriterialName IS NULL OR pghd.group_criterial_name LIKE %:groupCriterialName%)",nativeQuery = true)
+        "AND  pghd.criterial_name LIKE %:criterialName%\n" +
+        "AND  pghd.group_criterial_name LIKE %:groupCriterialName%",
+        nativeQuery = true
+    )
     Page<PlanGroupHistoryResponse> getDetailRecheckByReportIdWithFilter(
         @Param("reportId") Long reportId,
         @Param("criterialName") String criterialName,

@@ -80,17 +80,20 @@ public class PlanGroupHistoryDetailResource {
         List<PlanGroupHistoryDetail> result = planGroupHistoryDetailRepository.findAllByPlanGroupHistoryIdAndReportId(historyId, reportId);
         return ResponseEntity.ok(result);
     }
+
     @GetMapping("/recheck-details")
     public ResponseEntity<Page<PlanGroupHistoryResponse>> getRecheckDetails(
         @RequestParam Long reportId,
         @RequestParam(required = false) String criterialName,
         @RequestParam(required = false) String groupCriterialName,
-        @PageableDefault(size = 10) Pageable pageable) {
-
+        @PageableDefault(size = 10) Pageable pageable
+    ) {
+        String criterialNameFilter = (criterialName != null) ? criterialName : "";
+        String groupCriterialNameFilter = (groupCriterialName != null) ? groupCriterialName : "";
         Page<PlanGroupHistoryResponse> result = planGroupHistoryDetailRepository.getDetailRecheckByReportIdWithFilter(
             reportId,
-            criterialName,
-            groupCriterialName,
+            criterialNameFilter,
+            groupCriterialNameFilter,
             pageable
         );
 
