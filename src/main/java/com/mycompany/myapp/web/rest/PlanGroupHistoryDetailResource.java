@@ -99,4 +99,23 @@ public class PlanGroupHistoryDetailResource {
 
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/recheck-details/plan")
+    public ResponseEntity<Page<PlanGroupHistoryResponse>> getRecheckDetailsByPlan(
+        @RequestParam Long planId,
+        @RequestParam(required = false) String criterialName,
+        @RequestParam(required = false) String groupCriterialName,
+        @PageableDefault(size = 10) Pageable pageable
+    ) {
+        String criterialNameFilter = (criterialName != null) ? criterialName : "";
+        String groupCriterialNameFilter = (groupCriterialName != null) ? groupCriterialName : "";
+        Page<PlanGroupHistoryResponse> result = planGroupHistoryDetailRepository.getDetailRecheckByReportIdWithFilter(
+            planId,
+            criterialNameFilter,
+            groupCriterialNameFilter,
+            pageable
+        );
+
+        return ResponseEntity.ok(result);
+    }
 }
