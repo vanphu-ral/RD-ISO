@@ -64,7 +64,7 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         "WHERE pghd.result NOT IN ('Đạt', 'PASS')\n" +
         "AND pghd.report_id = :reportId\n" +
         "AND  pghd.criterial_name LIKE %:criterialName%\n" +
-        "AND  pghd.group_criterial_name LIKE %:groupCriterialName%",
+        "AND  pghd.criterial_group_name LIKE %:groupCriterialName%",
         nativeQuery = true
     )
     Page<PlanGroupHistoryResponse> getDetailRecheckByReportIdWithFilter(
