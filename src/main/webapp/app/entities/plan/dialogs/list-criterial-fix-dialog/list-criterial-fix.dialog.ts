@@ -15,6 +15,7 @@ import { PlanGroupService } from 'app/entities/plan-group/service/plan-group.ser
 export class ListCriterialFixDialog {
   data: any;
   type: number = 0;
+  listCriterialFix: any[] = [];
 
   constructor(
     public ref: DynamicDialogRef,
@@ -28,6 +29,13 @@ export class ListCriterialFixDialog {
   ngOnInit(): void {
     this.planGrHistoryDetailService.getRecheckDetails(this.data.id, '', '', 0, 10).subscribe(res => {
       console.log(res);
+      if (this.type == 0) {
+        this.listCriterialFix =
+          res.body?.content.filter((item: any) => item.result === 'Đạt' && item.statusRecheck === 'Đã hoàn thành') || [];
+      } else {
+        this.listCriterialFix =
+          res.body?.content.filter((item: any) => item.result != 'Đạt' && item.statusRecheck != 'Đã hoàn thành') || [];
+      }
     });
   }
 }

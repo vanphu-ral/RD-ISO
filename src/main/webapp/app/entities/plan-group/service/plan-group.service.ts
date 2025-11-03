@@ -17,6 +17,13 @@ export interface IGrossScript {
   createdBy?: string | null;
   status?: string | null;
 }
+export interface IPageResponse<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+}
 export type EntityResponseType = HttpResponse<any>;
 export type EntityArrayResponseType = HttpResponse<any[]>;
 
@@ -114,22 +121,15 @@ export class PlanGroupService {
     groupCriterialName?: string,
     page: number = 0,
     size: number = 10,
-  ): Observable<HttpResponse<any[]>> {
-    let params = new HttpParams().set('reportId', reportId).set('page', page).set('size', size);
+  ): Observable<HttpResponse<IPageResponse<any>>> {
+    let params = new HttpParams()
+      .set('reportId', reportId)
+      .set('page', page)
+      .set('size', size)
+      .set('criterialName', criterialName ?? '')
+      .set('groupCriterialName', groupCriterialName ?? '');
 
-    if (criterialName) {
-      params = params.set('criterialName', criterialName);
-    } else {
-      params = params.set('criterialName', '');
-    }
-
-    if (groupCriterialName) {
-      params = params.set('groupCriterialName', groupCriterialName);
-    } else {
-      params = params.set('groupCriterialName', '');
-    }
-
-    return this.http.get<any[]>(`${this.resourceDetailUrl}/recheck-details`, {
+    return this.http.get<IPageResponse<any>>(`${this.resourceDetailUrl}/recheck-details`, {
       params,
       observe: 'response',
     });

@@ -3,17 +3,21 @@
     <button class="btn btn-primary">Khắc phục</button>
   </div>
   <div class="table-reposive">
-    <p-table [value]="data">
+    <p-table [value]="listCriterialFix">
       <ng-template pTemplate="header">
         <tr>
           <th>Nhóm tiêu trí</th>
           <th>Tên tiêu trí</th>
+          <th>Lỗi</th>
+          <th *ngIf="type == 0">Số lần khắc phục</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-row>
         <tr>
-          <td>{{ row.woId }}</td>
-          <td>{{ row.sapWoId }}</td>
+          <td>{{ row.groupCriterialName }}</td>
+          <td>{{ row.criterialName }}</td>
+          <td>{{ row.errorType }}</td>
+          <td *ngIf="type == 0">{{ row.sumOfRecheck }}</td>
         </tr>
       </ng-template>
     </p-table>
