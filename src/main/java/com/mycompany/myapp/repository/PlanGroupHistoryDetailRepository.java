@@ -26,7 +26,7 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
     );
 
     @Query(
-        value = "SELECT" +
+        value = "SELECT  " +
         "pghd.id as id," +
         "pghd.report_id as reportId," +
         "pghd.report_name as reportName," +
@@ -88,6 +88,63 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         @Param("criterialGroupName") String criterialGroupName,
         Pageable pageable
     );
+
+    @Query(
+        value = "SELECT  " +
+        "pghd.id as id," +
+        "pghd.report_id as reportId," +
+        "pghd.report_name as reportName," +
+        "pghd.plan_group_history_id as planGroupHistoryId," +
+        "pghd.image as image," +
+        "pghd.has_evaluation as hasEvaluation," +
+        "pghd.status as status," +
+        "pghd.updated_at as updatedAt," +
+        "pghd.created_by as createdBy," +
+        "pghd.fixed as fixed,\n" +
+        "    pghd.criterial_name as criterialName,\n" +
+        "    pghd.criterial_group_name as criterialGroupName," +
+        "pghd.result as result," +
+        "pghd.frequency as frequency," +
+        "pghd.convert_score as convertScore," +
+        "pghd.note as note," +
+        "pghd.created_at as createdAt,\n" +
+        "    (\n" +
+        "        SELECT rrpd.result\n" +
+        "        FROM iso.remediation_plan_detail rpd\n" +
+        "        INNER JOIN iso.recheck_remediation_plan_detail rrpd \n" +
+        "            ON rrpd.remediation_plan_detail_id = rpd.id\n" +
+        "        WHERE rpd.criterial_name = pghd.criterial_name \n" +
+        "            AND rpd.criterial_group_name = pghd.criterial_group_name \n" +
+        "            AND rpd.report_id = pghd.report_id\n" +
+        "        ORDER BY rpd.created_at DESC\n" +
+        "        LIMIT 1\n" +
+        "    ) AS resultRecheck,\n" +
+        "    (\n" +
+        "        SELECT rrpd.status\n" +
+        "        FROM iso.remediation_plan_detail rpd\n" +
+        "        INNER JOIN iso.recheck_remediation_plan_detail rrpd \n" +
+        "            ON rrpd.remediation_plan_detail_id = rpd.id\n" +
+        "        WHERE rpd.criterial_name = pghd.criterial_name \n" +
+        "            AND rpd.criterial_group_name = pghd.criterial_group_name \n" +
+        "            AND rpd.report_id = pghd.report_id\n" +
+        "        ORDER BY rpd.created_at DESC\n" +
+        "        LIMIT 1\n" +
+        "    ) AS statusRecheck,\n" +
+        "    (\n" +
+        "        SELECT COUNT(rpd.id)\n" +
+        "        FROM iso.remediation_plan_detail rpd\n" +
+        "        INNER JOIN iso.recheck_remediation_plan_detail rrpd \n" +
+        "            ON rrpd.remediation_plan_detail_id = rpd.id\n" +
+        "        WHERE rpd.criterial_name = pghd.criterial_name \n" +
+        "            AND rpd.criterial_group_name = pghd.criterial_group_name \n" +
+        "            AND rpd.report_id = pghd.report_id\n" +
+        "    ) AS sumOfRecheck\n" +
+        "FROM iso.plan_group_history_detail pghd\n" +
+        "WHERE pghd.result NOT IN ('Đạt', 'PASS')\n" +
+        "AND pghd.report_id = :reportId\n",
+        nativeQuery = true
+    )
+    List<PlanGroupHistoryResponse> getDetailRecheckByReportId(@Param("reportId") Long reportId);
 
     @Query(
         value = "SELECT\n" +
@@ -203,6 +260,8 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         value = "SELECT\n" +
         "    pghd.criterial_name as criterialName,\n" +
         "    pghd.criterial_group_name as criterialGroupName," +
+        "p.subject_of_assetment_plan as subjectOfAssetmentPlan," +
+        "r.group_name as groupName," +
         "pghd.result as errorType,\n" +
         "    (\n" +
         "        SELECT rrpd.result\n" +
@@ -248,6 +307,8 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         value = "SELECT\n" +
         "    pghd.criterial_name as criterialName,\n" +
         "    pghd.criterial_group_name as criterialGroupName," +
+        "p.subject_of_assetment_plan as subjectOfAssetmentPlan," +
+        "r.group_name as groupName," +
         "pghd.result as errorType,\n" +
         "    (\n" +
         "        SELECT rrpd.result\n" +

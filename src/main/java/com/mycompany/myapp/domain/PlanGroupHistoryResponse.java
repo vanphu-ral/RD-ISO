@@ -22,4 +22,6 @@ public interface PlanGroupHistoryResponse {
     String getUpdatedAt();
     String getCreatedBy();
     Integer getFixed();
+    String getGroupName();
+    String getSubjectOfAssetmentPlan();
 }

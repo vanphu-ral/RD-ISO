@@ -9,7 +9,9 @@ import com.mycompany.myapp.repository.PlanGroupHistoryDetailRepository;
 import com.mycompany.myapp.repository.PlanRepository;
 import com.mycompany.myapp.repository.ReportRepository;
 import com.mycompany.myapp.service.dto.PlanDetailDTO;
+import com.mycompany.myapp.service.dto.PlanStatisticalResponseDTO;
 import com.mycompany.myapp.service.dto.ReportDTO;
+import com.mycompany.myapp.service.dto.ReportResponseDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -22,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -567,8 +570,59 @@ public class PlanResource {
     }
 
     @GetMapping("plan-detail-summarize/{planId}")
-    public List<ReportResponse> getPlanDetailByPlanId(@PathVariable Long planId) {
-        return reportRepository.getDetailByPlanId(planId);
+    public List<ReportResponseDTO> getPlanDetailByPlanId(@PathVariable Long planId) {
+        List<ReportResponse> list = reportRepository.getDetailByPlanId(planId);
+        return list
+            .stream()
+            .map(report -> {
+                ReportResponseDTO dto = new ReportResponseDTO();
+                dto.setId(report.getId());
+                dto.setName(report.getName());
+                dto.setCode(report.getCode());
+                dto.setSampleReportId(report.getSampleReportId());
+                dto.setTestOfObject(report.getTestOfObject());
+                dto.setChecker(report.getChecker());
+                dto.setGroupName(report.getGroupName());
+                dto.setStatus(report.getStatus());
+                dto.setFrequency(report.getFrequency());
+                dto.setReportType(report.getReportType());
+                dto.setReportTypeId(report.getReportTypeId());
+                dto.setGroupReport(report.getGroupReport());
+                dto.setCreatedAt(report.getCreatedAt());
+                dto.setUpdatedAt(report.getUpdatedAt());
+                dto.setCheckTime(report.getCheckTime());
+                dto.setScoreScale(report.getScoreScale());
+                dto.setConvertScore(report.getConvertScore());
+                dto.setUpdateBy(report.getUpdateBy());
+                dto.setPlanId(report.getPlanId());
+                dto.setUser(report.getUser());
+                dto.setDetail(report.getDetail());
+                dto.setSumOfAudit(report.getSumOfAudit());
+                dto.setSumOfNc(report.getSumOfNc());
+                dto.setSumOfLy(report.getSumOfLy());
+                dto.setSumOfFail(report.getSumOfFail());
+                dto.setSumOfSelectAgain(report.getSumOfSelectAgain());
+                List<PlanGroupHistoryResponse> planGroupHistoryResponseList =
+                    this.planGroupHistoryDetailRepository.getDetailRecheckByReportId(report.getId());
+                Integer sumOfCheck = 0;
+                Integer sumOfUncheck = 0;
+                for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
+                    if (
+                        historyResponse.getResultRecheck() != null &&
+                        historyResponse.getStatusRecheck() != null &&
+                        historyResponse.getResultRecheck().equals("Đạt") &&
+                        historyResponse.getStatusRecheck().equals("Đã hoàn thành")
+                    ) {
+                        sumOfCheck += 1;
+                    } else {
+                        sumOfUncheck += 1;
+                    }
+                }
+                dto.setSumOfCheck(sumOfCheck);
+                dto.setSumOfUncheck(sumOfUncheck);
+                return dto;
+            })
+            .collect(Collectors.toList());
     }
 
     @PostMapping("/statistical")
@@ -591,7 +645,10 @@ public class PlanResource {
     }
 
     @PostMapping("/statistical/by-group")
-    public Page<PlanStatisticalResponse> getStatisticsByGroup(@RequestBody ReportDTO dto, @PageableDefault(size = 10) Pageable pageable) {
+    public Page<PlanStatisticalResponseDTO> getStatisticsByGroup(
+        @RequestBody ReportDTO dto,
+        @PageableDefault(size = 10) Pageable pageable
+    ) {
         System.out.println(dto.getTimeStart().substring(0, 4) + "-" + dto.getTimeStart().substring(5, 7));
         System.out.println(dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7));
         List<String> reportType = dto.getReportType() == null ? new ArrayList<>() : dto.getReportType();
@@ -605,7 +662,31 @@ public class PlanResource {
             groupName,
             pageable
         );
-        for (PlanStatisticalResponse planStatisticalResponse : planStatisticalResponsePage) {
+        Page<PlanStatisticalResponseDTO> planStatisticalResponseDTOS = new PageImpl<>(new ArrayList<>(), pageable, 0);
+        // Chuyển đổi PlanStatisticalResponse thành PlanStatisticalResponseDTO
+        planStatisticalResponseDTOS = planStatisticalResponsePage.map(planStatisticalResponse -> {
+            PlanStatisticalResponseDTO dtoItem = new PlanStatisticalResponseDTO();
+            dtoItem.setSubjectOfAssetmentPlan(planStatisticalResponse.getSubjectOfAssetmentPlan());
+            dtoItem.setTimeStart(planStatisticalResponse.getTimeStart());
+            dtoItem.setReportType(planStatisticalResponse.getReportType());
+            dtoItem.setConvertScore(planStatisticalResponse.getConvertScore());
+            dtoItem.setGroupName(planStatisticalResponse.getGroupName());
+            dtoItem.setSumOfCheck(planStatisticalResponse.getSumOfCheck());
+            dtoItem.setSumOfUncheck(planStatisticalResponse.getSumOfUncheck());
+            dtoItem.setTotal(planStatisticalResponse.getTotal());
+            dtoItem.setSumOfLy(planStatisticalResponse.getSumOfLy());
+            dtoItem.setSumOfFail(planStatisticalResponse.getSumOfFail());
+            dtoItem.setSumOfNc(planStatisticalResponse.getSumOfNc());
+            dtoItem.setSumOfPass(planStatisticalResponse.getSumOfPass());
+            dtoItem.setSumOfScoreScale(planStatisticalResponse.getSumOfScoreScale());
+            dtoItem.setSumOfDat(planStatisticalResponse.getSumOfDat());
+            dtoItem.setSumOfCreateReport(planStatisticalResponse.getSumOfCreateReport());
+            dtoItem.setSumOfReport(planStatisticalResponse.getSumOfReport());
+            dtoItem.setSumOfAudit(planStatisticalResponse.getSumOfAudit());
+            dtoItem.setSumOfScoreScale(planStatisticalResponse.getSumOfScoreScale());
+            return dtoItem;
+        });
+        for (PlanStatisticalResponseDTO planStatisticalResponse : planStatisticalResponseDTOS) {
             Integer sumOfCheck = 0;
             Integer sumOfUncheck = 0;
             List<PlanGroupHistoryResponse> planGroupHistoryResponseList =
@@ -613,14 +694,21 @@ public class PlanResource {
             if (planGroupHistoryResponseList.size() > 0 || planGroupHistoryResponseList != null) {
                 for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
                     if (
-                        historyResponse.getResultRecheck() != null &&
-                        historyResponse.getStatusRecheck() != null &&
-                        historyResponse.getResultRecheck().equals("Đạt") &&
-                        historyResponse.getStatusRecheck().equals("Đã hoàn thành")
+                        historyResponse.getGroupName() != null &&
+                        historyResponse.getGroupName().equals(planStatisticalResponse.getGroupName()) &&
+                        historyResponse.getSubjectOfAssetmentPlan() != null &&
+                        historyResponse.getSubjectOfAssetmentPlan().equals(planStatisticalResponse.getSubjectOfAssetmentPlan())
                     ) {
-                        sumOfCheck += 1;
-                    } else {
-                        sumOfUncheck += 1;
+                        if (
+                            historyResponse.getResultRecheck() != null &&
+                            historyResponse.getStatusRecheck() != null &&
+                            historyResponse.getResultRecheck().equals("Đạt") &&
+                            historyResponse.getStatusRecheck().equals("Đã hoàn thành")
+                        ) {
+                            sumOfCheck += 1;
+                        } else {
+                            sumOfUncheck += 1;
+                        }
                     }
                 }
                 planStatisticalResponse.setSumOfCheck(sumOfCheck);
@@ -630,11 +718,11 @@ public class PlanResource {
                 planStatisticalResponse.setSumOfUncheck(0);
             }
         }
-        return planStatisticalResponsePage;
+        return planStatisticalResponseDTOS;
     }
 
     @PostMapping("/statistical/by-subject-assetment-plan")
-    public Page<PlanStatisticalResponse> getPlanStatisticalByManyCriteriaBySubjectAssetmentPlan(
+    public Page<PlanStatisticalResponseDTO> getPlanStatisticalByManyCriteriaBySubjectAssetmentPlan(
         @RequestBody ReportDTO dto,
         @PageableDefault(size = 10) Pageable pageable
     ) {
@@ -642,6 +730,7 @@ public class PlanResource {
         System.out.println(dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7));
         List<String> reportType = dto.getReportType() == null ? new ArrayList<>() : dto.getReportType();
         List<String> subjectOfAssetmentPlan = dto.getSubjectOfAssetmentPlan() == null ? new ArrayList<>() : dto.getSubjectOfAssetmentPlan();
+        Page<PlanStatisticalResponseDTO> planStatisticalResponseDTOS = new PageImpl<>(new ArrayList<>(), pageable, 0);
         Page<PlanStatisticalResponse> planStatisticalResponsePage = planRepository.getPlanStatisticalByManyCriteriaBySubjectAssetmentPlan(
             dto.getTimeStart().substring(0, 4) + "-" + dto.getTimeStart().substring(5, 7),
             dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7),
@@ -649,7 +738,30 @@ public class PlanResource {
             subjectOfAssetmentPlan,
             pageable
         );
-        for (PlanStatisticalResponse planStatisticalResponse : planStatisticalResponsePage) {
+        // Chuyển đổi PlanStatisticalResponse thành PlanStatisticalResponseDTO
+        planStatisticalResponseDTOS = planStatisticalResponsePage.map(planStatisticalResponse -> {
+            PlanStatisticalResponseDTO dtoItem = new PlanStatisticalResponseDTO();
+            dtoItem.setSubjectOfAssetmentPlan(planStatisticalResponse.getSubjectOfAssetmentPlan());
+            dtoItem.setTimeStart(planStatisticalResponse.getTimeStart());
+            dtoItem.setReportType(planStatisticalResponse.getReportType());
+            dtoItem.setConvertScore(planStatisticalResponse.getConvertScore());
+            dtoItem.setGroupName(planStatisticalResponse.getGroupName());
+            dtoItem.setSumOfCheck(planStatisticalResponse.getSumOfCheck());
+            dtoItem.setSumOfUncheck(planStatisticalResponse.getSumOfUncheck());
+            dtoItem.setTotal(planStatisticalResponse.getTotal());
+            dtoItem.setSumOfLy(planStatisticalResponse.getSumOfLy());
+            dtoItem.setSumOfFail(planStatisticalResponse.getSumOfFail());
+            dtoItem.setSumOfNc(planStatisticalResponse.getSumOfNc());
+            dtoItem.setSumOfPass(planStatisticalResponse.getSumOfPass());
+            dtoItem.setSumOfScoreScale(planStatisticalResponse.getSumOfScoreScale());
+            dtoItem.setSumOfDat(planStatisticalResponse.getSumOfDat());
+            dtoItem.setSumOfCreateReport(planStatisticalResponse.getSumOfCreateReport());
+            dtoItem.setSumOfReport(planStatisticalResponse.getSumOfReport());
+            dtoItem.setSumOfAudit(planStatisticalResponse.getSumOfAudit());
+            dtoItem.setSumOfScoreScale(planStatisticalResponse.getSumOfScoreScale());
+            return dtoItem;
+        });
+        for (PlanStatisticalResponseDTO planStatisticalResponse : planStatisticalResponseDTOS) {
             Integer sumOfCheck = 0;
             Integer sumOfUncheck = 0;
             List<PlanGroupHistoryResponse> planGroupHistoryResponseList =
@@ -660,23 +772,28 @@ public class PlanResource {
             if (planGroupHistoryResponseList.size() > 0 || planGroupHistoryResponseList != null) {
                 for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
                     if (
-                        historyResponse.getResultRecheck() != null &&
-                        historyResponse.getStatusRecheck() != null &&
-                        historyResponse.getResultRecheck().equals("Đạt") &&
-                        historyResponse.getStatusRecheck().equals("Đã hoàn thành")
+                        historyResponse.getSubjectOfAssetmentPlan() != null &&
+                        historyResponse.getSubjectOfAssetmentPlan().equals(planStatisticalResponse.getSubjectOfAssetmentPlan())
                     ) {
-                        sumOfCheck += 1;
-                    } else {
-                        sumOfUncheck += 1;
+                        if (
+                            historyResponse.getResultRecheck() != null &&
+                            historyResponse.getStatusRecheck() != null &&
+                            historyResponse.getResultRecheck().equals("Đạt") &&
+                            historyResponse.getStatusRecheck().equals("Đã hoàn thành")
+                        ) {
+                            sumOfCheck += 1;
+                        } else {
+                            sumOfUncheck += 1;
+                        }
                     }
+                    planStatisticalResponse.setSumOfCheck(sumOfCheck);
+                    planStatisticalResponse.setSumOfUncheck(sumOfUncheck);
                 }
-                planStatisticalResponse.setSumOfCheck(sumOfCheck);
-                planStatisticalResponse.setSumOfUncheck(sumOfUncheck);
             } else {
                 planStatisticalResponse.setSumOfCheck(0);
                 planStatisticalResponse.setSumOfUncheck(0);
             }
         }
-        return planStatisticalResponsePage;
+        return planStatisticalResponseDTOS;
     }
 }
