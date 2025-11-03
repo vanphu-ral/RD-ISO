@@ -26,10 +26,20 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
     );
 
     @Query(
-        value = "SELECT\n" +
+        value = "SELECT" +
+        "pghd.id as id," +
+        "pghd.report_id as reportId," +
+        "pghd.report_name as reportName," +
+        "pghd.plan_group_history_id as planGroupHistoryId," +
+        "pghd.image as image," +
+        "pghd.has_evaluation as hasEvaluation," +
+        "pghd.status as status," +
+        "pghd.updated_at as updatedAt," +
+        "pghd.created_by as createdBy," +
+        "pghd.fixed as fixed,\n" +
         "    pghd.criterial_name as criterialName,\n" +
         "    pghd.criterial_group_name as criterialGroupName," +
-        "pghd.result as errorType," +
+        "pghd.result as result," +
         "pghd.frequency as frequency," +
         "pghd.convert_score as convertScore," +
         "pghd.note as note," +
@@ -44,7 +54,7 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         "            AND rpd.report_id = pghd.report_id\n" +
         "        ORDER BY rpd.created_at DESC\n" +
         "        LIMIT 1\n" +
-        "    ) AS result,\n" +
+        "    ) AS resultRecheck,\n" +
         "    (\n" +
         "        SELECT rrpd.status\n" +
         "        FROM iso.remediation_plan_detail rpd\n" +
@@ -81,9 +91,24 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
 
     @Query(
         value = "SELECT\n" +
+        "pghd.id as id," +
+        "pghd.report_id as reportId," +
+        "pghd.report_name as reportName," +
+        "pghd.plan_group_history_id as planGroupHistoryId," +
+        "pghd.image as image," +
+        "pghd.has_evaluation as hasEvaluation," +
+        "pghd.status as status," +
+        "pghd.updated_at as updatedAt," +
+        "pghd.created_by as createdBy," +
+        "pghd.fixed as fixed,\n" +
+        "pghd.result as result," +
+        "pghd.frequency as frequency," +
+        "pghd.convert_score as convertScore," +
+        "pghd.note as note," +
+        "pghd.created_at as createdAt,\n" +
         "    pghd.criterial_name as criterialName,\n" +
         "    pghd.criterial_group_name as criterialGroupName," +
-        "pghd.result as errorType,\n" +
+        "pghd.result as result,\n" +
         "    (\n" +
         "        SELECT rrpd.result\n" +
         "        FROM iso.remediation_plan_detail rpd\n" +
@@ -94,7 +119,7 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         "            AND rpd.report_id = pghd.report_id\n" +
         "        ORDER BY rpd.created_at DESC\n" +
         "        LIMIT 1\n" +
-        "    ) AS result,\n" +
+        "    ) AS resultRecheck,\n" +
         "    (\n" +
         "        SELECT rrpd.status\n" +
         "        FROM iso.remediation_plan_detail rpd\n" +
@@ -214,7 +239,7 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         "inner join iso.report as r on r.id = pghd.report_id " +
         "inner join iso.plan as p on p.id = r.plan_id \n" +
         "WHERE pghd.result NOT IN ('Đạt', 'PASS')\n" +
-        "AND r.subject_of_assetment_plan = :subjectOfAssetmentPlan ;\n",
+        "AND p.subject_of_assetment_plan = :subjectOfAssetmentPlan ;\n",
         nativeQuery = true
     )
     List<PlanGroupHistoryResponse> getDetailRecheckByGroup(@Param("subjectOfAssetmentPlan") String subjectOfAssetmentPlan);
@@ -259,7 +284,7 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         "inner join iso.report as r on r.id = pghd.report_id \n" +
         "inner join iso.plan as p on p.id = r.plan_id \n" +
         "WHERE pghd.result NOT IN ('Đạt', 'PASS')\n" +
-        "AND r.subject_of_assetment_plan = :subjectOfAssetmentPlan AND r.group_name = :groupName ;\n",
+        "AND p.subject_of_assetment_plan = :subjectOfAssetmentPlan AND r.group_name = :groupName ;\n",
         nativeQuery = true
     )
     List<PlanGroupHistoryResponse> getDetailRecheckByTeam(

@@ -397,9 +397,9 @@ public class PlanResource {
                 } else {
                     for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
                         if (
-                            historyResponse.getResult() != null &&
+                            historyResponse.getResultRecheck() != null &&
                             historyResponse.getStatusRecheck() != null &&
-                            historyResponse.getResult().equals("Đạt") &&
+                            historyResponse.getResultRecheck().equals("Đạt") &&
                             historyResponse.getStatusRecheck().equals("Đã hoàn thành")
                         ) {
                             sumOfCheck += 1;
@@ -613,9 +613,9 @@ public class PlanResource {
             if (planGroupHistoryResponseList.size() > 0 || planGroupHistoryResponseList != null) {
                 for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
                     if (
-                        historyResponse.getResult() != null &&
+                        historyResponse.getResultRecheck() != null &&
                         historyResponse.getStatusRecheck() != null &&
-                        historyResponse.getResult().equals("Đạt") &&
+                        historyResponse.getResultRecheck().equals("Đạt") &&
                         historyResponse.getStatusRecheck().equals("Đã hoàn thành")
                     ) {
                         sumOfCheck += 1;
@@ -660,9 +660,9 @@ public class PlanResource {
             if (planGroupHistoryResponseList.size() > 0 || planGroupHistoryResponseList != null) {
                 for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
                     if (
-                        historyResponse.getResult() != null &&
+                        historyResponse.getResultRecheck() != null &&
                         historyResponse.getStatusRecheck() != null &&
-                        historyResponse.getResult().equals("Đạt") &&
+                        historyResponse.getResultRecheck().equals("Đạt") &&
                         historyResponse.getStatusRecheck().equals("Đã hoàn thành")
                     ) {
                         sumOfCheck += 1;

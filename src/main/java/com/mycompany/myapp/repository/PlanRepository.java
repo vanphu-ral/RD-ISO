@@ -346,24 +346,7 @@ public interface PlanRepository extends JpaRepository<Plan, Long>, JpaSpecificat
         " INNER JOIN iso.plan c ON c.id = b.plan_id " +
         " inner join iso.report d on d.id = a.report_id" +
         " WHERE d.group_name = rp.group_name AND d.report_type = rp.report_type AND c.subject_of_assetment_plan = p.subject_of_assetment_plan " +
-        " AND CONCAT(YEAR(c.time_start), '-', LPAD(MONTH(c.time_start), 2, '0')) = CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0'))) AS total, " +
-        // sumOfUncheck
-        "(SELECT COUNT(*) " +
-        " FROM iso.recheck_remediation_plan_detail rrpd " +
-        " INNER JOIN iso.remediation_plan_detail rpd ON rpd.id = rrpd.remediation_plan_detail_id " +
-        " INNER JOIN iso.remediation_plan rps ON rps.id = rpd.remediation_plan_id " +
-        " INNER JOIN iso.plan c ON c.id = rps.plan_id " +
-        " inner join iso.report d on d.id = rps.report_id" +
-        " WHERE d.group_name = rp.group_name AND d.report_type = rp.report_type AND c.subject_of_assetment_plan = p.subject_of_assetment_plan AND rrpd.result = 'Không đạt'" +
-        " AND CONCAT(YEAR(c.time_start), '-', LPAD(MONTH(c.time_start), 2, '0')) = CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0'))) AS sumOfUncheck ," +
-        "(SELECT COUNT(*) " +
-        " FROM iso.recheck_remediation_plan_detail rrpd " +
-        " INNER JOIN iso.remediation_plan_detail rpd ON rpd.id = rrpd.remediation_plan_detail_id " +
-        " INNER JOIN iso.remediation_plan rps ON rps.id = rpd.remediation_plan_id " +
-        " INNER JOIN iso.plan c ON c.id = rps.plan_id " +
-        " inner join iso.report d on d.id = rps.report_id" +
-        " WHERE c.subject_of_assetment_plan = p.subject_of_assetment_plan AND d.report_type = rp.report_type AND rrpd.result = 'Đạt'" +
-        " AND CONCAT(YEAR(c.time_start), '-', LPAD(MONTH(c.time_start), 2, '0')) = CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0')) ) AS sumOfCheck " +
+        " AND CONCAT(YEAR(c.time_start), '-', LPAD(MONTH(c.time_start), 2, '0')) = CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0'))) AS total " +
         "FROM iso.plan_group_history_detail pghd " +
         "INNER JOIN iso.report rp ON rp.id = pghd.report_id " +
         "INNER JOIN iso.plan p ON p.id = rp.plan_id " +
@@ -474,24 +457,7 @@ public interface PlanRepository extends JpaRepository<Plan, Long>, JpaSpecificat
         " INNER JOIN iso.plan c ON c.id = b.plan_id " +
         " inner join iso.report d on d.id = a.report_id" +
         " WHERE c.subject_of_assetment_plan = p.subject_of_assetment_plan AND d.report_type = rp.report_type" +
-        " AND CONCAT(YEAR(c.time_start), '-', LPAD(MONTH(c.time_start), 2, '0')) = CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0')) ) AS total, " +
-        // sumOfUncheck
-        "(SELECT COUNT(*) " +
-        " FROM iso.recheck_remediation_plan_detail rrpd " +
-        " INNER JOIN iso.remediation_plan_detail rpd ON rpd.id = rrpd.remediation_plan_detail_id " +
-        " INNER JOIN iso.remediation_plan rps ON rps.id = rpd.remediation_plan_id " +
-        " INNER JOIN iso.plan c ON c.id = rps.plan_id " +
-        " inner join iso.report d on d.id = rps.report_id" +
-        " WHERE c.subject_of_assetment_plan = p.subject_of_assetment_plan AND d.report_type = rp.report_type AND rrpd.result = 'Không đạt'" +
-        " AND CONCAT(YEAR(c.time_start), '-', LPAD(MONTH(c.time_start), 2, '0')) = CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0'))) AS sumOfUncheck ," +
-        "(SELECT COUNT(*) " +
-        " FROM iso.recheck_remediation_plan_detail rrpd " +
-        " INNER JOIN iso.remediation_plan_detail rpd ON rpd.id = rrpd.remediation_plan_detail_id " +
-        " INNER JOIN iso.remediation_plan rps ON rps.id = rpd.remediation_plan_id " +
-        " INNER JOIN iso.plan c ON c.id = rps.plan_id " +
-        " inner join iso.report d on d.id = rps.report_id" +
-        " WHERE c.subject_of_assetment_plan = p.subject_of_assetment_plan AND d.report_type = rp.report_type AND rrpd.result = 'Đạt'" +
-        " AND CONCAT(YEAR(c.time_start), '-', LPAD(MONTH(c.time_start), 2, '0')) = CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0')) ) AS sumOfCheck " +
+        " AND CONCAT(YEAR(c.time_start), '-', LPAD(MONTH(c.time_start), 2, '0')) = CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0')) ) AS total " +
         "FROM iso.plan_group_history_detail pghd " +
         "INNER JOIN iso.report rp ON rp.id = pghd.report_id " +
         "INNER JOIN iso.plan p ON p.id = rp.plan_id " +
