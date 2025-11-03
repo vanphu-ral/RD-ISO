@@ -2,14 +2,14 @@ package com.mycompany.myapp.web.rest;
 
 import com.mycompany.myapp.config.ApplicationProperties;
 import com.mycompany.myapp.domain.Plan;
+import com.mycompany.myapp.domain.PlanGroupHistoryResponse;
 import com.mycompany.myapp.domain.PlanStatisticalResponse;
 import com.mycompany.myapp.domain.ReportResponse;
+import com.mycompany.myapp.repository.PlanGroupHistoryDetailRepository;
 import com.mycompany.myapp.repository.PlanRepository;
 import com.mycompany.myapp.repository.ReportRepository;
 import com.mycompany.myapp.service.dto.PlanDetailDTO;
 import com.mycompany.myapp.service.dto.ReportDTO;
-import com.mycompany.myapp.web.filter.PlanFilter;
-import com.mycompany.myapp.web.filter.PlanSpecification;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -20,15 +20,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,12 +59,19 @@ public class PlanResource {
 
     private final PlanRepository planRepository;
     private final ReportRepository reportRepository;
+    private PlanGroupHistoryDetailRepository planGroupHistoryDetailRepository;
 
-    public PlanResource(PlanRepository planRepository, ReportRepository reportRepository, ApplicationProperties applicationProperties) {
+    public PlanResource(
+        PlanRepository planRepository,
+        ReportRepository reportRepository,
+        ApplicationProperties applicationProperties,
+        EntityManager entityManager
+    ) {
         this.planRepository = planRepository;
         this.reportRepository = reportRepository;
         this.uploadDir = applicationProperties.getUploadDir();
         this.videoDir = applicationProperties.getVideoDir();
+        this.entityManager = entityManager;
     }
 
     /**
@@ -378,10 +382,16 @@ public class PlanResource {
                 dto.setSumOfFail(stats.getSumOfFail());
                 dto.setSumOfNc(stats.getSumOfNc());
                 dto.setSumOfPass(stats.getSumOfPass());
-                dto.setSumOfCheck(stats.getSumOfCheck());
-                dto.setSumOfUncheck(stats.getSumOfUncheck());
                 dto.setSumOfScoreScale(stats.getSumOfScoreScale());
-
+                List<PlanGroupHistoryResponse> planGroupHistoryResponseList =
+                    this.planGroupHistoryDetailRepository.getDetailRecheckByPlanId(plan.getId());
+                for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
+                    if (historyResponse.getResult().equals("Đạt") && historyResponse.getStatusRecheck().equals("Hoàn thành")) {
+                        dto.setSumOfCheck(dto.getSumOfCheck() + 1);
+                    } else {
+                        dto.setSumOfUncheck(dto.getSumOfUncheck() + 1);
+                    }
+                }
                 return dto;
             })
             .toList();
@@ -434,9 +444,9 @@ public class PlanResource {
             planDetailDTO.setSumOfFail(statisticalResponse.getSumOfFail());
             planDetailDTO.setSumOfNc(statisticalResponse.getSumOfNc());
             planDetailDTO.setSumOfPass(statisticalResponse.getSumOfPass());
-            planDetailDTO.setSumOfCheck(statisticalResponse.getSumOfCheck());
-            planDetailDTO.setSumOfUncheck(statisticalResponse.getSumOfUncheck());
             planDetailDTO.setSumOfScoreScale(statisticalResponse.getSumOfScoreScale());
+            List<PlanGroupHistoryResponse> planGroupHistoryResponseList =
+                this.planGroupHistoryDetailRepository.getDetailRecheckByPlanId(plan.getId());
             planDetailDTOS.add(planDetailDTO);
         }
         Collections.reverse(planDetailDTOS);
@@ -571,7 +581,7 @@ public class PlanResource {
         List<String> reportType = dto.getReportType() == null ? new ArrayList<>() : dto.getReportType();
         List<String> subjectOfAssetmentPlan = dto.getSubjectOfAssetmentPlan() == null ? new ArrayList<>() : dto.getSubjectOfAssetmentPlan();
         List<String> groupName = dto.getGroupName() == null ? new ArrayList<>() : dto.getGroupName();
-        return planRepository.getPlanStatisticalByManyCriteriaByGroup(
+        Page<PlanStatisticalResponse> planStatisticalResponsePage = planRepository.getPlanStatisticalByManyCriteriaByGroup(
             dto.getTimeStart().substring(0, 4) + "-" + dto.getTimeStart().substring(5, 7),
             dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7),
             reportType,
@@ -579,6 +589,18 @@ public class PlanResource {
             groupName,
             pageable
         );
+        for (PlanStatisticalResponse planStatisticalResponse : planStatisticalResponsePage) {
+            List<PlanGroupHistoryResponse> planGroupHistoryResponseList =
+                this.planGroupHistoryDetailRepository.getDetailRecheckByGroup(planStatisticalResponse.getSubjectOfAssetmentPlan());
+            for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
+                if (historyResponse.getResult().equals("Đạt") && historyResponse.getStatusRecheck().equals("Hoàn thành")) {
+                    planStatisticalResponse.setSumOfCheck(planStatisticalResponse.getSumOfCheck() + 1);
+                } else {
+                    planStatisticalResponse.setSumOfUncheck(planStatisticalResponse.getSumOfUncheck() + 1);
+                }
+            }
+        }
+        return planStatisticalResponsePage;
     }
 
     @PostMapping("/statistical/by-subject-assetment-plan")
@@ -590,12 +612,27 @@ public class PlanResource {
         System.out.println(dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7));
         List<String> reportType = dto.getReportType() == null ? new ArrayList<>() : dto.getReportType();
         List<String> subjectOfAssetmentPlan = dto.getSubjectOfAssetmentPlan() == null ? new ArrayList<>() : dto.getSubjectOfAssetmentPlan();
-        return planRepository.getPlanStatisticalByManyCriteriaBySubjectAssetmentPlan(
+        Page<PlanStatisticalResponse> planStatisticalResponsePage = planRepository.getPlanStatisticalByManyCriteriaBySubjectAssetmentPlan(
             dto.getTimeStart().substring(0, 4) + "-" + dto.getTimeStart().substring(5, 7),
             dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7),
             reportType,
             subjectOfAssetmentPlan,
             pageable
         );
+        for (PlanStatisticalResponse planStatisticalResponse : planStatisticalResponsePage) {
+            List<PlanGroupHistoryResponse> planGroupHistoryResponseList =
+                this.planGroupHistoryDetailRepository.getDetailRecheckByTeam(
+                        planStatisticalResponse.getSubjectOfAssetmentPlan(),
+                        planStatisticalResponse.getGroupName()
+                    );
+            for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
+                if (historyResponse.getResult().equals("Đạt") && historyResponse.getStatusRecheck().equals("Hoàn thành")) {
+                    planStatisticalResponse.setSumOfCheck(planStatisticalResponse.getSumOfCheck() + 1);
+                } else {
+                    planStatisticalResponse.setSumOfUncheck(planStatisticalResponse.getSumOfUncheck() + 1);
+                }
+            }
+        }
+        return planStatisticalResponsePage;
     }
 }

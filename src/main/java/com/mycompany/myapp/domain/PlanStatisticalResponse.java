@@ -32,4 +32,6 @@ public interface PlanStatisticalResponse {
     Integer getSumOfReport(); // tong so bien ban kiem tra
     Integer getSumOfCreateReport(); // tong so bien ban da tao bao cao
     Integer getSumOfScoreScale(); // tong diem
+    void setSumOfUncheck(int sum);
+    void setSumOfCheck(int sum);
 }

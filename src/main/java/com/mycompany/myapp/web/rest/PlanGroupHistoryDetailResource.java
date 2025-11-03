@@ -109,7 +109,7 @@ public class PlanGroupHistoryDetailResource {
     ) {
         String criterialNameFilter = (criterialName != null) ? criterialName : "";
         String groupCriterialNameFilter = (groupCriterialName != null) ? groupCriterialName : "";
-        Page<PlanGroupHistoryResponse> result = planGroupHistoryDetailRepository.getDetailRecheckByReportIdWithFilter(
+        Page<PlanGroupHistoryResponse> result = planGroupHistoryDetailRepository.getDetailRecheckByPlanIdWithFilter(
             planId,
             criterialNameFilter,
             groupCriterialNameFilter,
