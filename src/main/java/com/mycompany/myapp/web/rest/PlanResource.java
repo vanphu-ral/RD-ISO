@@ -590,14 +590,23 @@ public class PlanResource {
             pageable
         );
         for (PlanStatisticalResponse planStatisticalResponse : planStatisticalResponsePage) {
+            Integer sumOfCheck = 0;
+            Integer sumOfUncheck = 0;
             List<PlanGroupHistoryResponse> planGroupHistoryResponseList =
                 this.planGroupHistoryDetailRepository.getDetailRecheckByGroup(planStatisticalResponse.getSubjectOfAssetmentPlan());
-            for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
-                if (historyResponse.getResult().equals("Đạt") && historyResponse.getStatusRecheck().equals("Hoàn thành")) {
-                    planStatisticalResponse.setSumOfCheck(planStatisticalResponse.getSumOfCheck() + 1);
-                } else {
-                    planStatisticalResponse.setSumOfUncheck(planStatisticalResponse.getSumOfUncheck() + 1);
+            if (planGroupHistoryResponseList.size() > 0 || planGroupHistoryResponseList != null) {
+                for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
+                    if (historyResponse.getResult().equals("Đạt") && historyResponse.getStatusRecheck().equals("Hoàn thành")) {
+                        sumOfCheck += 1;
+                    } else {
+                        sumOfUncheck += 1;
+                    }
                 }
+                planStatisticalResponse.setSumOfCheck(sumOfCheck);
+                planStatisticalResponse.setSumOfUncheck(sumOfUncheck);
+            } else {
+                planStatisticalResponse.setSumOfCheck(0);
+                planStatisticalResponse.setSumOfUncheck(0);
             }
         }
         return planStatisticalResponsePage;
@@ -620,17 +629,26 @@ public class PlanResource {
             pageable
         );
         for (PlanStatisticalResponse planStatisticalResponse : planStatisticalResponsePage) {
+            Integer sumOfCheck = 0;
+            Integer sumOfUncheck = 0;
             List<PlanGroupHistoryResponse> planGroupHistoryResponseList =
                 this.planGroupHistoryDetailRepository.getDetailRecheckByTeam(
                         planStatisticalResponse.getSubjectOfAssetmentPlan(),
                         planStatisticalResponse.getGroupName()
                     );
-            for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
-                if (historyResponse.getResult().equals("Đạt") && historyResponse.getStatusRecheck().equals("Hoàn thành")) {
-                    planStatisticalResponse.setSumOfCheck(planStatisticalResponse.getSumOfCheck() + 1);
-                } else {
-                    planStatisticalResponse.setSumOfUncheck(planStatisticalResponse.getSumOfUncheck() + 1);
+            if (planGroupHistoryResponseList.size() > 0 || planGroupHistoryResponseList != null) {
+                for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
+                    if (historyResponse.getResult().equals("Đạt") && historyResponse.getStatusRecheck().equals("Hoàn thành")) {
+                        sumOfCheck += 1;
+                    } else {
+                        sumOfUncheck += 1;
+                    }
                 }
+                planStatisticalResponse.setSumOfCheck(sumOfCheck);
+                planStatisticalResponse.setSumOfUncheck(sumOfUncheck);
+            } else {
+                planStatisticalResponse.setSumOfCheck(0);
+                planStatisticalResponse.setSumOfUncheck(0);
             }
         }
         return planStatisticalResponsePage;
