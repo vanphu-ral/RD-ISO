@@ -157,8 +157,12 @@
         <td>{{ rowNode.sumOfPass }}</td>
         <td>{{ rowNode.sumOfDat ? rowNode.sumOfDat : 0 }}</td>
         <td>{{ rowNode.sumOfFail }}</td>
-        <td>{{ rowNode.sumOfCheck ? rowNode.sumOfCheck : 0 }}</td>
-        <td>{{ rowNode.sumOfUncheck ? rowNode.sumOfUncheck : 0 }}</td>
+        <td (click)="listDialogCriterialFix(rowNode, 0)" class="text-primary fw-bold" style="cursor: pointer">
+          {{ rowNode.sumOfCheck ? rowNode.sumOfCheck : 0 }}
+        </td>
+        <td (click)="listDialogCriterialFix(rowNode, 1)" class="text-primary fw-bold" style="cursor: pointer">
+          {{ rowNode.sumOfUncheck ? rowNode.sumOfUncheck : 0 }}
+        </td>
         <td>{{ rowNode.timeStart | date: 'dd/MM/yyyy' }}</td>
         <td>{{ rowNode.timeEnd | date: 'dd/MM/yyyy' }}</td>
         <td>{{ rowNode.createBy }}</td>
@@ -284,6 +288,8 @@
                   <th style="min-width: 30px; padding: 0">LY</th>
                   <th style="min-width: 110px; padding: 0">SL không đạt</th>
                   <th style="min-width: 100px; padding: 0">SL chọn lại</th>
+                  <th class="text-center" style="min-width: 80px; padding: 0">Tổng lỗi đã khắc phục</th>
+                  <th class="text-center" style="min-width: 80px; padding: 0">Tổng lỗi chưa khắc phục</th>
                   <th style="min-width: 150px; padding: 0">Người KT</th>
                   <th style="min-width: 100px; padding: 0">Tần suất</th>
                   <th style="min-width: 110px; padding: 0">Trạng thái</th>
@@ -304,6 +310,8 @@
                   <th style="padding: 0">
                     <p-columnFilter type="text" matchMode="contains" field="reportType" placeholder="Search"></p-columnFilter>
                   </th>
+                  <th style="padding: 0"></th>
+                  <th style="padding: 0"></th>
                   <th style="padding: 0"></th>
                   <th style="padding: 0"></th>
                   <th style="padding: 0"></th>
@@ -382,6 +390,12 @@
                   <td>{{ detail.sumOfLy }}</td>
                   <td>{{ detail.sumOfFail }}</td>
                   <td>{{ detail.sumOfSelectAgain }}</td>
+                  <td (click)="listDialogCriterialFix(detail, 0)" class="text-primary fw-bold" style="cursor: pointer">
+                    {{ detail.sumOfCheck ? detail.sumOfCheck : 0 }}
+                  </td>
+                  <td (click)="listDialogCriterialFix(detail, 1)" class="text-primary fw-bold" style="cursor: pointer">
+                    {{ detail.sumOfUncheck ? detail.sumOfUncheck : 0 }}
+                  </td>
                   <td>{{ detail.reviewer }}</td>
                   <td>{{ detail.frequency }}</td>
                   <td><p-tag [value]="detail.status" [severity]="getSeverity(detail.status)" /></td>

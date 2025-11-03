@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { Observable, map } from 'rxjs';
 import dayjs from 'dayjs/esm';
@@ -106,5 +106,32 @@ export class PlanGroupService {
 
   delete(id: number): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
+
+  getRecheckDetails(
+    reportId: number,
+    criterialName?: string,
+    groupCriterialName?: string,
+    page: number = 0,
+    size: number = 10,
+  ): Observable<HttpResponse<any[]>> {
+    let params = new HttpParams().set('reportId', reportId).set('page', page).set('size', size);
+
+    if (criterialName) {
+      params = params.set('criterialName', criterialName);
+    } else {
+      params = params.set('criterialName', '');
+    }
+
+    if (groupCriterialName) {
+      params = params.set('groupCriterialName', groupCriterialName);
+    } else {
+      params = params.set('groupCriterialName', '');
+    }
+
+    return this.http.get<any[]>(`${this.resourceDetailUrl}/recheck-details`, {
+      params,
+      observe: 'response',
+    });
   }
 }

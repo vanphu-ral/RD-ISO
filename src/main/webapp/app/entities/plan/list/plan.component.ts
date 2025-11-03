@@ -42,6 +42,8 @@ import { SidebarModule } from 'primeng/sidebar';
 import { NoZeroDecimalPipe } from 'app/shared/pipe/no-zero-decimal.pipe';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { RemediationPlanService } from '../service/remediationPlan.service';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { ListCriterialFixDialog } from '../dialogs/list-criterial-fix-dialog/list-criterial-fix.dialog';
 
 @Component({
   standalone: true,
@@ -74,7 +76,7 @@ import { RemediationPlanService } from '../service/remediationPlan.service';
     NoZeroDecimalPipe,
     MultiSelectModule,
   ],
-  providers: [SummarizePlanComponent, ConfirmationService],
+  providers: [SummarizePlanComponent, ConfirmationService, DialogService],
 })
 export class PlanComponent implements OnInit {
   subscription: Subscription | null = null;
@@ -141,6 +143,8 @@ export class PlanComponent implements OnInit {
   page: number = 0;
   size: number = 10;
 
+  ref: DynamicDialogRef | undefined;
+
   trackId = (_index: number, item: IPlan): number => this.planService.getPlanIdentifier(item);
 
   constructor(
@@ -162,6 +166,7 @@ export class PlanComponent implements OnInit {
     private layoutService: LayoutService,
     protected reportService: ReportService,
     private remediationPlanService: RemediationPlanService,
+    private dialogService: DialogService,
   ) {}
 
   ngOnInit(): void {
@@ -1224,6 +1229,16 @@ export class PlanComponent implements OnInit {
 
   updateCheckAllStatus() {
     this.checkAll = this.planGrDetail.every(report => report.hasEvaluation === 0);
+  }
+
+  listDialogCriterialFix(data: any, type: number) {
+    this.ref = this.dialogService.open(ListCriterialFixDialog, {
+      header: `Danh sách tiêu chí ${type == 1 ? 'chưa khắc phục' : 'đã khắc phục'}`,
+      contentStyle: { overflow: 'auto' },
+      width: '1200px',
+      modal: true,
+      data: { data, type },
+    });
   }
 
   // Mobile funcition
