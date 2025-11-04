@@ -147,13 +147,7 @@
         </div>
         <div class="col-md-6">
           <label for="createdBy">Người kiểm tra</label>
-          <select
-            name="createdBy"
-            [(ngModel)]="groupCriterialError.createdBy"
-            required
-            class="form-control"
-            (ngModelChange)="onCreatedByChange($event)"
-          >
+          <select name="createdBy" [(ngModel)]="groupCriterialError.createdBy" required class="form-control">
             <option *ngFor="let data of evaluator" [value]="data.name">
               {{ data.name }}
             </option>
@@ -198,7 +192,7 @@
               <td class="text-center border">
                 <select name="userHandle" class="form-control" [(ngModel)]="row.userHandle">
                   <option value="" disabled selected>-- Chọn người đánh giá --</option>
-                  <option *ngFor="let data of evaluator" [value]="data.name">
+                  <option *ngFor="let data of listUserHander" [value]="data.name">
                     {{ data.name }}
                   </option>
                 </select>
@@ -255,7 +249,7 @@
               <td class="text-center border" style="padding: 0">
                 <select name="userHandle" class="form-control" [(ngModel)]="row.userHandle">
                   <option value="" disabled selected>-- Chọn người đánh giá --</option>
-                  <option *ngFor="let data of evaluator" [value]="data.name">
+                  <option *ngFor="let data of listUserHander" [value]="data.name">
                     {{ data.name }}
                   </option>
                 </select>

@@ -10,6 +10,7 @@ import { EvaluatorService } from 'app/entities/evaluator/service/evaluator.servi
 import { LayoutService } from 'app/layouts/service/layout.service';
 import dayjs from 'dayjs/esm';
 import { AccountService } from 'app/core/auth/account.service';
+import { CheckTargetService } from 'app/entities/check-target/service/check-target.service';
 
 @Component({
   standalone: true,
@@ -25,6 +26,7 @@ export class CreatePlanFixDialog {
   isMobile: boolean = false;
   selectedlistCriterialError: any[] = [];
   account: any = {};
+  listUserHander: any[] = [];
 
   constructor(
     public ref: DynamicDialogRef,
@@ -34,6 +36,7 @@ export class CreatePlanFixDialog {
     private layoutService: LayoutService,
     private planGrHistoryDetailService: PlanGroupService,
     private accountService: AccountService,
+    private checkTargetService: CheckTargetService,
   ) {
     this.data = config.data;
   }
@@ -51,6 +54,9 @@ export class CreatePlanFixDialog {
     this.planGrHistoryDetailService.getRecheckDetails(this.data.id, '', '', 0, 10).subscribe(res => {
       this.listCriterialError =
         res.body?.content.filter((item: any) => item.result != 'Đạt' && item.statusRecheck != 'Đã hoàn thành') || [];
+    });
+    this.checkTargetService.getAllCheckTargets().subscribe(res => {
+      this.listUserHander = res;
     });
     this.groupCriterialError.repairDate = new Date().toISOString().substring(0, 10);
     this.groupCriterialError.name = `KHKP-${this.account.login}-${new Date().getDate()}-${
