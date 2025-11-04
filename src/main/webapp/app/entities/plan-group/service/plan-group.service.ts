@@ -134,4 +134,24 @@ export class PlanGroupService {
       observe: 'response',
     });
   }
+
+  getRecheckDetailPlan(
+    planId: number,
+    criterialName?: string,
+    groupCriterialName?: string,
+    page: number = 0,
+    size: number = 10,
+  ): Observable<HttpResponse<IPageResponse<any>>> {
+    let params = new HttpParams()
+      .set('planId', planId)
+      .set('page', page)
+      .set('size', size)
+      .set('criterialName', criterialName ?? '')
+      .set('groupCriterialName', groupCriterialName ?? '');
+
+    return this.http.get<IPageResponse<any>>(`${this.resourceDetailUrl}/recheck-details/plan`, {
+      params,
+      observe: 'response',
+    });
+  }
 }

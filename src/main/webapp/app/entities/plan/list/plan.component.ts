@@ -1231,13 +1231,13 @@ export class PlanComponent implements OnInit {
     this.checkAll = this.planGrDetail.every(report => report.hasEvaluation === 0);
   }
 
-  listDialogCriterialFix(data: any, type: number) {
+  listDialogCriterialFix(data: any, typeCriterial: number, type: string) {
     this.ref = this.dialogService.open(ListCriterialFixDialog, {
-      header: `Danh sách tiêu chí ${type == 1 ? 'chưa khắc phục' : 'đã khắc phục'}`,
+      header: `Danh sách tiêu chí ${typeCriterial == 1 ? 'chưa khắc phục' : 'đã khắc phục'}`,
       contentStyle: { overflow: 'auto' },
       width: '1200px',
       modal: true,
-      data: { data, type },
+      data: { data, typeCriterial, type },
     });
   }
 

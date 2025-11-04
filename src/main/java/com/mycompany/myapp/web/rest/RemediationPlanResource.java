@@ -171,6 +171,7 @@ public class RemediationPlanResource {
                         RecheckRemediationPlanDetailDTO recheckDto = new RecheckRemediationPlanDetailDTO();
                         // Ánh xạ các trường từ RecheckRemediationPlanDetail Entity sang DTO
                         recheckDto.setId(recheck.getId());
+                        recheckDto.setRemediationPlanDetailId(recheck.getRemediationPlanDetailId());
                         recheckDto.setResult(recheck.getResult());
                         recheckDto.setImage(recheck.getImage());
                         recheckDto.setReason(recheck.getReason());

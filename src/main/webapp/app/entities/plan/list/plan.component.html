@@ -157,10 +157,10 @@
         <td>{{ rowNode.sumOfPass }}</td>
         <td>{{ rowNode.sumOfDat ? rowNode.sumOfDat : 0 }}</td>
         <td>{{ rowNode.sumOfFail }}</td>
-        <td (click)="listDialogCriterialFix(rowNode, 0)" class="text-primary fw-bold" style="cursor: pointer">
+        <td (click)="listDialogCriterialFix(rowNode, 0, 'PLAN')" class="text-primary fw-bold" style="cursor: pointer">
           {{ rowNode.sumOfCheck ? rowNode.sumOfCheck : 0 }}
         </td>
-        <td (click)="listDialogCriterialFix(rowNode, 1)" class="text-primary fw-bold" style="cursor: pointer">
+        <td (click)="listDialogCriterialFix(rowNode, 1, 'PLAN')" class="text-primary fw-bold" style="cursor: pointer">
           {{ rowNode.sumOfUncheck ? rowNode.sumOfUncheck : 0 }}
         </td>
         <td>{{ rowNode.timeStart | date: 'dd/MM/yyyy' }}</td>
@@ -390,10 +390,10 @@
                   <td>{{ detail.sumOfLy }}</td>
                   <td>{{ detail.sumOfFail }}</td>
                   <td>{{ detail.sumOfSelectAgain }}</td>
-                  <td (click)="listDialogCriterialFix(detail, 0)" class="text-primary fw-bold" style="cursor: pointer">
+                  <td (click)="listDialogCriterialFix(detail, 0, 'REPORT')" class="text-primary fw-bold" style="cursor: pointer">
                     {{ detail.sumOfCheck ? detail.sumOfCheck : 0 }}
                   </td>
-                  <td (click)="listDialogCriterialFix(detail, 1)" class="text-primary fw-bold" style="cursor: pointer">
+                  <td (click)="listDialogCriterialFix(detail, 1, 'REPORT')" class="text-primary fw-bold" style="cursor: pointer">
                     {{ detail.sumOfUncheck ? detail.sumOfUncheck : 0 }}
                   </td>
                   <td>{{ detail.reviewer }}</td>

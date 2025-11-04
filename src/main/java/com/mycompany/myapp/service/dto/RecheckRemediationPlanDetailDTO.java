@@ -5,6 +5,7 @@ import java.time.ZonedDateTime;
 public class RecheckRemediationPlanDetailDTO {
 
     private Long id;
+    private Long remediationPlanDetailId;
     private String result;
     private String image;
     private String reason;
@@ -18,6 +19,7 @@ public class RecheckRemediationPlanDetailDTO {
 
     public RecheckRemediationPlanDetailDTO(
         Long id,
+        Long remediationPlanDetailId,
         String result,
         String image,
         String reason,
@@ -27,6 +29,7 @@ public class RecheckRemediationPlanDetailDTO {
         String status
     ) {
         this.id = id;
+        this.remediationPlanDetailId = remediationPlanDetailId;
         this.result = result;
         this.image = image;
         this.reason = reason;
@@ -43,6 +46,14 @@ public class RecheckRemediationPlanDetailDTO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getRemediationPlanDetailId() {
+        return remediationPlanDetailId;
+    }
+
+    public void setRemediationPlanDetailId(Long remediationPlanDetailId) {
+        this.remediationPlanDetailId = remediationPlanDetailId;
     }
 
     public String getResult() {

@@ -14,7 +14,8 @@ import { PlanGroupService } from 'app/entities/plan-group/service/plan-group.ser
 })
 export class ListCriterialFixDialog {
   data: any;
-  type: number = 0;
+  typeCriterial: number = 0;
+  type: string = '';
   listCriterialFix: any[] = [];
 
   constructor(
@@ -23,19 +24,31 @@ export class ListCriterialFixDialog {
     private planGrHistoryDetailService: PlanGroupService,
   ) {
     this.data = config.data.data;
+    this.typeCriterial = config.data.typeCriterial;
     this.type = config.data.type;
   }
 
   ngOnInit(): void {
-    this.planGrHistoryDetailService.getRecheckDetails(this.data.id, '', '', 0, 10).subscribe(res => {
-      console.log(res);
-      if (this.type == 0) {
-        this.listCriterialFix =
-          res.body?.content.filter((item: any) => item.result === 'Đạt' && item.statusRecheck === 'Đã hoàn thành') || [];
-      } else {
-        this.listCriterialFix =
-          res.body?.content.filter((item: any) => item.result != 'Đạt' && item.statusRecheck != 'Đã hoàn thành') || [];
-      }
-    });
+    if (this.type == 'PLAN') {
+      this.planGrHistoryDetailService.getRecheckDetailPlan(this.data.id, '', '', 0, 10).subscribe(res => {
+        if (this.typeCriterial == 0) {
+          this.listCriterialFix =
+            res.body?.content.filter((item: any) => item.result === 'Đạt' && item.statusRecheck === 'Đã hoàn thành') || [];
+        } else {
+          this.listCriterialFix =
+            res.body?.content.filter((item: any) => item.result != 'Đạt' && item.statusRecheck != 'Đã hoàn thành') || [];
+        }
+      });
+    } else {
+      this.planGrHistoryDetailService.getRecheckDetails(this.data.id, '', '', 0, 10).subscribe(res => {
+        if (this.typeCriterial == 0) {
+          this.listCriterialFix =
+            res.body?.content.filter((item: any) => item.result === 'Đạt' && item.statusRecheck === 'Đã hoàn thành') || [];
+        } else {
+          this.listCriterialFix =
+            res.body?.content.filter((item: any) => item.result != 'Đạt' && item.statusRecheck != 'Đã hoàn thành') || [];
+        }
+      });
+    }
   }
 }
