@@ -6,11 +6,12 @@ import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { TableModule } from 'primeng/table';
 import { PlanGroupService } from 'app/entities/plan-group/service/plan-group.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   standalone: true,
   templateUrl: './list-criterial-fix.dialog.html',
-  imports: [SharedModule, FormsModule, TableModule],
+  imports: [SharedModule, FormsModule, TableModule, RouterModule],
 })
 export class ListCriterialFixDialog {
   data: any;
