@@ -26,6 +26,7 @@ import Swal from 'sweetalert2';
 import { TagModule } from 'primeng/tag';
 import HasAnyAuthorityDirective from 'app/shared/auth/has-any-authority.directive';
 import { LayoutService } from 'app/layouts/service/layout.service';
+import { PlanGroupService } from 'app/entities/plan-group/service/plan-group.service';
 
 @Component({
   selector: 'jhi-inspection-report',
@@ -85,7 +86,7 @@ export class InspectionPlanComponent implements OnInit {
   isMobile: boolean = false;
   editDialogVisible = false;
   selectedRow: any = null;
-  editField: 'solution' | 'note' | null = null;
+  editField: 'solution' | 'description' | null = null;
   editDialogVisibleRepair = false;
   selectedRowRepair: any = null;
   editFieldRepair: 'note' | 'reason' | null = null;
@@ -98,6 +99,8 @@ export class InspectionPlanComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private router: Router,
     private layoutService: LayoutService,
+    private planGrHistoryDetailService: PlanGroupService,
+    private reportService: ReportService,
   ) {}
 
   ngOnInit(): void {
@@ -157,19 +160,27 @@ export class InspectionPlanComponent implements OnInit {
       }
       groupedData[key].createdDates.push(item.createdAt);
     });
-    this.processedReportData = Object.values(groupedData).map(row => {
-      row.rowspan = row.createdDates.length;
-      row.createdDates.sort((a: any, b: any) => new Date(a).getTime() - new Date(b).getTime());
-      return row;
-    });
-    this.processedReportData.sort((a, b) => {
-      if (a.reportId !== b.reportId) {
-        return a.reportId - b.reportId;
-      }
-      if (a.reportName !== b.reportName) {
-        return a.reportName.localeCompare(b.reportName);
-      }
-      return 0;
+    // this.processedReportData = Object.values(groupedData).map(row => {
+    //   row.rowspan = row.createdDates.length;
+    //   row.createdDates.sort((a: any, b: any) => new Date(a).getTime() - new Date(b).getTime());
+    //   return row;
+    // });
+    // this.processedReportData.sort((a, b) => {
+    //   if (a.reportId !== b.reportId) {
+    //     return a.reportId - b.reportId;
+    //   }
+    //   if (a.reportName !== b.reportName) {
+    //     return a.reportName.localeCompare(b.reportName);
+    //   }
+    //   return 0;
+    // });
+    this.loadCriterialErrr();
+  }
+
+  loadCriterialErrr() {
+    this.planGrHistoryDetailService.getRecheckDetailPlan(this.plan.id, '', '', 0, 10).subscribe(res => {
+      this.processedReportData =
+        res.body?.content.filter((item: any) => item.result != 'Đạt' && item.statusRecheck != 'Đã hoàn thành') || [];
     });
   }
 
@@ -226,36 +237,49 @@ export class InspectionPlanComponent implements OnInit {
     data.createdAt = dayjs();
     data.type = 'Multiple';
     data.status = 'Đang xử lý';
-    const arrSubmit = this.selectedRows.map(item => {
-      return {
-        reportId: item.reportId,
-        criterialGroupName: item.criterialGroupName,
-        criterialName: item.criterialName,
-        convertScore: item.convertScore,
-        note: item.note,
-        solution: item.solution,
-        planTimeComplete: dayjs(item.planTimeComplete).toISOString(),
-        userHandle: item.userHandle,
-        createdAt: dayjs(),
-        createdBy: data.createdBy,
-        status: 'Đang xử lý',
-        detail: this.listReportCriterialErrors.filter(
-          rpt =>
-            rpt.criterialGroupName == item.criterialGroupName &&
-            rpt.criterialName == item.criterialName &&
-            rpt.convertScore == item.convertScore &&
-            rpt.reportId == item.reportId &&
-            rpt.reportName == item.reportName &&
-            rpt.result == item.result,
-        ),
-      };
-    });
+    // const arrSubmit = this.selectedRows.map(item => {
+    //   return {
+    //     reportId: item.reportId,
+    //     criterialGroupName: item.criterialGroupName,
+    //     criterialName: item.criterialName,
+    //     convertScore: item.convertScore,
+    //     note: item.note,
+    //     solution: item.solution,
+    //     planTimeComplete: dayjs(item.planTimeComplete).toISOString(),
+    //     userHandle: item.userHandle,
+    //     createdAt: dayjs(),
+    //     createdBy: data.createdBy,
+    //     status: 'Đang xử lý',
+    //     detail: this.listReportCriterialErrors.filter(
+    //       rpt =>
+    //         rpt.criterialGroupName == item.criterialGroupName &&
+    //         rpt.criterialName == item.criterialName &&
+    //         rpt.convertScore == item.convertScore &&
+    //         rpt.reportId == item.reportId &&
+    //         rpt.reportName == item.reportName &&
+    //         rpt.result == item.result,
+    //     ),
+    //   };
+    // });
     this.remediationPlanService.create(data).subscribe(res => {
-      const arrCriterialErr = arrSubmit.map((item: any) => {
+      const arrCriterialErr = this.selectedRows.map((item: any) => {
+        delete item.result;
+        delete item.errorType;
+        delete item.resultRecheck;
+        delete item.statusRecheck;
+        delete item.subjectOfAssetmentPlan;
+        delete item.sumOfRecheck;
         return {
           ...item,
           remediationPlanId: res.body,
-          detail: JSON.stringify(item.detail),
+          convertScore: item.convertScore,
+          reportId: item.reportId,
+          detail: JSON.stringify(item),
+          planTimeComplete: dayjs(item.planTimeComplete).toISOString(),
+          createdAt: dayjs(),
+          createdBy: data.createdBy,
+          note: item.description,
+          status: 'Đang xử lý',
         };
       });
       this.remediationPlanService.createRemediationPlanDetail(arrCriterialErr).subscribe(repo => {
@@ -419,6 +443,7 @@ export class InspectionPlanComponent implements OnInit {
           image: JSON.stringify(item.image),
           reason: item.reason,
           note: item.content,
+          status: item.status,
           createdBy: item.createdBy,
           createdAt: dayjs(),
         };
@@ -526,6 +551,9 @@ export class InspectionPlanComponent implements OnInit {
     this.dialogUpdateRemePlan = true;
     if (!this.groupCriterialError.repairDate) {
       const today = new Date();
+      this.groupCriterialError.name = `KHKP GOP-${this.plan.subjectOfAssetmentPlan}-${today.getDate()}-${
+        today.getMonth() + 1
+      }-${today.getFullYear()}`;
       this.groupCriterialError.repairDate = today.toISOString().substring(0, 10);
     }
   }
@@ -548,7 +576,10 @@ export class InspectionPlanComponent implements OnInit {
         repairDate: dayjs(cpl.repairDate).toISOString(),
       };
     });
-    console.log(updateRequests);
+    const arrRecheck: any[] = this.selectedRecheckCriterial
+      .flatMap(item => item.recheckDetails || [])
+      .map(detail => ({ ...detail, status: 'Đã hoàn thành' }));
+    this.remediationPlanService.createRecheckRemePlan(arrRecheck).subscribe();
     this.remediationPlanService.createRemediationPlanDetail(updateRequests).subscribe(repo => {
       this.selectedRecheckCriterial.forEach(selectedCpl => {
         const index = this.completeRemePlan.findIndex(cpl => cpl.id === selectedCpl.id);
@@ -558,6 +589,7 @@ export class InspectionPlanComponent implements OnInit {
       });
       this.selectedRecheckCriterial = [];
       this.checkAndUpdateParentRemediationPlanStatus();
+      this.loadCriterialErrr();
       this.completeRemeDialog = false;
     });
   }
@@ -613,7 +645,7 @@ export class InspectionPlanComponent implements OnInit {
   }
 
   // Mobile function
-  openEditDialog(row: any, field: 'solution' | 'note') {
+  openEditDialog(row: any, field: 'solution' | 'description') {
     if (!row || row.hasEvaluation === 0) return;
     this.selectedRow = row;
     this.editField = field;

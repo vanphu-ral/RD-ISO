@@ -30,6 +30,7 @@ public class RemediationPlanDetailDTO {
     public RemediationPlanDetailDTO(
         Long id,
         Long remediationPlanId,
+        Long reportId,
         String criterialName,
         String criterialGroupName,
         String convertScore,
@@ -46,6 +47,7 @@ public class RemediationPlanDetailDTO {
     ) {
         this.id = id;
         this.remediationPlanId = remediationPlanId;
+        this.reportId = reportId;
         this.criterialName = criterialName;
         this.criterialGroupName = criterialGroupName;
         this.convertScore = convertScore;

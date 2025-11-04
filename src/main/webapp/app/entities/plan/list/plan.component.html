@@ -3,16 +3,17 @@
     <span>Kế hoạch</span>
 
     <div class="d-flex justify-content-end">
-      <button
-        *jhiHasAnyAuthority="['ROLE_ISO_ADMIN', 'ROLE_ISO_CREATE_PLAN']"
-        id="jh-create-entity"
-        data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-plan"
-        [routerLink]="['/plan/new']"
-      >
-        <fa-icon icon="plus"></fa-icon>
-        <span>Thêm mới</span>
-      </button>
+      <a [routerLink]="['/plan/new']" target="_blank" style="text-decoration: none">
+        <button
+          *jhiHasAnyAuthority="['ROLE_ISO_ADMIN', 'ROLE_ISO_CREATE_PLAN']"
+          id="jh-create-entity"
+          data-cy="entityCreateButton"
+          class="btn btn-primary jh-create-entity create-plan"
+        >
+          <fa-icon icon="plus"></fa-icon>
+          <span>Thêm mới</span>
+        </button>
+      </a>
     </div>
   </h2>
 
@@ -181,42 +182,52 @@
               title="Sao chép"
               (onClick)="copyPlan(rowNode.id)"
             />
-            <p-button
-              icon="pi pi-pencil"
-              aria-label="Edit"
-              [rounded]="true"
-              styleClass="p-button-rounded p-button-info p-button-sm mr-2"
-              [severity]="'warning'"
-              *ngIf="validDisplayButton(rowNode, ['ROLE_ISO_ADMIN', 'ROLE_ISO_CREATE_PLAN'])"
+            <a
               [routerLink]="['/plan', rowNode.id, 'edit']"
-              title="Chỉnh sửa"
-            />
-            <p-button
-              icon="pi pi-file-plus"
-              aria-label="Gross"
-              styleClass="p-button-rounded p-button-info p-button-sm mr-2"
-              [severity]="'help'"
-              *ngIf="validDisplayButton(rowNode, ['ROLE_ISO_ADMIN', 'ROLE_ISO_CHECK'])"
-              title="Gộp"
+              target="_blank"
+              *ngIf="validDisplayButton(rowNode, ['ROLE_ISO_ADMIN', 'ROLE_ISO_CREATE_PLAN'])"
+            >
+              <p-button
+                icon="pi pi-pencil"
+                aria-label="Edit"
+                [rounded]="true"
+                styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+                [severity]="'warning'"
+                title="Chỉnh sửa"
+              />
+            </a>
+            <a
               [routerLink]="['/plan', rowNode.id, 'gross-script']"
-            />
-            <p-button
-              icon="pi pi-eye"
-              aria-label="View"
-              styleClass="p-button-rounded p-button-info p-button-sm mr-2"
-              [severity]="'info'"
-              title="Xem chi tiết"
-              [routerLink]="['/plan', rowNode.id, 'summarize-plan']"
-            />
-            <p-button
-              icon="pi pi-wrench"
-              aria-label="Report"
-              [rounded]="true"
-              [routerLink]="['/plan', rowNode.id, 'inspection-plan']"
-              styleClass="p-button-rounded p-button-info p-button-sm mr-2"
-              [severity]="'danger'"
-              title="Khai báo kế hoạch khắc phục"
-            />
+              target="_blank"
+              *ngIf="validDisplayButton(rowNode, ['ROLE_ISO_ADMIN', 'ROLE_ISO_CHECK'])"
+            >
+              <p-button
+                icon="pi pi-file-plus"
+                aria-label="Gross"
+                styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+                [severity]="'help'"
+                title="Gộp"
+              />
+            </a>
+            <a [routerLink]="['/plan', rowNode.id, 'summarize-plan']" target="_blank">
+              <p-button
+                icon="pi pi-eye"
+                aria-label="View"
+                styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+                [severity]="'info'"
+                title="Xem chi tiết"
+              />
+            </a>
+            <a [routerLink]="['/plan', rowNode.id, 'inspection-plan']" target="_blank">
+              <p-button
+                icon="pi pi-wrench"
+                aria-label="Report"
+                [rounded]="true"
+                styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+                [severity]="'danger'"
+                title="Khai báo kế hoạch khắc phục"
+              />
+            </a>
             <p-button
               icon="pi pi-file-excel"
               aria-label="Excel"
@@ -418,15 +429,16 @@
                         title="Xem chi tiết"
                         (onClick)="showDialogGeneralCheckPlan(rowNode, detail)"
                       />
-                      <p-button
-                        icon="pi pi-wrench"
-                        aria-label="Report"
-                        [rounded]="true"
-                        [routerLink]="['/plan', detail.id, 'inspection-report']"
-                        styleClass="p-button-rounded p-button-info p-button-sm mr-2"
-                        [severity]="'danger'"
-                        title="Khai báo kế hoạch khắc phục"
-                      />
+                      <a [routerLink]="['/plan', detail.id, 'inspection-report']" target="_blank">
+                        <p-button
+                          icon="pi pi-wrench"
+                          aria-label="Report"
+                          [rounded]="true"
+                          styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+                          [severity]="'danger'"
+                          title="Khai báo kế hoạch khắc phục"
+                        />
+                      </a>
                       <p-button
                         icon="pi pi-file-excel"
                         aria-label="Excel"

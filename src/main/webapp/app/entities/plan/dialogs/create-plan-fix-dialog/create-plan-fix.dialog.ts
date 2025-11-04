@@ -47,6 +47,9 @@ export class CreatePlanFixDialog {
         res.body?.content.filter((item: any) => item.result != 'Đạt' && item.statusRecheck != 'Đã hoàn thành') || [];
     });
     this.groupCriterialError.repairDate = new Date().toISOString().substring(0, 10);
+    this.groupCriterialError.name = `KHKP-${this.data.testOfObject}-${new Date().getDate()}-${
+      new Date().getMonth() + 1
+    }-${new Date().getFullYear()}`;
   }
 
   duplicateNameValidator(name: string | null): void {

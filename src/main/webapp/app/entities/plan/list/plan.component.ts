@@ -326,11 +326,12 @@ export class PlanComponent implements OnInit {
 
   // Sao chép kế hoạch
   copyPlan(plan: any): void {
-    this.router.navigate([`/plan/${plan}/edit`], {
-      state: {
-        mode: 'COPY', // Add mode flag
-      },
-    });
+    const url = this.router.serializeUrl(
+      this.router.createUrlTree([`/plan/${plan}/edit`], {
+        queryParams: { mode: 'COPY' },
+      }),
+    );
+    window.open(url, '_blank');
   }
 
   navigateToInspectionReport(): void {

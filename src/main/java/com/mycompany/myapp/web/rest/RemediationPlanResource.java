@@ -143,6 +143,7 @@ public class RemediationPlanResource {
                 // Ánh xạ các trường từ RemediationPlanDetail Entity sang DTO
                 detailDto.setId(detail.getId());
                 detailDto.setRemediationPlanId(detail.getRemediationPlanId());
+                detailDto.setReportId(detail.getReportId());
                 detailDto.setCriterialName(detail.getCriterialName());
                 detailDto.setCriterialGroupName(detail.getCriterialGroupName());
                 detailDto.setConvertScore(detail.getConvertScore());
