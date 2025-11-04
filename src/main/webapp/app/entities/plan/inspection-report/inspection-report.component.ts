@@ -28,6 +28,9 @@ import { CheckerGroupService } from 'app/entities/checker-group/service/checker-
 import { ExportExcelService } from '../service/export-excel.service';
 import HasAnyAuthorityDirective from 'app/shared/auth/has-any-authority.directive';
 import { LayoutService } from 'app/layouts/service/layout.service';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { CreatePlanFixDialog } from '../dialogs/create-plan-fix-dialog/create-plan-fix.dialog';
+import { FixCriterialDialog } from '../dialogs/fix-criterial-dialog/fix-criterial.dialog';
 
 @Component({
   selector: 'jhi-inspection-report',
@@ -54,6 +57,7 @@ import { LayoutService } from 'app/layouts/service/layout.service';
   ],
   templateUrl: './inspection-report.component.html',
   styleUrl: './inspection-report.component.scss',
+  providers: [DialogService],
 })
 export class InspectionReportComponent implements OnInit {
   @ViewChild('listcriterials') listcriterials!: TemplateRef<any>;
@@ -104,6 +108,8 @@ export class InspectionReportComponent implements OnInit {
   selectedRowRepair: any = null;
   editFieldRepair: 'note' | 'reason' | null = null;
 
+  ref: DynamicDialogRef | undefined;
+
   constructor(
     protected modalService: NgbModal,
     protected activatedRoute: ActivatedRoute,
@@ -116,6 +122,7 @@ export class InspectionReportComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private router: Router,
     private layoutService: LayoutService,
+    private dialogService: DialogService,
   ) {}
 
   ngOnInit(): void {
@@ -243,13 +250,12 @@ export class InspectionReportComponent implements OnInit {
       this.criterialDetails = this.listEvalReports.filter(item => item.criterialName === data.criterialName);
       this.selectedCritical.criterialGroupName = this.criterialDetails[0].criterialGroupName;
       this.selectedCritical.criterialName = this.criterialDetails[0].criterialName;
-      this.criterialDetails = this.criterialDetails.map(detail => {
-        const group = arrPlanGr.find(g => g.id === detail.planGroupHistoryId);
-        return {
-          ...detail,
-          planGroup: group || null,
-        };
-      });
+      this.criterialDetails = this.criterialDetails
+        .map(detail => {
+          const group = arrPlanGr.find(g => g.id === detail.planGroupHistoryId);
+          return group ? { ...detail, planGroup: group } : null;
+        })
+        .filter(detail => detail !== null);
       this.dialogViewCriterial = true;
     });
   }
@@ -354,6 +360,19 @@ export class InspectionReportComponent implements OnInit {
     this.remediationPlanSelected = data;
     this.LoadlistCriterialRepairTable(data.id);
     this.dialogRepairCriterial = true;
+    // const ref = this.dialogService.open(FixCriterialDialog, {
+    //   header: `Danh sách tiêu chí cần khắc phục`,
+    //   contentStyle: { overflow: 'auto' },
+    //   width: '100%',
+    //   modal: true,
+    //   data: data,
+    // });
+    // ref.onClose.subscribe((result) => {
+    //   if (result) {
+    //     this.LoadlistCriterialRepairTable(data.id);
+    //     this.toastMessageSaveSucess();
+    //   }
+    // });
   }
 
   showDialogCheckCriterial(data: any) {
@@ -591,6 +610,10 @@ export class InspectionReportComponent implements OnInit {
         repairDate: dayjs(cpl.repairDate).toISOString(),
       };
     });
+    const arrRecheck: any[] = this.selectedRecheckCriterial
+      .flatMap(item => item.recheckDetails || [])
+      .map(detail => ({ ...detail, status: 'Đã hoàn thành' }));
+    this.remediationPlanService.createRecheckRemePlan(arrRecheck).subscribe();
     this.remediationPlanService.createRemediationPlanDetail(updateRequests).subscribe(repo => {
       this.selectedRecheckCriterial.forEach(selectedCpl => {
         const index = this.completeRemePlan.findIndex(cpl => cpl.id === selectedCpl.id);
@@ -637,11 +660,24 @@ export class InspectionReportComponent implements OnInit {
   }
 
   openDialogRepair() {
-    this.dialogUpdateRemePlan = true;
-    if (!this.groupCriterialError.repairDate) {
-      const today = new Date();
-      this.groupCriterialError.repairDate = today.toISOString().substring(0, 10);
-    }
+    // this.dialogUpdateRemePlan = true;
+    // if (!this.groupCriterialError.repairDate) {
+    //   const today = new Date();
+    //   this.groupCriterialError.repairDate = today.toISOString().substring(0, 10);
+    // }
+    this.ref = this.dialogService.open(CreatePlanFixDialog, {
+      header: `Danh sách tiêu chí cần khắc phục`,
+      contentStyle: { overflow: 'auto' },
+      width: '100%',
+      modal: true,
+      data: this.report,
+    });
+    this.ref.onClose.subscribe(result => {
+      if (result) {
+        this.reloadRemediationTableData(this.report.id);
+        this.toastMessageSaveSucess();
+      }
+    });
   }
 
   previousState(): void {

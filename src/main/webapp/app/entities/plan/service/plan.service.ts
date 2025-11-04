@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 
 import dayjs from 'dayjs/esm';
@@ -70,11 +70,22 @@ export class PlanService {
       .pipe(map(res => this.convertResponseFromServer(res)));
   }
 
-  query(req?: any): Observable<EntityArrayResponseType> {
-    const options = createRequestOption(req);
-    return this.http
-      .get<RestPlan[]>(this.resourceUrl, { params: options, observe: 'response' })
-      .pipe(map(res => this.convertResponseArrayFromServer(res)));
+  // query(req?: any): Observable<EntityArrayResponseType> {
+  //   const options = createRequestOption(req);
+  //   return this.http
+  //     .get<RestPlan[]>(this.resourceUrl, { params: options, observe: 'response' })
+  //     .pipe(map(res => this.convertResponseArrayFromServer(res)));
+  // }
+  query(filter: any, page: number = 0, size: number = 10): Observable<any> {
+    let params = new HttpParams().set('page', page.toString()).set('size', size.toString());
+    Object.keys(filter).forEach(key => {
+      const value = filter[key];
+      if (value !== null && value !== undefined && value !== '') {
+        params = params.set(key, value);
+      }
+    });
+
+    return this.http.get<any>(this.planDetailUrl, { params });
   }
 
   delete(id: number): Observable<HttpResponse<{}>> {

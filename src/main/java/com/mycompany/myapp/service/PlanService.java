@@ -30,8 +30,8 @@ public class PlanService {
         String formattedDate = today.format(formatter);
 
         // Kiểm tra xem hiện tại có phải 23h không
-        LocalTime now = LocalTime.now(ZoneId.of("Asia/Bangkok"));
-        if (now.getHour() == 17) {
+        LocalTime now = LocalTime.now(ZoneId.of("Asia/Bangkok")).minusHours(7);
+        if (now.getHour() == 23) {
             System.out.println("UPDATE REPORT AT END OF DAY:: " + now.getHour());
         } else {
             System.out.println("UPDATE REPORT AT :: " + formattedDate + " :: " + now.getHour());

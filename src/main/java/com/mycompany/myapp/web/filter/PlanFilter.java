@@ -1,156 +1,35 @@
-package com.mycompany.myapp.service.dto;
+package com.mycompany.myapp.web.filter;
 
-import com.mycompany.myapp.domain.ReportResponse;
 import java.time.ZonedDateTime;
-import java.util.List;
 
-public class PlanDetailDTO {
-
-    private Long id;
+public class PlanFilter {
 
     private String code;
-
     private String name;
-
     private String subjectOfAssetmentPlan;
-
     private String frequency;
-
     private ZonedDateTime timeStart;
-
     private ZonedDateTime timeEnd;
-
     private String statusPlan;
-
     private String testObject;
-
     private Long reportTypeId;
-
     private String reportTypeName;
-
-    private String numberOfCheck;
-
+    private Integer numberOfCheck;
     private String implementer;
-
     private String paticipant;
-
     private String checkerGroup;
-
     private String checkerName;
-
     private Long checkerGroupId;
-
     private Long checkerId;
-
     private String gross;
-
-    private String timeCheck;
-
+    private ZonedDateTime timeCheck;
     private String nameResult;
-
     private Long scriptId;
-
     private String createBy;
-
     private String status;
-
     private ZonedDateTime createdAt;
-
     private ZonedDateTime updatedAt;
-
     private String updateBy;
-    private List<ReportResponse> planDetail;
-    private Integer sumOfNc;
-    private Integer sumOfLy;
-    private Integer sumOfPass;
-    private Integer sumOfFail;
-    private Integer sumOfScore;
-    private Integer sumOfCheck;
-    private Integer sumOfUncheck;
-    private Integer sumOfDat;
-    private Integer sumOfScoreScale;
-
-    public Integer getSumOfScoreScale() {
-        return sumOfScoreScale;
-    }
-
-    public void setSumOfScoreScale(Integer sumOfScoreScale) {
-        this.sumOfScoreScale = sumOfScoreScale;
-    }
-
-    public Integer getSumOfDat() {
-        return sumOfDat;
-    }
-
-    public void setSumOfDat(Integer sumOfDat) {
-        this.sumOfDat = sumOfDat;
-    }
-
-    public Integer getSumOfCheck() {
-        return sumOfCheck;
-    }
-
-    public void setSumOfCheck(Integer sumOfCheck) {
-        this.sumOfCheck = sumOfCheck;
-    }
-
-    public Integer getSumOfUncheck() {
-        return sumOfUncheck;
-    }
-
-    public void setSumOfUncheck(Integer sumOfUncheck) {
-        this.sumOfUncheck = sumOfUncheck;
-    }
-
-    public PlanDetailDTO() {}
-
-    public Integer getSumOfNc() {
-        return sumOfNc;
-    }
-
-    public void setSumOfNc(Integer sumOfNc) {
-        this.sumOfNc = sumOfNc;
-    }
-
-    public Integer getSumOfLy() {
-        return sumOfLy;
-    }
-
-    public void setSumOfLy(Integer sumOfLy) {
-        this.sumOfLy = sumOfLy;
-    }
-
-    public Integer getSumOfPass() {
-        return sumOfPass;
-    }
-
-    public void setSumOfPass(Integer sumOfPass) {
-        this.sumOfPass = sumOfPass;
-    }
-
-    public Integer getSumOfFail() {
-        return sumOfFail;
-    }
-
-    public void setSumOfFail(Integer sumOfFail) {
-        this.sumOfFail = sumOfFail;
-    }
-
-    public Integer getSumOfScore() {
-        return sumOfScore;
-    }
-
-    public void setSumOfScore(Integer sumOfScore) {
-        this.sumOfScore = sumOfScore;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getCode() {
         return code;
@@ -232,11 +111,11 @@ public class PlanDetailDTO {
         this.reportTypeName = reportTypeName;
     }
 
-    public String getNumberOfCheck() {
+    public Integer getNumberOfCheck() {
         return numberOfCheck;
     }
 
-    public void setNumberOfCheck(String numberOfCheck) {
+    public void setNumberOfCheck(Integer numberOfCheck) {
         this.numberOfCheck = numberOfCheck;
     }
 
@@ -296,11 +175,11 @@ public class PlanDetailDTO {
         this.gross = gross;
     }
 
-    public String getTimeCheck() {
+    public ZonedDateTime getTimeCheck() {
         return timeCheck;
     }
 
-    public void setTimeCheck(String timeCheck) {
+    public void setTimeCheck(ZonedDateTime timeCheck) {
         this.timeCheck = timeCheck;
     }
 
@@ -358,13 +237,5 @@ public class PlanDetailDTO {
 
     public void setUpdateBy(String updateBy) {
         this.updateBy = updateBy;
-    }
-
-    public List<ReportResponse> getPlanDetail() {
-        return planDetail;
-    }
-
-    public void setPlanDetail(List<ReportResponse> planDetail) {
-        this.planDetail = planDetail;
     }
 }

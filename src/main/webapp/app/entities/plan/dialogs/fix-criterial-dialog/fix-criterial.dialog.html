@@ -1,0 +1,491 @@
+<div class="dialog">
+  <p-table
+    *ngIf="!isMobile"
+    [value]="listCriterialRepair"
+    [paginator]="true"
+    [rows]="10"
+    [responsive]="true"
+    styleClass="p-datatable-gridlines"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="text-center border">STT</th>
+        <th class="text-center border">Nhóm tiêu chí</th>
+        <th class="text-center border">Tên tiêu chí</th>
+        <th class="text-center border">Người xử lý</th>
+        <th class="text-center border">Giải pháp xử lý</th>
+        <th class="text-center border">Thời gian sử lý</th>
+        <th class="text-center border">Trạng thái</th>
+        <th class="text-center border">Kết luận</th>
+        <th class="text-center border">Nội dung đánh giá</th>
+        <th class="text-center border">Lý do</th>
+        <th class="text-center border">Hình ảnh</th>
+        <th class="text-center border">Tùy chọn</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-criterial let-index="rowIndex">
+      <tr>
+        <td class="text-center border">{{ index + 1 }}</td>
+        <td class="text-center border">{{ criterial.criterialGroupName }}</td>
+        <td class="text-center border">{{ criterial.criterialName }}</td>
+        <td class="text-center border">{{ criterial.userHandle }}</td>
+        <td class="text-center border">{{ criterial.solution }}</td>
+        <td class="text-center border">{{ criterial.planTimeComplete }}</td>
+        <td class="text-center border">
+          <p-tag [value]="criterial.status" [severity]="criterial.status == 'Đã hoàn thành' ? 'success' : 'danger'" />
+        </td>
+        <td class="text-center border">
+          <select [(ngModel)]="criterial.result" name="recheck.result" required>
+            <option value="Đạt">Đạt</option>
+            <option value="Không đạt">Không đạt</option>
+          </select>
+        </td>
+        <td class="text-center border">
+          <input type="text" [(ngModel)]="criterial.content" required />
+        </td>
+        <td class="text-center border">
+          <input type="text" [(ngModel)]="criterial.reason" required />
+        </td>
+        <td class="text-center border">
+          <p-button (click)="showDialogUpLoad(criterial, index)" label="Attach files" />
+          <p-dialog
+            header="Upload Files"
+            [modal]="true"
+            [(visible)]="dialogVisibility[index]"
+            [style]="{ width: '50rem' }"
+            [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+            [maximizable]="true"
+          >
+            <ng-container *ngIf="selectedData">
+              <p-fileUpload
+                name="files"
+                [url]="''"
+                [multiple]="true"
+                accept="image/*,video/*"
+                maxFileSize="25000000"
+                mode="advanced"
+                [auto]="false"
+                [customUpload]="true"
+                preview="true"
+                (onSelect)="onFileSelect($event, selectedData, index)"
+                (onClear)="onClear(selectedData)"
+                (onRemove)="removeImg($event, selectedData)"
+                [showUploadButton]="false"
+              >
+                <ng-template pTemplate="empty">
+                  <div>Drag and drop files to here to upload.</div>
+                </ng-template>
+                <ng-template pTemplate="content">
+                  <div *ngFor="let fileName of selectedData.image" class="file-item-container">
+                    <div style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem; align-items: center">
+                      <div style="grid-column: span 4" class="file-preview-container">
+                        <ng-container *ngIf="isImage(fileName); else videoTemplate">
+                          <img
+                            [src]="getImageUrl(fileName)"
+                            (error)="onImageError(fileName)"
+                            alt="Image thumbnail"
+                            style="width: 100%"
+                            class="thumbnail-image"
+                          />
+                        </ng-container>
+                        <ng-template #videoTemplate>
+                          <video [src]="getVideoUrl(fileName)" controls style="width: 100%"></video>
+                        </ng-template>
+                      </div>
+                      <div style="grid-column: span 4">
+                        <div class="file-name">{{ fileName }}</div>
+                      </div>
+                      <div style="grid-column: span 4">
+                        <button
+                          type="button"
+                          (click)="deleteFile(fileName, selectedData)"
+                          class="p-button p-button-icon-only p-button-text p-button-danger p-button-sm"
+                        >
+                          <span class="pi pi-times"></span>
+                        </button>
+                      </div>
+                      <br />
+                    </div>
+                  </div>
+                </ng-template>
+              </p-fileUpload>
+            </ng-container>
+            <ng-template pTemplate="footer">
+              <div class="flex justify-content-end">
+                <p-button label="Xong" icon="pi pi-check" styleClass="p-button-text" (click)="dialogVisibility[index] = false"></p-button>
+              </div>
+            </ng-template>
+          </p-dialog>
+        </td>
+        <td class="text-center border">
+          <p-button
+            icon="pi pi-check"
+            aria-label="Check"
+            styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+            [severity]="'success'"
+            (onClick)="showDialogCheckCriterial(criterial)"
+          />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <p-table
+    *ngIf="isMobile"
+    [value]="listCriterialRepair"
+    [paginator]="true"
+    [rows]="10"
+    [responsive]="true"
+    styleClass="p-datatable-gridlines"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="text-center border" style="padding: 0">Nhóm tiêu chí</th>
+        <th class="text-center border" style="padding: 0">Tên tiêu chí</th>
+        <th class="text-center border" style="padding: 0">Người xử lý</th>
+        <th class="text-center border" style="padding: 0">Giải pháp xử lý</th>
+        <th class="text-center border" style="padding: 0">Thời gian sử lý</th>
+        <th class="text-center border" style="padding: 0">Trạng thái</th>
+        <th class="text-center border" style="padding: 0">Tùy chọn</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-criterial let-index="rowIndex">
+      <tr>
+        <td class="text-center border" style="padding: 0">{{ criterial.criterialGroupName }}</td>
+        <td class="text-center border" style="padding: 0">{{ criterial.criterialName }}</td>
+        <td class="text-center border" style="padding: 0">{{ criterial.userHandle }}</td>
+        <td class="text-center border" style="padding: 0">{{ criterial.solution }}</td>
+        <td class="text-center border" style="padding: 0">{{ criterial.planTimeComplete | date: 'dd/MM/yyyy' }}</td>
+        <td class="text-center border" style="padding: 0">
+          <p-tag [value]="criterial.status" [severity]="criterial.status == 'Đã hoàn thành' ? 'success' : 'danger'" />
+        </td>
+        <td class="text-center border" style="padding: 0">
+          <p-button
+            icon="pi pi-check"
+            aria-label="Check"
+            styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+            [severity]="'success'"
+            (onClick)="showDialogCheckCriterial(criterial)"
+          />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-dialog header="Đợt khắc phục" [(visible)]="dialogCheckCriterial" [modal]="true" [style]="{ width: '100%' }" [baseZIndex]="1100">
+    <div class="col-container">
+      <div class="col-m4-25 col-container-child">
+        <label for="">Nhóm tiêu chí</label>
+        <input type="text" class="inp-style" [(ngModel)]="criterialSelected.criterialGroupName" readonly />
+      </div>
+      <div class="col-m4-25 col-container-child">
+        <label for="">Tên tiêu chí</label>
+        <input type="text" class="inp-style" [(ngModel)]="criterialSelected.criterialName" readonly />
+      </div>
+    </div>
+    <div class="d-flex" style="justify-content: flex-end !important">
+      <div class="custom-button-apply ms-3">
+        <p-button
+          label="Thêm dữ liệu"
+          icon="pi pi-check"
+          (onClick)="addRowListReCheck()"
+          styleClass="p-button-rounded p-button-info p-button-sm mr-2 gross-btn"
+          [raised]="true"
+          [severity]="'info'"
+        />
+      </div>
+    </div>
+    <div class="modal-body">
+      <p-table
+        *ngIf="!isMobile"
+        [value]="listReCheckRemediationPlan"
+        [paginator]="true"
+        [rows]="10"
+        [responsive]="true"
+        styleClass="p-datatable-gridlines"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="text-center border">STT</th>
+            <th class="text-center border">Kết luận</th>
+            <th class="text-center border">Nội dung đánh giá</th>
+            <th class="text-center border">Lý do</th>
+            <th class="text-center border">Hình ảnh đánh giá</th>
+            <th class="text-center border">Tùy chọn</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-recheck let-index="rowIndex">
+          <tr>
+            <td class="text-center border">{{ index + 1 }}</td>
+            <td class="text-center border">
+              <select [(ngModel)]="recheck.result" name="recheck.result" required>
+                <option value="Đạt">Đạt</option>
+                <option value="Không đạt">Không đạt</option>
+              </select>
+            </td>
+            <td class="text-center border">
+              <input type="text" [(ngModel)]="recheck.note" required />
+            </td>
+            <td class="text-center border">
+              <input type="text" [(ngModel)]="recheck.reason" required />
+            </td>
+            <td class="text-center border">
+              <p-button (click)="showDialogUpLoad(recheck, index)" label="Attach files" />
+              <p-dialog
+                header="Upload Files"
+                [modal]="true"
+                [(visible)]="dialogVisibility[index]"
+                [style]="{ width: '50rem' }"
+                [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+                [maximizable]="true"
+              >
+                <ng-container *ngIf="selectedData">
+                  <p-fileUpload
+                    name="files"
+                    [url]="''"
+                    [multiple]="true"
+                    accept="image/*,video/*"
+                    maxFileSize="25000000"
+                    mode="advanced"
+                    [auto]="false"
+                    [customUpload]="true"
+                    preview="true"
+                    (onSelect)="onFileSelect($event, selectedData, index)"
+                    (onClear)="onClear(selectedData)"
+                    (onRemove)="removeImg($event, selectedData)"
+                    [showUploadButton]="false"
+                  >
+                    <ng-template pTemplate="empty">
+                      <div>Drag and drop files to here to upload.</div>
+                    </ng-template>
+                    <ng-template pTemplate="content">
+                      <div *ngFor="let fileName of selectedData.image" class="file-item-container">
+                        <div style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem; align-items: center">
+                          <div style="grid-column: span 4" class="file-preview-container">
+                            <ng-container *ngIf="isImage(fileName); else videoTemplate">
+                              <img
+                                [src]="getImageUrl(fileName)"
+                                (error)="onImageError(fileName)"
+                                alt="Image thumbnail"
+                                style="width: 100%"
+                                class="thumbnail-image"
+                              />
+                            </ng-container>
+                            <ng-template #videoTemplate>
+                              <video [src]="getVideoUrl(fileName)" controls style="width: 100%"></video>
+                            </ng-template>
+                          </div>
+                          <div style="grid-column: span 4">
+                            <div class="file-name">{{ fileName }}</div>
+                          </div>
+                          <div style="grid-column: span 4">
+                            <button
+                              type="button"
+                              (click)="deleteFile(fileName, selectedData)"
+                              class="p-button p-button-icon-only p-button-text p-button-danger p-button-sm"
+                            >
+                              <span class="pi pi-times"></span>
+                            </button>
+                          </div>
+                          <br />
+                        </div>
+                      </div>
+                    </ng-template>
+                  </p-fileUpload>
+                </ng-container>
+                <ng-template pTemplate="footer">
+                  <div class="flex justify-content-end">
+                    <p-button
+                      label="Xong"
+                      icon="pi pi-check"
+                      styleClass="p-button-text"
+                      (click)="dialogVisibility[index] = false"
+                    ></p-button>
+                  </div>
+                </ng-template>
+              </p-dialog>
+            </td>
+            <td class="text-center border">
+              <p-button
+                icon="pi pi-trash"
+                aria-label="Delete"
+                styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+                [severity]="'danger'"
+                (onClick)="deleteRow(listReCheckRemediationPlan, index)"
+                title="Xoá"
+              />
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <p-table
+        *ngIf="isMobile"
+        [value]="listReCheckRemediationPlan"
+        [paginator]="true"
+        [rows]="10"
+        [responsive]="true"
+        styleClass="p-datatable-gridlines"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="text-center border" style="padding: 0; min-width: 100px">Kết luận</th>
+            <th class="text-center border" style="padding: 0; min-width: 100px">Nội dung đánh giá</th>
+            <th class="text-center border" style="padding: 0; min-width: 100px">Lý do</th>
+            <th class="text-center border" style="padding: 0; min-width: 100px">Hình ảnh đánh giá</th>
+            <th class="text-center border" style="padding: 0; min-width: 100px">Tùy chọn</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-recheck let-index="rowIndex">
+          <tr>
+            <td class="text-center border" style="padding: 0">
+              <select [(ngModel)]="recheck.result" name="recheck.result" required>
+                <option value="Đạt">Đạt</option>
+                <option value="Không đạt">Không đạt</option>
+              </select>
+            </td>
+            <td class="text-center border" style="padding: 0">
+              <input type="text" [(ngModel)]="recheck.note" required (click)="openEditRepairDialog(recheck, 'note')" />
+            </td>
+            <td class="text-center border" style="padding: 0">
+              <input type="text" [(ngModel)]="recheck.reason" required (click)="openEditRepairDialog(recheck, 'reason')" />
+            </td>
+            <td class="text-center border" style="padding: 0">
+              <p-button (click)="showDialogUpLoad(recheck, index)" label="Attach files" />
+              <p-dialog
+                header="Upload Files"
+                [modal]="true"
+                [(visible)]="dialogVisibility[index]"
+                [style]="{ width: '50rem' }"
+                [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+                [maximizable]="true"
+              >
+                <ng-container *ngIf="selectedData">
+                  <p-fileUpload
+                    name="files"
+                    [url]="''"
+                    [multiple]="true"
+                    accept="image/*,video/*"
+                    maxFileSize="25000000"
+                    mode="advanced"
+                    [auto]="false"
+                    [customUpload]="true"
+                    preview="true"
+                    (onSelect)="onFileSelect($event, selectedData, index)"
+                    (onClear)="onClear(selectedData)"
+                    (onRemove)="removeImg($event, selectedData)"
+                    [showUploadButton]="false"
+                  >
+                    <ng-template pTemplate="empty">
+                      <div>Drag and drop files to here to upload.</div>
+                    </ng-template>
+                    <ng-template pTemplate="content">
+                      <div *ngFor="let fileName of selectedData.image" class="file-item-container">
+                        <div style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem; align-items: center">
+                          <div style="grid-column: span 4" class="file-preview-container">
+                            <ng-container *ngIf="isImage(fileName); else videoTemplate">
+                              <img
+                                [src]="getImageUrl(fileName)"
+                                (error)="onImageError(fileName)"
+                                alt="Image thumbnail"
+                                style="width: 100%"
+                                class="thumbnail-image"
+                              />
+                            </ng-container>
+                            <ng-template #videoTemplate>
+                              <video [src]="getVideoUrl(fileName)" controls style="width: 100%"></video>
+                            </ng-template>
+                          </div>
+                          <div style="grid-column: span 4">
+                            <div class="file-name">{{ fileName }}</div>
+                          </div>
+                          <div style="grid-column: span 4">
+                            <button
+                              type="button"
+                              (click)="deleteFile(fileName, selectedData)"
+                              class="p-button p-button-icon-only p-button-text p-button-danger p-button-sm"
+                            >
+                              <span class="pi pi-times"></span>
+                            </button>
+                          </div>
+                          <br />
+                        </div>
+                      </div>
+                    </ng-template>
+                  </p-fileUpload>
+                </ng-container>
+                <ng-template pTemplate="footer">
+                  <div class="flex justify-content-end">
+                    <p-button
+                      label="Xong"
+                      icon="pi pi-check"
+                      styleClass="p-button-text"
+                      (click)="dialogVisibility[index] = false"
+                    ></p-button>
+                  </div>
+                </ng-template>
+              </p-dialog>
+            </td>
+            <td class="text-center border">
+              <p-button
+                icon="pi pi-trash"
+                aria-label="Delete"
+                styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+                [severity]="'danger'"
+                (onClick)="deleteRow(listReCheckRemediationPlan, index)"
+                title="Xoá"
+              />
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+    <div class="d-flex" style="justify-content: flex-end !important">
+      <div class="custom-button-apply ms-3">
+        <p-button
+          label="Lưu"
+          icon="pi pi-save"
+          (onClick)="saveReCheckRemePlan()"
+          styleClass="p-button-rounded p-button-info p-button-sm mr-2 gross-btn"
+          [raised]="true"
+          severity="success"
+        />
+      </div>
+    </div>
+  </p-dialog>
+
+  <p-dialog
+    header="Nhập nội dung"
+    [(visible)]="editDialogVisibleRepair"
+    [modal]="true"
+    [style]="{ width: '90vw' }"
+    [closable]="true"
+    [maximizable]="true"
+  >
+    <ng-container *ngIf="selectedRowRepair && editFieldRepair">
+      <textarea
+        [(ngModel)]="selectedRowRepair[editFieldRepair]"
+        rows="6"
+        class="form-control"
+        placeholder="Nhập nội dung..."
+        autofocus
+        (keydown.enter)="handleEnterForRepairDialog($event)"
+      ></textarea>
+    </ng-container>
+    <ng-template pTemplate="footer">
+      <ng-container *ngIf="selectedRowRepair && editFieldRepair">
+        <button type="button" class="btn btn-danger" (click)="selectedRowRepair[editFieldRepair] = ''">Xóa</button>
+        <button type="button" class="btn btn-success" (click)="editDialogVisibleRepair = false">Xong</button>
+      </ng-container>
+    </ng-template>
+  </p-dialog>
+</div>
+
+<div class="dialog-footer" style="display: flex; justify-content: flex-end">
+  <p-button
+    icon="pi pi-save"
+    styleClass="p-button-rounded p-button-info p-button-sm mr-2 gross-btn"
+    [raised]="true"
+    severity="success"
+    (onClick)="saveRemediationPlanDetail(listCriterialRepair)"
+    label="Lưu"
+  />
+</div>

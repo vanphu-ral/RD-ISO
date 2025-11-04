@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { Observable, map } from 'rxjs';
 import dayjs from 'dayjs/esm';
@@ -16,6 +16,13 @@ export interface IGrossScript {
   updatedAt?: dayjs.Dayjs | null;
   createdBy?: string | null;
   status?: string | null;
+}
+export interface IPageResponse<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
 }
 export type EntityResponseType = HttpResponse<any>;
 export type EntityArrayResponseType = HttpResponse<any[]>;
@@ -106,5 +113,45 @@ export class PlanGroupService {
 
   delete(id: number): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
+
+  getRecheckDetails(
+    reportId: number,
+    criterialName?: string,
+    groupCriterialName?: string,
+    page: number = 0,
+    size: number = 10,
+  ): Observable<HttpResponse<IPageResponse<any>>> {
+    let params = new HttpParams()
+      .set('reportId', reportId)
+      .set('page', page)
+      .set('size', size)
+      .set('criterialName', criterialName ?? '')
+      .set('groupCriterialName', groupCriterialName ?? '');
+
+    return this.http.get<IPageResponse<any>>(`${this.resourceDetailUrl}/recheck-details`, {
+      params,
+      observe: 'response',
+    });
+  }
+
+  getRecheckDetailPlan(
+    planId: number,
+    criterialName?: string,
+    groupCriterialName?: string,
+    page: number = 0,
+    size: number = 10,
+  ): Observable<HttpResponse<IPageResponse<any>>> {
+    let params = new HttpParams()
+      .set('planId', planId)
+      .set('page', page)
+      .set('size', size)
+      .set('criterialName', criterialName ?? '')
+      .set('groupCriterialName', groupCriterialName ?? '');
+
+    return this.http.get<IPageResponse<any>>(`${this.resourceDetailUrl}/recheck-details/plan`, {
+      params,
+      observe: 'response',
+    });
   }
 }

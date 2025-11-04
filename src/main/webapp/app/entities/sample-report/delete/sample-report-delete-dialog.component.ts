@@ -22,8 +22,9 @@ export class SampleReportDeleteDialogComponent {
     this.activeModal.dismiss();
   }
 
-  confirmDelete(id: number): void {
-    this.sampleReportService.delete(id).subscribe(() => {
+  confirmDelete(data: any): void {
+    data.status = 'DEACTIVATE';
+    this.sampleReportService.update(data).subscribe(() => {
       this.activeModal.close(ITEM_DELETED_EVENT);
     });
   }

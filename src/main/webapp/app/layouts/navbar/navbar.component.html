@@ -319,7 +319,14 @@
             </ul>
           </li>
           <li
-            *jhiHasAnyAuthority="['ROLE_ISO_ADMIN', 'ROLE_ISO_CREATE_PLAN', 'ROLE_ISO_VIEW_ITEM']"
+            *jhiHasAnyAuthority="[
+              'ROLE_ISO_ADMIN',
+              'ROLE_ISO_CREATE_PLAN',
+              'ROLE_ISO_VIEW_ITEM',
+              'ROLE_ISO_CREATE_FIX_PLAN',
+              'ROLE_ISO_CHECK',
+              'ISO_VIEW_PLAN'
+            ]"
             ngbDropdown
             class="nav-item dropdown pointer"
             display="dynamic"

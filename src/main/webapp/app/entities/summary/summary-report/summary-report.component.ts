@@ -156,7 +156,7 @@ export class SummaryReportComponent implements OnInit {
     if (data.convertScore == 'Tính điểm') {
       const markNC = this.listEvalReportBase.find((item: any) => item.name == 'NC');
       const markLC = this.listEvalReportBase.find((item: any) => item.name == 'LY');
-      const totalPointSummarize = data.scoreScale * data.sumOfReport - (data.sumOfLy * markLC.mark + data.sumOfNc * markNC.mark);
+      const totalPointSummarize = data.sumOfScoreScale - (data.sumOfLy * markLC.mark + data.sumOfNc * markNC.mark);
       return totalPointSummarize;
     } else {
       return data.scoreScale;

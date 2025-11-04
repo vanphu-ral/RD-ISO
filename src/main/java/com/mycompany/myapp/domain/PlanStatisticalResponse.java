@@ -25,9 +25,13 @@ public interface PlanStatisticalResponse {
     String getGroupName(); // ten nganh
     String getTimeStart(); // thoi gian bat dau
     Integer getSumOfPass(); // tong so tieu chi pass
+    Integer getSumOfDat(); // tong so tieu chi dat
     Integer getTotal();
     Integer getSumOfUncheck(); // tong so loi chua khac phuc
     Integer getSumOfCheck(); // tong so loi da khac phuc
     Integer getSumOfReport(); // tong so bien ban kiem tra
     Integer getSumOfCreateReport(); // tong so bien ban da tao bao cao
+    Integer getSumOfScoreScale(); // tong diem
+    void setSumOfUncheck(Integer sum);
+    void setSumOfCheck(Integer sum);
 }

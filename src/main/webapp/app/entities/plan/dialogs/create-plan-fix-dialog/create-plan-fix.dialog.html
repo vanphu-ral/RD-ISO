@@ -1,0 +1,162 @@
+<div class="row">
+  <div class="col">
+    <label for="userNameGroups">Tên kế hoạch khắc phục</label>
+    <input
+      type="text"
+      name="name"
+      [(ngModel)]="groupCriterialError.name"
+      required
+      class="form-control w-100"
+      [style.borderColor]="!groupCriterialError.name || isNameDuplicate ? '#f44336' : ''"
+      [style.borderLeft]="!groupCriterialError.name || isNameDuplicate ? '3px solid #e74c3c' : ''"
+      (ngModelChange)="duplicateNameValidator(groupCriterialError.name)"
+    />
+    <div class="error-message">
+      <span *ngIf="!groupCriterialError.name">Tên không được để trống </span>
+      <span *ngIf="isNameDuplicate">Tên này đã tồn tại</span>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <label for="checkDate">Ngày tạo</label>
+    <input type="date" name="checkDate" [(ngModel)]="groupCriterialError.repairDate" required class="form-control" />
+  </div>
+  <div class="col-md-6">
+    <label for="createdBy">Người tạo</label>
+    <select
+      name="createdBy"
+      [(ngModel)]="groupCriterialError.createdBy"
+      required
+      class="form-control"
+      (ngModelChange)="onCreatedByChange($event)"
+    >
+      <option *ngFor="let data of evaluator" [value]="data.name">{{ data.name }}</option>
+    </select>
+  </div>
+</div>
+<div style="max-height: 450px !important; overflow-y: scroll" class="mt-3">
+  <p-table
+    *ngIf="!isMobile"
+    [value]="listCriterialError"
+    [responsive]="true"
+    styleClass="p-datatable-gridlines"
+    [(selection)]="selectedlistCriterialError"
+    selectionMode="multiple"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="text-center border">STT</th>
+        <th class="text-center border">Nhóm tiêu chí</th>
+        <th class="text-center border">Tên tiêu chí</th>
+        <th class="text-center border">Tình trạng</th>
+        <th class="text-center border">Tần suất</th>
+        <th class="text-center border">Thời gian đánh giá</th>
+        <th class="text-center border">Ghi chú</th>
+        <th class="text-center border" style="min-width: 200px">Giải pháp</th>
+        <th class="text-center border" style="min-width: 200px">Chi tiết</th>
+        <th class="text-center border" style="min-width: 200px">Người xử lý</th>
+        <th class="text-center border" style="min-width: 200px">Thời gian khắc phục</th>
+        <th class="text-center border"><p-tableHeaderCheckbox /></th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-group let-i="rowIndex">
+      <tr>
+        <td class="text-center border">{{ i + 1 }}</td>
+        <td class="text-center border">{{ group.criterialGroupName }}</td>
+        <td class="text-center border">{{ group.criterialName }}</td>
+        <td class="text-center border">{{ group.result }}</td>
+        <td class="text-center border">{{ group.frequency }}</td>
+        <td class="text-center border">{{ group.createdAt }}</td>
+        <td class="text-center border">{{ group.note }}</td>
+        <td class="text-center border" style="padding: 0">
+          <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="group.solution"></textarea>
+        </td>
+        <td class="text-center border" style="padding: 0">
+          <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="group.description"></textarea>
+        </td>
+        <td class="text-center border" style="padding: 0">
+          <select [(ngModel)]="group.userHandle">
+            <option value="" disabled>-- Chọn người đánh giá --</option>
+            <option *ngFor="let data of evaluator" [value]="data.name">{{ data.name }}</option>
+          </select>
+        </td>
+        <td class="text-center border" style="padding: 0">
+          <input type="date" [(ngModel)]="group.planTimeComplete" />
+        </td>
+        <td class="text-center border">
+          <p-tableCheckbox [value]="group" />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <p-table
+    *ngIf="isMobile"
+    [value]="listCriterialError"
+    [responsive]="true"
+    styleClass="p-datatable-gridlines"
+    [(selection)]="selectedlistCriterialError"
+    selectionMode="multiple"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="text-center border" style="padding: 0">Nhóm tiêu chí</th>
+        <th class="text-center border" style="padding: 0">Tên tiêu chí</th>
+        <th class="text-center border" style="padding: 0">Tình trạng</th>
+        <th class="text-center border" style="padding: 0">Tần suất</th>
+        <th class="text-center border" style="padding: 0; min-width: 90px">Thời gian đánh giá</th>
+        <th class="text-center border" style="padding: 0">Ghi chú</th>
+        <th class="text-center border" style="padding: 0">Giải pháp</th>
+        <th class="text-center border" style="padding: 0">Chi tiết</th>
+        <th class="text-center border" style="padding: 0">Người xử lý</th>
+        <th class="text-center border" style="padding: 0">Thời gian khắc phục</th>
+        <th class="text-center border" style="padding: 0"><p-tableHeaderCheckbox /></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-group let-i="rowIndex">
+      <tr>
+        <td class="text-center border">{{ group.groupCriterialName }}</td>
+        <td class="text-center border">{{ group.criterialName }}</td>
+        <td class="text-center border">{{ group.errorType }}</td>
+        <td class="text-center border">{{ group.frequency }}</td>
+        <td class="text-center border">{{ group.note }}</td>
+        <td class="text-center border">
+          <input type="text" [(ngModel)]="group.solution" />
+        </td>
+        <td class="text-center border">
+          <input type="text" [(ngModel)]="group.description" />
+        </td>
+        <td class="text-center border">
+          <select [(ngModel)]="group.userHandle">
+            <option value="" disabled>-- Chọn người đánh giá --</option>
+            <option *ngFor="let data of evaluator" [value]="data.name">{{ data.name }}</option>
+          </select>
+        </td>
+        <td class="text-center border">
+          <input type="date" [(ngModel)]="group.planTimeComplete" />
+        </td>
+        <td class="text-center border">
+          <p-tableCheckbox [value]="group" />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+<div class="dialog-footer" style="display: flex; justify-content: flex-end">
+  <p-button
+    data-dismiss="modal"
+    type="button"
+    styleClass="p-button-rounded p-button-info p-button-sm mr-2"
+    [severity]="'success'"
+    [disabled]="
+        !groupCriterialError.name ||
+        !groupCriterialError.createdBy ||
+        !groupCriterialError.repairDate ||
+        isNameDuplicate ||
+        selectedlistCriterialError.length == 0
+      "
+    (onClick)="saveRemediationPlan(groupCriterialError)"
+    >Gộp</p-button
+  >
+</div>

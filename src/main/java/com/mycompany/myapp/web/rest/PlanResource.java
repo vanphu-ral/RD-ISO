@@ -2,26 +2,34 @@ package com.mycompany.myapp.web.rest;
 
 import com.mycompany.myapp.config.ApplicationProperties;
 import com.mycompany.myapp.domain.Plan;
+import com.mycompany.myapp.domain.PlanGroupHistoryResponse;
 import com.mycompany.myapp.domain.PlanStatisticalResponse;
 import com.mycompany.myapp.domain.ReportResponse;
+import com.mycompany.myapp.repository.PlanGroupHistoryDetailRepository;
 import com.mycompany.myapp.repository.PlanRepository;
 import com.mycompany.myapp.repository.ReportRepository;
 import com.mycompany.myapp.service.dto.PlanDetailDTO;
+import com.mycompany.myapp.service.dto.PlanStatisticalResponseDTO;
 import com.mycompany.myapp.service.dto.ReportDTO;
+import com.mycompany.myapp.service.dto.ReportResponseDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,17 +55,29 @@ public class PlanResource {
     private final String uploadDir;
     private final String videoDir;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
     private final PlanRepository planRepository;
     private final ReportRepository reportRepository;
 
-    public PlanResource(PlanRepository planRepository, ReportRepository reportRepository, ApplicationProperties applicationProperties) {
+    @Autowired
+    private PlanGroupHistoryDetailRepository planGroupHistoryDetailRepository;
+
+    public PlanResource(
+        PlanRepository planRepository,
+        ReportRepository reportRepository,
+        ApplicationProperties applicationProperties,
+        EntityManager entityManager
+    ) {
         this.planRepository = planRepository;
         this.reportRepository = reportRepository;
         this.uploadDir = applicationProperties.getUploadDir();
         this.videoDir = applicationProperties.getVideoDir();
+        this.entityManager = entityManager;
     }
 
     /**
@@ -272,7 +292,142 @@ public class PlanResource {
     /**
      * Lay du lieu plan di kem thong tin chi tiet
      */
-    @GetMapping("plan-detail")
+    private List<Predicate> buildPredicates(CriteriaBuilder cb, Root<Plan> root, Map<String, Object> filters) {
+        List<Predicate> predicates = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.000000"); // hoặc định dạng phù hợp với dữ liệu đầu vào
+        filters.forEach((key, value) -> {
+            if (value == null || key.equals("size") || key.equals("page")) return;
+
+            String val = value.toString().toLowerCase();
+
+            switch (key) {
+                case "code" -> predicates.add(cb.like(cb.lower(root.get("code")), "%" + val + "%"));
+                case "name" -> predicates.add(cb.like(cb.lower(root.get("name")), "%" + val + "%"));
+                case "frequency" -> predicates.add(cb.like(cb.lower(root.get("frequency")), "%" + val + "%"));
+                case "subjectOfAssetmentPlan" -> predicates.add(cb.like(cb.lower(root.get("subjectOfAssetmentPlan")), "%" + val + "%"));
+                case "testObject" -> predicates.add(cb.like(cb.lower(root.get("testObject")), "%" + val + "%"));
+                case "reportTypeName" -> predicates.add(cb.like(cb.lower(root.get("reportTypeName")), "%" + val + "%"));
+                case "implementer" -> predicates.add(cb.like(cb.lower(root.get("implementer")), "%" + val + "%"));
+                case "paticipant" -> predicates.add(cb.like(cb.lower(root.get("paticipant")), "%" + val + "%"));
+                case "checkerGroup" -> predicates.add(cb.like(cb.lower(root.get("checkerGroup")), "%" + val + "%"));
+                case "checkerName" -> predicates.add(cb.like(cb.lower(root.get("checkerName")), "%" + val + "%"));
+                case "nameResult" -> predicates.add(cb.like(cb.lower(root.get("nameResult")), "%" + val + "%"));
+                case "createBy" -> predicates.add(cb.like(cb.lower(root.get("createBy")), "%" + val + "%"));
+                case "updateBy" -> predicates.add(cb.like(cb.lower(root.get("updateBy")), "%" + val + "%"));
+                case "status" -> predicates.add(cb.equal(root.get("status"), value));
+                case "statusPlan" -> predicates.add(cb.equal(root.get("statusPlan"), value));
+                case "reportTypeId" -> predicates.add(cb.equal(root.get("reportTypeId"), value));
+                case "checkerGroupId" -> predicates.add(cb.equal(root.get("checkerGroupId"), value));
+                case "checkerId" -> predicates.add(cb.equal(root.get("checkerId"), value));
+                case "scriptId" -> predicates.add(cb.equal(root.get("scriptId"), value));
+                case "timeStart" -> predicates.add(
+                    cb.like(cb.function("TO_CHAR", String.class, root.get("timeStart"), cb.literal("YYYY-MM-DD")), "%" + val + "%")
+                );
+                case "timeEnd" -> predicates.add(
+                    cb.like(cb.function("TO_CHAR", String.class, root.get("timeEnd"), cb.literal("YYYY-MM-DD")), "%" + val + "%")
+                );
+            }
+        });
+
+        return predicates;
+    }
+
+    @Transactional
+    @GetMapping("/plan-detail")
+    public Page<PlanDetailDTO> getPlanDetail(@RequestParam Map<String, Object> filters, @RequestParam int page) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+        // Truy vấn chính
+        CriteriaQuery<Plan> cq = cb.createQuery(Plan.class);
+        Root<Plan> root = cq.from(Plan.class);
+        List<Predicate> predicates = buildPredicates(cb, root, filters);
+
+        cq.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
+        cq.orderBy(cb.desc(root.get("id")));
+
+        TypedQuery<Plan> query = entityManager.createQuery(cq);
+        query.setFirstResult(page * 10);
+        query.setMaxResults(10);
+        List<Plan> plans = query.getResultList();
+
+        // Chuyển đổi sang DTO
+        List<PlanDetailDTO> dtos = plans
+            .stream()
+            .map(plan -> {
+                PlanDetailDTO dto = new PlanDetailDTO();
+                dto.setId(plan.getId());
+                dto.setCode(plan.getCode());
+                dto.setName(plan.getName());
+                dto.setSubjectOfAssetmentPlan(plan.getSubjectOfAssetmentPlan());
+                dto.setFrequency(plan.getFrequency());
+                dto.setTimeStart(plan.getTimeStart());
+                dto.setTimeEnd(plan.getTimeEnd());
+                dto.setStatusPlan(plan.getStatusPlan());
+                dto.setTestObject(plan.getTestObject());
+                dto.setReportTypeId(plan.getReportTypeId());
+                dto.setReportTypeName(plan.getReportTypeName());
+                dto.setNumberOfCheck(plan.getNumberOfCheck());
+                dto.setImplementer(plan.getImplementer());
+                dto.setPaticipant(plan.getPaticipant());
+                dto.setCheckerGroup(plan.getCheckerGroup());
+                dto.setCheckerName(plan.getCheckerName());
+                dto.setCheckerGroupId(plan.getCheckerGroupId());
+                dto.setCheckerId(plan.getCheckerId());
+                dto.setGross(plan.getGross());
+                dto.setTimeCheck(plan.getTimeCheck());
+                dto.setNameResult(plan.getNameResult());
+                dto.setScriptId(plan.getScriptId());
+                dto.setCreateBy(plan.getCreateBy());
+                dto.setStatus(plan.getStatus());
+                dto.setCreatedAt(plan.getCreatedAt());
+                dto.setUpdatedAt(plan.getUpdatedAt());
+                dto.setUpdateBy(plan.getUpdateBy());
+
+                PlanStatisticalResponse stats = planRepository.getAllPlanStatisticalByPlan(plan.getId());
+                dto.setSumOfLy(stats.getSumOfLy());
+                dto.setSumOfFail(stats.getSumOfFail());
+                dto.setSumOfNc(stats.getSumOfNc());
+                dto.setSumOfPass(stats.getSumOfPass());
+                dto.setSumOfScoreScale(stats.getSumOfScoreScale());
+                Integer sumOfCheck = 0;
+                Integer sumOfUncheck = 0;
+                List<PlanGroupHistoryResponse> planGroupHistoryResponseList = planGroupHistoryDetailRepository.getDetailRecheckByPlanId(
+                    plan.getId()
+                );
+                if (planGroupHistoryResponseList == null || planGroupHistoryResponseList.size() == 0) {
+                    dto.setSumOfCheck(0);
+                    dto.setSumOfUncheck(0);
+                } else {
+                    for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
+                        if (
+                            historyResponse.getResultRecheck() != null &&
+                            historyResponse.getStatusRecheck() != null &&
+                            historyResponse.getResultRecheck().equals("Đạt") &&
+                            historyResponse.getStatusRecheck().equals("Đã hoàn thành")
+                        ) {
+                            sumOfCheck += 1;
+                        } else {
+                            sumOfUncheck += 1;
+                        }
+                    }
+                    dto.setSumOfCheck(sumOfCheck);
+                    dto.setSumOfUncheck(sumOfUncheck);
+                }
+                return dto;
+            })
+            .toList();
+
+        // Truy vấn đếm tổng số bản ghi
+        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+        Root<Plan> countRoot = countQuery.from(Plan.class);
+        List<Predicate> countPredicates = buildPredicates(cb, countRoot, filters);
+        countQuery.select(cb.count(countRoot)).where(cb.and(countPredicates.toArray(new Predicate[0])));
+        Long total = entityManager.createQuery(countQuery).getSingleResult();
+
+        return new PageImpl<>(dtos, PageRequest.of(page, 10), total);
+    }
+
+    @GetMapping("plan-detail-old")
     public List<PlanDetailDTO> getPlanDetail() {
         List<Plan> plans = this.planRepository.findAll();
         List<PlanDetailDTO> planDetailDTOS = new ArrayList<>();
@@ -305,8 +460,12 @@ public class PlanResource {
             planDetailDTO.setCreatedAt(plan.getCreatedAt());
             planDetailDTO.setUpdatedAt(plan.getUpdatedAt());
             planDetailDTO.setUpdateBy(plan.getUpdateBy());
-            List<ReportResponse> response = this.reportRepository.getDetailByPlanId(plan.getId());
-            planDetailDTO.setPlanDetail(response);
+            PlanStatisticalResponse statisticalResponse = this.planRepository.getAllPlanStatisticalByPlan(plan.getId());
+            planDetailDTO.setSumOfLy(statisticalResponse.getSumOfLy());
+            planDetailDTO.setSumOfFail(statisticalResponse.getSumOfFail());
+            planDetailDTO.setSumOfNc(statisticalResponse.getSumOfNc());
+            planDetailDTO.setSumOfPass(statisticalResponse.getSumOfPass());
+            planDetailDTO.setSumOfScoreScale(statisticalResponse.getSumOfScoreScale());
             planDetailDTOS.add(planDetailDTO);
         }
         Collections.reverse(planDetailDTOS);
@@ -345,7 +504,7 @@ public class PlanResource {
             List<String> imageExtensions = Arrays.asList("jpg", "jpeg", "png", "gif");
             List<String> videoExtensions = Arrays.asList("mp4", "avi", "mov", "wmv", "flv");
 
-            Path uploadPath;
+            java.nio.file.Path uploadPath;
             String fileType;
 
             if (imageExtensions.contains(fileExtension)) {
@@ -363,7 +522,7 @@ public class PlanResource {
                 log.info("Created upload directory for {}: {}", fileType, uploadPath.toString());
             }
 
-            Path filePath = Paths.get(uploadPath.toString(), fileName);
+            java.nio.file.Path filePath = Paths.get(uploadPath.toString(), fileName);
             Files.write(filePath, file.getBytes());
 
             Map<String, String> response = new HashMap<>();
@@ -389,7 +548,7 @@ public class PlanResource {
     @DeleteMapping("/delete-file")
     public ResponseEntity<String> deleteFile(@RequestParam("fileName") String fileName) {
         try {
-            Path filePath = Paths.get(uploadDir + fileName);
+            java.nio.file.Path filePath = Paths.get(uploadDir + fileName);
             if (!Files.exists(filePath)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found");
             }
@@ -411,8 +570,59 @@ public class PlanResource {
     }
 
     @GetMapping("plan-detail-summarize/{planId}")
-    public List<ReportResponse> getPlanDetailByPlanId(@PathVariable Long planId) {
-        return reportRepository.getDetailByPlanId(planId);
+    public List<ReportResponseDTO> getPlanDetailByPlanId(@PathVariable Long planId) {
+        List<ReportResponse> list = reportRepository.getDetailByPlanId(planId);
+        return list
+            .stream()
+            .map(report -> {
+                ReportResponseDTO dto = new ReportResponseDTO();
+                dto.setId(report.getId());
+                dto.setName(report.getName());
+                dto.setCode(report.getCode());
+                dto.setSampleReportId(report.getSampleReportId());
+                dto.setTestOfObject(report.getTestOfObject());
+                dto.setChecker(report.getChecker());
+                dto.setGroupName(report.getGroupName());
+                dto.setStatus(report.getStatus());
+                dto.setFrequency(report.getFrequency());
+                dto.setReportType(report.getReportType());
+                dto.setReportTypeId(report.getReportTypeId());
+                dto.setGroupReport(report.getGroupReport());
+                dto.setCreatedAt(report.getCreatedAt());
+                dto.setUpdatedAt(report.getUpdatedAt());
+                dto.setCheckTime(report.getCheckTime());
+                dto.setScoreScale(report.getScoreScale());
+                dto.setConvertScore(report.getConvertScore());
+                dto.setUpdateBy(report.getUpdateBy());
+                dto.setPlanId(report.getPlanId());
+                dto.setUser(report.getUser());
+                dto.setDetail(report.getDetail());
+                dto.setSumOfAudit(report.getSumOfAudit());
+                dto.setSumOfNc(report.getSumOfNc());
+                dto.setSumOfLy(report.getSumOfLy());
+                dto.setSumOfFail(report.getSumOfFail());
+                dto.setSumOfSelectAgain(report.getSumOfSelectAgain());
+                List<PlanGroupHistoryResponse> planGroupHistoryResponseList =
+                    this.planGroupHistoryDetailRepository.getDetailRecheckByReportId(report.getId());
+                Integer sumOfCheck = 0;
+                Integer sumOfUncheck = 0;
+                for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
+                    if (
+                        historyResponse.getResultRecheck() != null &&
+                        historyResponse.getStatusRecheck() != null &&
+                        historyResponse.getResultRecheck().equals("Đạt") &&
+                        historyResponse.getStatusRecheck().equals("Đã hoàn thành")
+                    ) {
+                        sumOfCheck += 1;
+                    } else {
+                        sumOfUncheck += 1;
+                    }
+                }
+                dto.setSumOfCheck(sumOfCheck);
+                dto.setSumOfUncheck(sumOfUncheck);
+                return dto;
+            })
+            .collect(Collectors.toList());
     }
 
     @PostMapping("/statistical")
@@ -435,24 +645,7 @@ public class PlanResource {
     }
 
     @PostMapping("/statistical/by-group")
-    public Page<PlanStatisticalResponse> getStatisticsByGroup(@RequestBody ReportDTO dto, @PageableDefault(size = 10) Pageable pageable) {
-        System.out.println(dto.getTimeStart().substring(0, 4) + "-" + dto.getTimeStart().substring(5, 7));
-        System.out.println(dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7));
-        List<String> reportType = dto.getReportType() == null ? new ArrayList<>() : dto.getReportType();
-        List<String> subjectOfAssetmentPlan = dto.getSubjectOfAssetmentPlan() == null ? new ArrayList<>() : dto.getSubjectOfAssetmentPlan();
-        List<String> groupName = dto.getGroupName() == null ? new ArrayList<>() : dto.getGroupName();
-        return planRepository.getPlanStatisticalByManyCriteriaByGroup(
-            dto.getTimeStart().substring(0, 4) + "-" + dto.getTimeStart().substring(5, 7),
-            dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7),
-            reportType,
-            subjectOfAssetmentPlan,
-            groupName,
-            pageable
-        );
-    }
-
-    @PostMapping("/statistical/by-subject-assetment-plan")
-    public Page<PlanStatisticalResponse> getPlanStatisticalByManyCriteriaBySubjectAssetmentPlan(
+    public Page<PlanStatisticalResponseDTO> getStatisticsByGroup(
         @RequestBody ReportDTO dto,
         @PageableDefault(size = 10) Pageable pageable
     ) {
@@ -460,12 +653,147 @@ public class PlanResource {
         System.out.println(dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7));
         List<String> reportType = dto.getReportType() == null ? new ArrayList<>() : dto.getReportType();
         List<String> subjectOfAssetmentPlan = dto.getSubjectOfAssetmentPlan() == null ? new ArrayList<>() : dto.getSubjectOfAssetmentPlan();
-        return planRepository.getPlanStatisticalByManyCriteriaBySubjectAssetmentPlan(
+        List<String> groupName = dto.getGroupName() == null ? new ArrayList<>() : dto.getGroupName();
+        Page<PlanStatisticalResponse> planStatisticalResponsePage = planRepository.getPlanStatisticalByManyCriteriaByGroup(
+            dto.getTimeStart().substring(0, 4) + "-" + dto.getTimeStart().substring(5, 7),
+            dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7),
+            reportType,
+            subjectOfAssetmentPlan,
+            groupName,
+            pageable
+        );
+        Page<PlanStatisticalResponseDTO> planStatisticalResponseDTOS = new PageImpl<>(new ArrayList<>(), pageable, 0);
+        // Chuyển đổi PlanStatisticalResponse thành PlanStatisticalResponseDTO
+        planStatisticalResponseDTOS = planStatisticalResponsePage.map(planStatisticalResponse -> {
+            PlanStatisticalResponseDTO dtoItem = new PlanStatisticalResponseDTO();
+            dtoItem.setSubjectOfAssetmentPlan(planStatisticalResponse.getSubjectOfAssetmentPlan());
+            dtoItem.setTimeStart(planStatisticalResponse.getTimeStart());
+            dtoItem.setReportType(planStatisticalResponse.getReportType());
+            dtoItem.setConvertScore(planStatisticalResponse.getConvertScore());
+            dtoItem.setGroupName(planStatisticalResponse.getGroupName());
+            dtoItem.setSumOfCheck(planStatisticalResponse.getSumOfCheck());
+            dtoItem.setSumOfUncheck(planStatisticalResponse.getSumOfUncheck());
+            dtoItem.setTotal(planStatisticalResponse.getTotal());
+            dtoItem.setSumOfLy(planStatisticalResponse.getSumOfLy());
+            dtoItem.setSumOfFail(planStatisticalResponse.getSumOfFail());
+            dtoItem.setSumOfNc(planStatisticalResponse.getSumOfNc());
+            dtoItem.setSumOfPass(planStatisticalResponse.getSumOfPass());
+            dtoItem.setSumOfScoreScale(planStatisticalResponse.getSumOfScoreScale());
+            dtoItem.setSumOfDat(planStatisticalResponse.getSumOfDat());
+            dtoItem.setSumOfCreateReport(planStatisticalResponse.getSumOfCreateReport());
+            dtoItem.setSumOfReport(planStatisticalResponse.getSumOfReport());
+            dtoItem.setSumOfAudit(planStatisticalResponse.getSumOfAudit());
+            dtoItem.setSumOfScoreScale(planStatisticalResponse.getSumOfScoreScale());
+            return dtoItem;
+        });
+        for (PlanStatisticalResponseDTO planStatisticalResponse : planStatisticalResponseDTOS) {
+            Integer sumOfCheck = 0;
+            Integer sumOfUncheck = 0;
+            List<PlanGroupHistoryResponse> planGroupHistoryResponseList =
+                this.planGroupHistoryDetailRepository.getDetailRecheckByTeam(
+                        planStatisticalResponse.getSubjectOfAssetmentPlan(),
+                        planStatisticalResponse.getGroupName()
+                    );
+            if (planGroupHistoryResponseList.size() > 0 || planGroupHistoryResponseList != null) {
+                for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
+                    if (
+                        historyResponse.getGroupName() != null &&
+                        historyResponse.getGroupName().equals(planStatisticalResponse.getGroupName()) &&
+                        historyResponse.getSubjectOfAssetmentPlan() != null &&
+                        historyResponse.getSubjectOfAssetmentPlan().equals(planStatisticalResponse.getSubjectOfAssetmentPlan())
+                    ) {
+                        if (
+                            historyResponse.getResultRecheck() != null &&
+                            historyResponse.getStatusRecheck() != null &&
+                            historyResponse.getResultRecheck().equals("Đạt") &&
+                            historyResponse.getStatusRecheck().equals("Đã hoàn thành")
+                        ) {
+                            sumOfCheck += 1;
+                        } else {
+                            sumOfUncheck += 1;
+                        }
+                    }
+                }
+                planStatisticalResponse.setSumOfCheck(sumOfCheck);
+                planStatisticalResponse.setSumOfUncheck(sumOfUncheck);
+            } else {
+                planStatisticalResponse.setSumOfCheck(0);
+                planStatisticalResponse.setSumOfUncheck(0);
+            }
+        }
+        return planStatisticalResponseDTOS;
+    }
+
+    @PostMapping("/statistical/by-subject-assetment-plan")
+    public Page<PlanStatisticalResponseDTO> getPlanStatisticalByManyCriteriaBySubjectAssetmentPlan(
+        @RequestBody ReportDTO dto,
+        @PageableDefault(size = 10) Pageable pageable
+    ) {
+        System.out.println(dto.getTimeStart().substring(0, 4) + "-" + dto.getTimeStart().substring(5, 7));
+        System.out.println(dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7));
+        List<String> reportType = dto.getReportType() == null ? new ArrayList<>() : dto.getReportType();
+        List<String> subjectOfAssetmentPlan = dto.getSubjectOfAssetmentPlan() == null ? new ArrayList<>() : dto.getSubjectOfAssetmentPlan();
+        Page<PlanStatisticalResponseDTO> planStatisticalResponseDTOS = new PageImpl<>(new ArrayList<>(), pageable, 0);
+        Page<PlanStatisticalResponse> planStatisticalResponsePage = planRepository.getPlanStatisticalByManyCriteriaBySubjectAssetmentPlan(
             dto.getTimeStart().substring(0, 4) + "-" + dto.getTimeStart().substring(5, 7),
             dto.getTimeEnd().substring(0, 4) + "-" + dto.getTimeEnd().substring(5, 7),
             reportType,
             subjectOfAssetmentPlan,
             pageable
         );
+        // Chuyển đổi PlanStatisticalResponse thành PlanStatisticalResponseDTO
+        planStatisticalResponseDTOS = planStatisticalResponsePage.map(planStatisticalResponse -> {
+            PlanStatisticalResponseDTO dtoItem = new PlanStatisticalResponseDTO();
+            dtoItem.setSubjectOfAssetmentPlan(planStatisticalResponse.getSubjectOfAssetmentPlan());
+            dtoItem.setTimeStart(planStatisticalResponse.getTimeStart());
+            dtoItem.setReportType(planStatisticalResponse.getReportType());
+            dtoItem.setConvertScore(planStatisticalResponse.getConvertScore());
+            dtoItem.setGroupName(planStatisticalResponse.getGroupName());
+            dtoItem.setSumOfCheck(planStatisticalResponse.getSumOfCheck());
+            dtoItem.setSumOfUncheck(planStatisticalResponse.getSumOfUncheck());
+            dtoItem.setTotal(planStatisticalResponse.getTotal());
+            dtoItem.setSumOfLy(planStatisticalResponse.getSumOfLy());
+            dtoItem.setSumOfFail(planStatisticalResponse.getSumOfFail());
+            dtoItem.setSumOfNc(planStatisticalResponse.getSumOfNc());
+            dtoItem.setSumOfPass(planStatisticalResponse.getSumOfPass());
+            dtoItem.setSumOfScoreScale(planStatisticalResponse.getSumOfScoreScale());
+            dtoItem.setSumOfDat(planStatisticalResponse.getSumOfDat());
+            dtoItem.setSumOfCreateReport(planStatisticalResponse.getSumOfCreateReport());
+            dtoItem.setSumOfReport(planStatisticalResponse.getSumOfReport());
+            dtoItem.setSumOfAudit(planStatisticalResponse.getSumOfAudit());
+            dtoItem.setSumOfScoreScale(planStatisticalResponse.getSumOfScoreScale());
+            return dtoItem;
+        });
+        for (PlanStatisticalResponseDTO planStatisticalResponse : planStatisticalResponseDTOS) {
+            Integer sumOfCheck = 0;
+            Integer sumOfUncheck = 0;
+            List<PlanGroupHistoryResponse> planGroupHistoryResponseList =
+                this.planGroupHistoryDetailRepository.getDetailRecheckByGroup(planStatisticalResponse.getSubjectOfAssetmentPlan());
+            if (planGroupHistoryResponseList.size() > 0 || planGroupHistoryResponseList != null) {
+                for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
+                    if (
+                        historyResponse.getSubjectOfAssetmentPlan() != null &&
+                        historyResponse.getSubjectOfAssetmentPlan().equals(planStatisticalResponse.getSubjectOfAssetmentPlan())
+                    ) {
+                        if (
+                            historyResponse.getResultRecheck() != null &&
+                            historyResponse.getStatusRecheck() != null &&
+                            historyResponse.getResultRecheck().equals("Đạt") &&
+                            historyResponse.getStatusRecheck().equals("Đã hoàn thành")
+                        ) {
+                            sumOfCheck += 1;
+                        } else {
+                            sumOfUncheck += 1;
+                        }
+                    }
+                    planStatisticalResponse.setSumOfCheck(sumOfCheck);
+                    planStatisticalResponse.setSumOfUncheck(sumOfUncheck);
+                }
+            } else {
+                planStatisticalResponse.setSumOfCheck(0);
+                planStatisticalResponse.setSumOfUncheck(0);
+            }
+        }
+        return planStatisticalResponseDTOS;
     }
 }
