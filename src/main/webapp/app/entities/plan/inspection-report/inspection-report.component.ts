@@ -250,13 +250,12 @@ export class InspectionReportComponent implements OnInit {
       this.criterialDetails = this.listEvalReports.filter(item => item.criterialName === data.criterialName);
       this.selectedCritical.criterialGroupName = this.criterialDetails[0].criterialGroupName;
       this.selectedCritical.criterialName = this.criterialDetails[0].criterialName;
-      this.criterialDetails = this.criterialDetails.map(detail => {
-        const group = arrPlanGr.find(g => g.id === detail.planGroupHistoryId);
-        return {
-          ...detail,
-          planGroup: group || null,
-        };
-      });
+      this.criterialDetails = this.criterialDetails
+        .map(detail => {
+          const group = arrPlanGr.find(g => g.id === detail.planGroupHistoryId);
+          return group ? { ...detail, planGroup: group } : null;
+        })
+        .filter(detail => detail !== null);
       this.dialogViewCriterial = true;
     });
   }

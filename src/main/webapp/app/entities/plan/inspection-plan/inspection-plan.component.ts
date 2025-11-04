@@ -553,7 +553,7 @@ export class InspectionPlanComponent implements OnInit {
       const today = new Date();
       this.groupCriterialError.name = `KHKP GOP-${this.plan.subjectOfAssetmentPlan}-${today.getDate()}-${
         today.getMonth() + 1
-      }-${today.getFullYear()}`;
+      }-${today.getFullYear()}-${new Date().getHours()}h${new Date().getMinutes()}p`;
       this.groupCriterialError.repairDate = today.toISOString().substring(0, 10);
     }
   }

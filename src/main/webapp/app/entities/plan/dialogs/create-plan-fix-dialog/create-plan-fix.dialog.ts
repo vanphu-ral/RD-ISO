@@ -9,6 +9,7 @@ import { RemediationPlanService } from '../../service/remediationPlan.service';
 import { EvaluatorService } from 'app/entities/evaluator/service/evaluator.service';
 import { LayoutService } from 'app/layouts/service/layout.service';
 import dayjs from 'dayjs/esm';
+import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
   standalone: true,
@@ -23,6 +24,7 @@ export class CreatePlanFixDialog {
   evaluator: any[] = [];
   isMobile: boolean = false;
   selectedlistCriterialError: any[] = [];
+  account: any = {};
 
   constructor(
     public ref: DynamicDialogRef,
@@ -31,11 +33,15 @@ export class CreatePlanFixDialog {
     private evaluatorService: EvaluatorService,
     private layoutService: LayoutService,
     private planGrHistoryDetailService: PlanGroupService,
+    private accountService: AccountService,
   ) {
     this.data = config.data;
   }
 
   ngOnInit(): void {
+    this.accountService.identity().subscribe(account => {
+      this.account = account;
+    });
     this.layoutService.isMobile$.subscribe(value => {
       this.isMobile = value;
     });
@@ -47,9 +53,9 @@ export class CreatePlanFixDialog {
         res.body?.content.filter((item: any) => item.result != 'Đạt' && item.statusRecheck != 'Đã hoàn thành') || [];
     });
     this.groupCriterialError.repairDate = new Date().toISOString().substring(0, 10);
-    this.groupCriterialError.name = `KHKP-${this.data.testOfObject}-${new Date().getDate()}-${
+    this.groupCriterialError.name = `KHKP-${this.account.login}-${new Date().getDate()}-${
       new Date().getMonth() + 1
-    }-${new Date().getFullYear()}`;
+    }-${new Date().getFullYear()}-${new Date().getHours()}h${new Date().getMinutes()}p`;
   }
 
   duplicateNameValidator(name: string | null): void {

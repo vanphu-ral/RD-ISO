@@ -34,20 +34,20 @@ export class ListCriterialFixDialog {
       this.planGrHistoryDetailService.getRecheckDetailPlan(this.data.id, '', '', 0, 10).subscribe(res => {
         if (this.typeCriterial == 0) {
           this.listCriterialFix =
-            res.body?.content.filter((item: any) => item.result === 'Đạt' && item.statusRecheck === 'Đã hoàn thành') || [];
+            res.body?.content.filter((item: any) => item.resultRecheck === 'Đạt' && item.statusRecheck === 'Đã hoàn thành') || [];
         } else {
           this.listCriterialFix =
-            res.body?.content.filter((item: any) => item.result != 'Đạt' && item.statusRecheck != 'Đã hoàn thành') || [];
+            res.body?.content.filter((item: any) => item.resultRecheck != 'Đạt' && item.statusRecheck != 'Đã hoàn thành') || [];
         }
       });
     } else {
       this.planGrHistoryDetailService.getRecheckDetails(this.data.id, '', '', 0, 10).subscribe(res => {
         if (this.typeCriterial == 0) {
           this.listCriterialFix =
-            res.body?.content.filter((item: any) => item.result === 'Đạt' && item.statusRecheck === 'Đã hoàn thành') || [];
+            res.body?.content.filter((item: any) => item.resultRecheck === 'Đạt' && item.statusRecheck === 'Đã hoàn thành') || [];
         } else {
           this.listCriterialFix =
-            res.body?.content.filter((item: any) => item.result != 'Đạt' && item.statusRecheck != 'Đã hoàn thành') || [];
+            res.body?.content.filter((item: any) => item.resultRecheck != 'Đạt' && item.statusRecheck != 'Đã hoàn thành') || [];
         }
       });
     }
