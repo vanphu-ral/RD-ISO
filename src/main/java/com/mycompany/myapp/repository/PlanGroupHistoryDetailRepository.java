@@ -227,7 +227,7 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         "            AND rpd.report_id = pghd.report_id\n" +
         "        ORDER BY rpd.created_at DESC\n" +
         "        LIMIT 1\n" +
-        "    ) AS result,\n" +
+        "    ) AS resultRecheck,\n" +
         "    (\n" +
         "        SELECT rrpd.status\n" +
         "        FROM iso.remediation_plan_detail rpd\n" +
@@ -273,7 +273,7 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         "            AND rpd.report_id = pghd.report_id\n" +
         "        ORDER BY rpd.created_at DESC\n" +
         "        LIMIT 1\n" +
-        "    ) AS result,\n" +
+        "    ) AS resultRecheck,\n" +
         "    (\n" +
         "        SELECT rrpd.status\n" +
         "        FROM iso.remediation_plan_detail rpd\n" +
@@ -320,7 +320,7 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         "            AND rpd.report_id = pghd.report_id\n" +
         "        ORDER BY rpd.created_at DESC\n" +
         "        LIMIT 1\n" +
-        "    ) AS result,\n" +
+        "    ) AS resultRecheck,\n" +
         "    (\n" +
         "        SELECT rrpd.status\n" +
         "        FROM iso.remediation_plan_detail rpd\n" +

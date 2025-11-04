@@ -690,7 +690,10 @@ public class PlanResource {
             Integer sumOfCheck = 0;
             Integer sumOfUncheck = 0;
             List<PlanGroupHistoryResponse> planGroupHistoryResponseList =
-                this.planGroupHistoryDetailRepository.getDetailRecheckByGroup(planStatisticalResponse.getSubjectOfAssetmentPlan());
+                this.planGroupHistoryDetailRepository.getDetailRecheckByTeam(
+                        planStatisticalResponse.getSubjectOfAssetmentPlan(),
+                        planStatisticalResponse.getGroupName()
+                    );
             if (planGroupHistoryResponseList.size() > 0 || planGroupHistoryResponseList != null) {
                 for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
                     if (
@@ -765,10 +768,7 @@ public class PlanResource {
             Integer sumOfCheck = 0;
             Integer sumOfUncheck = 0;
             List<PlanGroupHistoryResponse> planGroupHistoryResponseList =
-                this.planGroupHistoryDetailRepository.getDetailRecheckByTeam(
-                        planStatisticalResponse.getSubjectOfAssetmentPlan(),
-                        planStatisticalResponse.getGroupName()
-                    );
+                this.planGroupHistoryDetailRepository.getDetailRecheckByGroup(planStatisticalResponse.getSubjectOfAssetmentPlan());
             if (planGroupHistoryResponseList.size() > 0 || planGroupHistoryResponseList != null) {
                 for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
                     if (
