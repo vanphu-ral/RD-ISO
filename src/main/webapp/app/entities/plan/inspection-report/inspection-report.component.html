@@ -63,8 +63,27 @@
                 <td class="text-center border">
                   <ng-container *ngIf="row.monthData[month] && row.monthData[month]['day' + day]?.length">
                     <div *ngFor="let result of row.monthData[month]['day' + day]; index as i">
-                      <span *ngIf="row.monthData[month]['day' + day].length > 1 && i == 0; else elsResult">{{ result }},</span>
-                      <ng-template #elsResult>{{ result }}</ng-template>
+                      <span
+                        *ngIf="row.monthData[month]['day' + day].length > 1 && i == 0; else elsResult"
+                        style="font-weight: bold"
+                        [ngClass]="{
+                          'text-danger': result === 'NC' || result === 'Không đạt',
+                          'text-warning': result === 'LY',
+                          'text-success': result === 'PASS' || result === 'Đạt'
+                        }"
+                        >{{ result }},</span
+                      >
+                      <ng-template #elsResult
+                        ><span
+                          [ngClass]="{
+                            'text-danger': result === 'NC' || result === 'Không đạt',
+                            'text-warning': result === 'LY',
+                            'text-success': result === 'PASS' || result === 'Đạt'
+                          }"
+                          style="font-weight: bold"
+                          >{{ result }}</span
+                        ></ng-template
+                      >
                     </div>
                   </ng-container>
                 </td>

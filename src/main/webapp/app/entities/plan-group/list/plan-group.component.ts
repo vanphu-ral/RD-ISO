@@ -174,6 +174,7 @@ export class PlanGroupComponent implements OnInit {
       const checkDateStr = checkDate ? checkDate.toLocaleDateString('en-CA') : '';
       const filterDateStr = filterDate ? filterDate.toLocaleDateString('en-CA') : '';
       return (
+        (!this.filters.planName || planGr.planName?.toLowerCase().includes(this.filters.planName.toLowerCase())) &&
         (!this.filters.name || planGr.name?.toLowerCase().includes(this.filters.name.toLowerCase())) &&
         (!this.filters.checker || planGr.checker?.toLowerCase().includes(this.filters.checker.toLowerCase())) &&
         (!this.filters.reviewer || planGr.reviewer?.toLowerCase().includes(this.filters.reviewer.toLowerCase())) &&

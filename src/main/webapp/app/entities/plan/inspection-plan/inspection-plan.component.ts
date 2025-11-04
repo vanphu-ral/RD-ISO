@@ -90,6 +90,7 @@ export class InspectionPlanComponent implements OnInit {
   editDialogVisibleRepair = false;
   selectedRowRepair: any = null;
   editFieldRepair: 'note' | 'reason' | null = null;
+  listUserHander: any[] = [];
 
   constructor(
     protected activatedRoute: ActivatedRoute,
@@ -101,6 +102,7 @@ export class InspectionPlanComponent implements OnInit {
     private layoutService: LayoutService,
     private planGrHistoryDetailService: PlanGroupService,
     private reportService: ReportService,
+    private checkTargetService: CheckTargetService,
   ) {}
 
   ngOnInit(): void {
@@ -109,6 +111,9 @@ export class InspectionPlanComponent implements OnInit {
     });
     this.evaluatorService.getAllCheckTargets().subscribe(res => {
       this.evaluator = res;
+    });
+    this.checkTargetService.getAllCheckTargets().subscribe(res => {
+      this.listUserHander = res;
     });
     this.activatedRoute.data.pipe(take(1)).subscribe(({ plan }) => {
       this.plan = plan;
