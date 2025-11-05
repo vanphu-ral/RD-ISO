@@ -156,7 +156,6 @@ public class RemediationPlanResource {
                 detailDto.setSolution(detail.getSolution());
                 detailDto.setStatus(detail.getStatus());
                 detailDto.setPlanTimeComplete(detail.getPlanTimeComplete());
-
                 // --- PHẦN SỬA LỖI ---
                 // Nếu trường 'detail' trong RemediationPlanDetail Entity là String và bạn muốn giữ nó:
                 detailDto.setDetail(detail.getDetail()); // Giữ nguyên trường String detail từ entity
@@ -252,7 +251,7 @@ public class RemediationPlanResource {
                         detail.setStatus("Đã hoàn thành");
                         detail.setPlanTimeComplete(remediationPlanDto.getRepairDate());
                         detail.setCreatedAt(remediationPlanDto.getRepairDate());
-                        detail.setDetail(detailDto.getDetail());
+                        detail.setDetail(String.valueOf(detailDto));
                         detail.setReportId(detailDto.getReportId());
                         detail.setUserHandle(detailDto.getCreatedBy());
                         detail = remediationPlanDetailRepository.save(detail);
@@ -297,7 +296,7 @@ public class RemediationPlanResource {
                     detail.setStatus("Đã hoàn thành");
                     detail.setPlanTimeComplete(remediationPlanDto.getRepairDate());
                     detail.setCreatedAt(remediationPlanDto.getRepairDate());
-                    detail.setDetail(detailDto.getDetail());
+                    detail.setDetail(String.valueOf(detailDto));
                     detail.setReportId(detailDto.getReportId());
                     detail.setUserHandle(detailDto.getCreatedBy());
                     detail = remediationPlanDetailRepository.save(detail);
