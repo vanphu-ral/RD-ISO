@@ -244,7 +244,7 @@ public class RemediationPlanResource {
                         detail.setConvertScore(detailDto.getConvertScore());
                         detail.setNote("Khắc phục nhanh");
                         detail.setSolution(detailDto.getSolution());
-                        detail.setStatus(detailDto.getStatus());
+                        detail.setStatus("Đã hoàn thành");
                         detail.setPlanTimeComplete(detailDto.getPlanTimeComplete());
                         detail.setDetail(detailDto.getDetail());
                         detail.setReportId(detailDto.getReportId());
@@ -276,6 +276,7 @@ public class RemediationPlanResource {
                 remediationPlan.setType(remediationPlanDto.getType());
                 remediationPlan.setStatus(remediationPlanDto.getStatus());
                 remediationPlan.setCreatedAt(remediationPlanDto.getRepairDate());
+                remediationPlan.setCreatedBy(remediationPlanDto.getCreatedBy());
                 remediationPlan = remediationPlanRepository.save(remediationPlan);
 
                 // 2. Lưu từng RemediationPlanDetail và các RecheckRemediationPlanDetail liên quan
