@@ -158,6 +158,7 @@ public class RemediationPlanResource {
                 detailDto.setNote(detail.getNote());
                 detailDto.setSolution(detail.getSolution());
                 detailDto.setStatus(detail.getStatus());
+                detailDto.setDetail(detail.getDetail());
                 detailDto.setPlanTimeComplete(detail.getPlanTimeComplete());
                 // --- PHẦN SỬA LỖI ---
                 // Nếu trường 'detail' trong RemediationPlanDetail Entity là String và bạn muốn giữ nó:
