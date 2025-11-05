@@ -140,10 +140,14 @@ public interface PlanRepository extends JpaRepository<Plan, Long>, JpaSpecificat
     )
     public PlanStatisticalResponse getAllPlanStatisticalByPlan(Long planId);
 
+    // Lấy trạng thái report theo planId để cập nhật tự động
+    // Nêu tất cả các plan_group_history_detail của report đó đều là 'Đã hoàn thành' thì trạng thái report là 'Đã hoàn thành'
+    // Ngược lại là 'Chưa hoàn thành'
     @Query(
         value = " SELECT" +
         " b.id as id, \n" +
-        " case when SUM(case when a.status ='Đã hoàn thành' then 0 ELSE 1 END) =0 then 'Đã hoàn thành'ELSE 'Chưa hoàn thành'END  AS status FROM iso.plan_group_history a\n" +
+        " case when SUM(case when a.status ='Đã hoàn thành' then 0 ELSE 1 END) =0 then 'Đã hoàn thành'ELSE 'Chưa hoàn thành'END  AS status " +
+        "FROM iso.plan_group_history a\n" +
         " INNER JOIN iso.plan_group_history_detail c ON c.plan_group_history_id = a.id\n" +
         " INNER JOIN iso.report b ON b.id = c.report_id WHERE a.plan_id = ?1\n" +
         " GROUP BY b.id\n" +
@@ -151,6 +155,22 @@ public interface PlanRepository extends JpaRepository<Plan, Long>, JpaSpecificat
         nativeQuery = true
     )
     public List<PlanAutoUpdateResponse> getReportStatusByPlanId(Long planId);
+
+    // Lấy trạng thái report theo planId để cập nhật tự động vào lúc 23h
+    // Nêu tất cả các plan_group_history_detail của report đó đều là 'Đã hoàn thành' thì trạng thái report là 'Đã hoàn thành'
+    // Ngược lại là     'Đang thực hiện'
+    @Query(
+        value = " SELECT" +
+        " b.id as id, \n" +
+        " case when SUM(case when a.status ='Đã hoàn thành' then 0 ELSE 1 END) =0 then 'Đã hoàn thành'ELSE 'Đang thực hiện'END  AS status " +
+        "FROM iso.plan_group_history a\n" +
+        " INNER JOIN iso.plan_group_history_detail c ON c.plan_group_history_id = a.id\n" +
+        " INNER JOIN iso.report b ON b.id = c.report_id WHERE a.plan_id = ?1\n" +
+        " GROUP BY b.id\n" +
+        " ORDER BY b.id ;",
+        nativeQuery = true
+    )
+    public List<PlanAutoUpdateResponse> getReportStatusByPlanIdNotLike23h(Long planId);
 
     @Query(value = "select * from iso.plan where time_end like ?1 ;", nativeQuery = true)
     public List<Plan> getPlanByTimeEnd(String timeEnd);
