@@ -250,7 +250,8 @@ public class RemediationPlanResource {
                         detail.setNote("Khắc phục nhanh");
                         detail.setSolution(detailDto.getSolution());
                         detail.setStatus("Đã hoàn thành");
-                        detail.setPlanTimeComplete(detailDto.getPlanTimeComplete());
+                        detail.setPlanTimeComplete(remediationPlanDto.getRepairDate());
+                        detail.setCreatedAt(remediationPlanDto.getRepairDate());
                         detail.setDetail(detailDto.getDetail());
                         detail.setReportId(detailDto.getReportId());
                         detail.setUserHandle(detailDto.getCreatedBy());
@@ -293,8 +294,9 @@ public class RemediationPlanResource {
                     detail.setConvertScore(detailDto.getConvertScore());
                     detail.setNote("Khắc phục nhanh");
                     detail.setSolution(detailDto.getSolution());
-                    detail.setStatus(detailDto.getStatus());
-                    detail.setPlanTimeComplete(detailDto.getPlanTimeComplete());
+                    detail.setStatus("Đã hoàn thành");
+                    detail.setPlanTimeComplete(remediationPlanDto.getRepairDate());
+                    detail.setCreatedAt(remediationPlanDto.getRepairDate());
                     detail.setDetail(detailDto.getDetail());
                     detail.setReportId(detailDto.getReportId());
                     detail.setUserHandle(detailDto.getCreatedBy());
