@@ -700,7 +700,11 @@ public class PlanResource {
                         historyResponse.getGroupName() != null &&
                         historyResponse.getGroupName().equals(planStatisticalResponse.getGroupName()) &&
                         historyResponse.getSubjectOfAssetmentPlan() != null &&
-                        historyResponse.getSubjectOfAssetmentPlan().equals(planStatisticalResponse.getSubjectOfAssetmentPlan())
+                        historyResponse.getSubjectOfAssetmentPlan().equals(planStatisticalResponse.getSubjectOfAssetmentPlan()) &&
+                        historyResponse.getTime() != null &&
+                        historyResponse.getTime().equals(planStatisticalResponse.getTimeStart()) &&
+                        historyResponse.getReportType() != null &&
+                        historyResponse.getReportType().equals(planStatisticalResponse.getReportType())
                     ) {
                         if (
                             historyResponse.getResultRecheck() != null &&
@@ -773,7 +777,11 @@ public class PlanResource {
                 for (PlanGroupHistoryResponse historyResponse : planGroupHistoryResponseList) {
                     if (
                         historyResponse.getSubjectOfAssetmentPlan() != null &&
-                        historyResponse.getSubjectOfAssetmentPlan().equals(planStatisticalResponse.getSubjectOfAssetmentPlan())
+                        historyResponse.getSubjectOfAssetmentPlan().equals(planStatisticalResponse.getSubjectOfAssetmentPlan()) &&
+                        historyResponse.getTime() != null &&
+                        historyResponse.getTime().equals(planStatisticalResponse.getTimeStart()) &&
+                        historyResponse.getReportType() != null &&
+                        historyResponse.getReportType().equals(planStatisticalResponse.getReportType())
                     ) {
                         if (
                             historyResponse.getResultRecheck() != null &&
