@@ -2,6 +2,7 @@ package com.mycompany.myapp.web.rest;
 
 import com.mycompany.myapp.domain.PlanGroupHistory;
 import com.mycompany.myapp.domain.PlanGroupHistoryListDetail;
+import com.mycompany.myapp.repository.PlanGroupHistoryDetailRepository;
 import com.mycompany.myapp.repository.PlanGroupHistoryRepository;
 import java.util.List;
 import org.slf4j.Logger;
@@ -29,6 +30,9 @@ public class PlanGroupHistoryResource {
 
     @Autowired
     private PlanGroupHistoryRepository planGroupHistoryRepository;
+
+    @Autowired
+    private PlanGroupHistoryDetailRepository planGroupHistoryDetailRepository;
 
     @GetMapping("")
     public List<PlanGroupHistory> getAllPlanGroups() {
@@ -81,6 +85,7 @@ public class PlanGroupHistoryResource {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePlan(@PathVariable("id") Long id) {
         log.debug("REST request to delete Plan : {}", id);
+        planGroupHistoryDetailRepository.deleteByPlanGroupHistoryId(id);
         planGroupHistoryRepository.deleteById(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))

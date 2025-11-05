@@ -19,4 +19,6 @@ public interface SampleReportRepository extends JpaRepository<SampleReport, Long
 
     @Query(value = "SELECT detail \n" + "FROM iso.sample_report where code = ?1 ;", nativeQuery = true)
     public String getSampleReportDetail(String code);
+
+    List<SampleReport> findByStatusOrderByIdDesc(String status);
 }

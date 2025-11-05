@@ -24,4 +24,6 @@ public interface PlanGroupHistoryResponse {
     Integer getFixed();
     String getGroupName();
     String getSubjectOfAssetmentPlan();
+    String getTime();
+    String getReportType();
 }

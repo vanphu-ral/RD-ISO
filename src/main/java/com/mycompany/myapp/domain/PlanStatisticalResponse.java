@@ -34,4 +34,5 @@ public interface PlanStatisticalResponse {
     Integer getSumOfScoreScale(); // tong diem
     void setSumOfUncheck(Integer sum);
     void setSumOfCheck(Integer sum);
+    String getTime();
 }

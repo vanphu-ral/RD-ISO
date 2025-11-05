@@ -31,46 +31,78 @@ public class PlanService {
 
         // Kiểm tra xem hiện tại có phải 23h không
         LocalTime now = LocalTime.now(ZoneId.of("Asia/Bangkok")).minusHours(7);
-        if (now.getHour() == 23) {
-            System.out.println("UPDATE REPORT AT END OF DAY:: " + now.getHour());
-        } else {
-            System.out.println("UPDATE REPORT AT :: " + formattedDate + " :: " + now.getHour());
-        }
-
         List<Plan> planList = this.planRepository.getPlanByTimeEnd(formattedDate);
         if (planList != null) {
-            for (Plan plan : planList) {
-                boolean checked = true;
-                List<PlanAutoUpdateResponse> results = this.planRepository.getReportStatusByPlanId(plan.getId());
+            if (now.getHour() == 23) {
+                System.out.println("UPDATE REPORT AT END OF DAY:: " + now.getHour());
+                for (Plan plan : planList) {
+                    boolean checked = true;
+                    List<PlanAutoUpdateResponse> results = this.planRepository.getReportStatusByPlanId(plan.getId());
 
-                for (PlanAutoUpdateResponse result : results) {
-                    System.out.println("UPDATE REPORT ID :: " + result.getId());
-                    Report report = this.reportRepository.findById(result.getId()).orElse(null);
-                    if (report != null) {
-                        report.setStatus(result.getStatus());
-                        this.reportRepository.save(report);
+                    for (PlanAutoUpdateResponse result : results) {
+                        System.out.println("UPDATE REPORT ID :: " + result.getId());
+                        Report report = this.reportRepository.findById(result.getId()).orElse(null);
+                        if (report != null) {
+                            report.setStatus(result.getStatus());
+                            this.reportRepository.save(report);
+                        }
+
+                        if ("Chưa hoàn thành".equals(result.getStatus())) {
+                            checked = false;
+                        }
                     }
 
-                    if ("Chưa hoàn thành".equals(result.getStatus())) {
-                        checked = false;
-                    }
-                }
-
-                if (!checked) {
-                    if (now.getHour() != 23) {
-                        plan.setStatus("Đang thực hiện");
+                    if (!checked) {
+                        if (now.getHour() != 23) {
+                            plan.setStatus("Đang thực hiện");
+                        } else {
+                            plan.setStatus("Chưa hoàn thành");
+                        }
                     } else {
-                        plan.setStatus("Chưa hoàn thành");
+                        if (now.getHour() != 23) {
+                            plan.setStatus("Đang thực hiện");
+                        } else {
+                            plan.setStatus("Đã hoàn thành");
+                        }
                     }
-                } else {
-                    if (now.getHour() != 23) {
-                        plan.setStatus("Đang thực hiện");
-                    } else {
-                        plan.setStatus("Đã hoàn thành");
-                    }
+                    System.out.println("REPORT STATUS AT :: " + formattedDate + " :: " + now.getHour() + " IS :: " + plan.getStatus());
+                    this.planRepository.save(plan);
                 }
-                System.out.println("REPORT STATUS AT :: " + formattedDate + " :: " + now.getHour() + " IS :: " + plan.getStatus());
-                this.planRepository.save(plan);
+            } else {
+                System.out.println("UPDATE REPORT AT :: " + formattedDate + " :: " + now.getHour());
+                for (Plan plan : planList) {
+                    boolean checked = true;
+                    List<PlanAutoUpdateResponse> results = this.planRepository.getReportStatusByPlanIdNotLike23h(plan.getId());
+
+                    for (PlanAutoUpdateResponse result : results) {
+                        System.out.println("UPDATE REPORT ID :: " + result.getId());
+                        Report report = this.reportRepository.findById(result.getId()).orElse(null);
+                        if (report != null) {
+                            report.setStatus(result.getStatus());
+                            this.reportRepository.save(report);
+                        }
+
+                        if ("Đang thực hiện".equals(result.getStatus())) {
+                            checked = false;
+                        }
+                    }
+
+                    if (!checked) {
+                        if (now.getHour() != 23) {
+                            plan.setStatus("Đang thực hiện");
+                        } else {
+                            plan.setStatus("Chưa hoàn thành");
+                        }
+                    } else {
+                        if (now.getHour() != 23) {
+                            plan.setStatus("Đang thực hiện");
+                        } else {
+                            plan.setStatus("Đã hoàn thành");
+                        }
+                    }
+                    System.out.println("REPORT STATUS AT :: " + formattedDate + " :: " + now.getHour() + " IS :: " + plan.getStatus());
+                    this.planRepository.save(plan);
+                }
             }
         }
     }
