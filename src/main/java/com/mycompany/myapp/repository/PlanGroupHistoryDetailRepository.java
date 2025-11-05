@@ -24,6 +24,7 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         String criterialName,
         String criterialGroupName
     );
+    void deleteByPlanGroupHistoryId(Long planGroupHistoryId);
 
     @Query(
         value = "SELECT  " +

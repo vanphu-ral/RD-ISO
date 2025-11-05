@@ -11,6 +11,8 @@ public interface RemediationPlanDetailRepository extends JpaRepository<Remediati
 
     public List<RemediationPlanDetail> findByRemediationPlanId(Long remediationPlanId);
 
+    void deleteByRemediationPlanId(Long remediationPlanId);
+
     @Query(
         value = """
         SELECT rpd.*
