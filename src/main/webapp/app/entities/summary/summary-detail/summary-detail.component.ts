@@ -141,15 +141,9 @@ export class SummaryDetailComponent implements OnInit {
   }
 
   getTotalPointAvg(data: any) {
-    if (data.convertScore == 'Tính điểm') {
-      const markNC = this.listEvalReportBase.find((item: any) => item.name == 'NC');
-      const markLC = this.listEvalReportBase.find((item: any) => item.name == 'LY');
-      const totalPointSummarize =
-        (data.scoreScale * data.sumOfAudit - (data.sumOfLy * markLC.mark + data.sumOfNc * markNC.mark)) / data.sumOfAudit;
-      return isNaN(totalPointSummarize) ? data.scoreScale : totalPointSummarize;
-    } else {
-      return data.scoreScale;
-    }
+    const markNC = this.listEvalReportBase.find((item: any) => item.name == 'NC');
+    const markLC = this.listEvalReportBase.find((item: any) => item.name == 'LY');
+    return (data.sumOfScoreScale - (data.sumOfLy * markLC.mark + data.sumOfNc * markNC.mark)) / data.sumOfReport;
   }
 
   getTotalPoint(data: any) {
