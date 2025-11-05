@@ -242,32 +242,9 @@ export class InspectionPlanComponent implements OnInit {
     data.createdAt = dayjs();
     data.type = 'Multiple';
     data.status = 'Đang xử lý';
-    // const arrSubmit = this.selectedRows.map(item => {
-    //   return {
-    //     reportId: item.reportId,
-    //     criterialGroupName: item.criterialGroupName,
-    //     criterialName: item.criterialName,
-    //     convertScore: item.convertScore,
-    //     note: item.note,
-    //     solution: item.solution,
-    //     planTimeComplete: dayjs(item.planTimeComplete).toISOString(),
-    //     userHandle: item.userHandle,
-    //     createdAt: dayjs(),
-    //     createdBy: data.createdBy,
-    //     status: 'Đang xử lý',
-    //     detail: this.listReportCriterialErrors.filter(
-    //       rpt =>
-    //         rpt.criterialGroupName == item.criterialGroupName &&
-    //         rpt.criterialName == item.criterialName &&
-    //         rpt.convertScore == item.convertScore &&
-    //         rpt.reportId == item.reportId &&
-    //         rpt.reportName == item.reportName &&
-    //         rpt.result == item.result,
-    //     ),
-    //   };
-    // });
     this.remediationPlanService.create(data).subscribe(res => {
       const arrCriterialErr = this.selectedRows.map((item: any) => {
+        const detail = structuredClone(item);
         delete item.result;
         delete item.errorType;
         delete item.resultRecheck;
@@ -279,7 +256,7 @@ export class InspectionPlanComponent implements OnInit {
           remediationPlanId: res.body,
           convertScore: item.convertScore,
           reportId: item.reportId,
-          detail: JSON.stringify(item),
+          detail: JSON.stringify(detail),
           planTimeComplete: dayjs(item.planTimeComplete).toISOString(),
           createdAt: dayjs(),
           createdBy: data.createdBy,
@@ -547,7 +524,7 @@ export class InspectionPlanComponent implements OnInit {
     this.disableCheckComplete = isView;
     this.remediationPlanInfo = data;
     this.remediationPlanService.getRemediationPlanWithFullDetails(data.id).subscribe(res => {
-      this.completeRemePlan = res.body.details || [];
+      this.completeRemePlan = res.body.details.map((item: any) => ({ ...item, result: JSON.parse(item.detail).result })) || [];
       this.completeRemeDialog = true;
     });
   }
@@ -574,9 +551,8 @@ export class InspectionPlanComponent implements OnInit {
       return;
     }
     const updateRequests: any[] = this.selectedRecheckCriterial.map(cpl => {
-      const { detail, ...rest } = cpl;
       return {
-        ...rest,
+        ...cpl,
         status: 'Đã hoàn thành',
         repairDate: dayjs(cpl.repairDate).toISOString(),
       };
