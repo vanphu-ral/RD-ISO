@@ -175,7 +175,7 @@ public class SampleReportResource {
     @GetMapping("")
     public List<SampleReport> getAllSampleReports() {
         log.debug("REST request to get all SampleReports");
-        return sampleReportRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+        return sampleReportRepository.findByStatusOrderByIdDesc("ACTIVE");
     }
 
     /**

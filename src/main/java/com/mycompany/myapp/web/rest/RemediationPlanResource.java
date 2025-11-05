@@ -82,6 +82,11 @@ public class RemediationPlanResource {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRemediationPlan(@PathVariable("id") Long id) {
         log.debug("REST request to delete Plan : {}", id);
+        List<RemediationPlanDetail> details = remediationPlanDetailRepository.findByRemediationPlanId(id);
+        for (RemediationPlanDetail detail : details) {
+            recheckRemediationPlanDetailRepository.deleteByRemediationPlanDetailId(detail.getId());
+        }
+        remediationPlanDetailRepository.deleteByRemediationPlanId(id);
         remediationPlanRepository.deleteById(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
