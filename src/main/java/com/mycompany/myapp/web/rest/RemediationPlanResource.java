@@ -1,5 +1,8 @@
 package com.mycompany.myapp.web.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.mycompany.myapp.domain.PlanGroupHistoryDetail;
 import com.mycompany.myapp.domain.RecheckRemediationPlanDetail;
 import com.mycompany.myapp.domain.RemediationPlan;
@@ -155,8 +158,8 @@ public class RemediationPlanResource {
                 detailDto.setNote(detail.getNote());
                 detailDto.setSolution(detail.getSolution());
                 detailDto.setStatus(detail.getStatus());
+                detailDto.setDetail(detail.getDetail());
                 detailDto.setPlanTimeComplete(detail.getPlanTimeComplete());
-
                 // --- PHẦN SỬA LỖI ---
                 // Nếu trường 'detail' trong RemediationPlanDetail Entity là String và bạn muốn giữ nó:
                 detailDto.setDetail(detail.getDetail()); // Giữ nguyên trường String detail từ entity
@@ -243,15 +246,21 @@ public class RemediationPlanResource {
                         )
                     ) {
                         RemediationPlanDetail detail = new RemediationPlanDetail();
+                        ObjectMapper mapper = new ObjectMapper(); // Tạo ObjectMapper để chuyển đổi đối tượng thành JSON
+                        mapper.registerModule(new JavaTimeModule()); // Đăng ký module hỗ trợ Java 8 Date/Time
+                        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // Format thời gian dạng ISO thay vì timestamp
+
+                        String jsonString = mapper.writeValueAsString(detailDto); // Chuyển đổi đối tượng thành chuỗi JSON
                         detail.setRemediationPlanId(existingPlanId);
                         detail.setCriterialName(detailDto.getCriterialName());
                         detail.setCriterialGroupName(detailDto.getCriterialGroupName());
                         detail.setConvertScore(detailDto.getConvertScore());
                         detail.setNote("Khắc phục nhanh");
-                        detail.setSolution(detailDto.getSolution());
-                        detail.setStatus(detailDto.getStatus());
-                        detail.setPlanTimeComplete(detailDto.getPlanTimeComplete());
-                        detail.setDetail(detailDto.getDetail());
+                        detail.setSolution("Khắc phục nhanh");
+                        detail.setStatus("Đã hoàn thành");
+                        detail.setPlanTimeComplete(remediationPlanDto.getRepairDate());
+                        detail.setCreatedAt(remediationPlanDto.getRepairDate());
+                        detail.setDetail(jsonString);
                         detail.setReportId(detailDto.getReportId());
                         detail.setUserHandle(detailDto.getCreatedBy());
                         detail = remediationPlanDetailRepository.save(detail);
@@ -281,20 +290,27 @@ public class RemediationPlanResource {
                 remediationPlan.setType(remediationPlanDto.getType());
                 remediationPlan.setStatus(remediationPlanDto.getStatus());
                 remediationPlan.setCreatedAt(remediationPlanDto.getRepairDate());
+                remediationPlan.setCreatedBy(remediationPlanDto.getCreatedBy());
                 remediationPlan = remediationPlanRepository.save(remediationPlan);
 
                 // 2. Lưu từng RemediationPlanDetail và các RecheckRemediationPlanDetail liên quan
                 for (RemediationPlanDetailDTO detailDto : remediationPlanDto.getDetails()) {
+                    ObjectMapper mapper = new ObjectMapper(); // Tạo ObjectMapper để chuyển đổi đối tượng thành JSON
+                    mapper.registerModule(new JavaTimeModule()); // Đăng ký module hỗ trợ Java 8 Date/Time
+                    mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // Format thời gian dạng ISO thay vì timestamp
+
+                    String jsonString = mapper.writeValueAsString(detailDto); // Chuyển đổi đối tượng thành chuỗi JSON
                     RemediationPlanDetail detail = new RemediationPlanDetail();
                     detail.setRemediationPlanId(remediationPlan.getId());
                     detail.setCriterialName(detailDto.getCriterialName());
                     detail.setCriterialGroupName(detailDto.getCriterialGroupName());
                     detail.setConvertScore(detailDto.getConvertScore());
                     detail.setNote("Khắc phục nhanh");
-                    detail.setSolution(detailDto.getSolution());
-                    detail.setStatus(detailDto.getStatus());
-                    detail.setPlanTimeComplete(detailDto.getPlanTimeComplete());
-                    detail.setDetail(detailDto.getDetail());
+                    detail.setSolution("Khắc phục nhanh");
+                    detail.setStatus("Đã hoàn thành");
+                    detail.setPlanTimeComplete(remediationPlanDto.getRepairDate());
+                    detail.setCreatedAt(remediationPlanDto.getRepairDate());
+                    detail.setDetail(jsonString);
                     detail.setReportId(detailDto.getReportId());
                     detail.setUserHandle(detailDto.getCreatedBy());
                     detail = remediationPlanDetailRepository.save(detail);

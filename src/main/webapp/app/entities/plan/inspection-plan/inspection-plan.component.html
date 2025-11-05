@@ -914,6 +914,7 @@
             <th class="text-center border">STT</th>
             <th class="text-center border">Nhóm tiêu chí</th>
             <th class="text-center border">Tên tiêu chí</th>
+            <th class="text-center border">Lỗi</th>
             <th class="text-center border">Người xử lý</th>
             <th class="text-center border">Giải pháp xử lý</th>
             <th class="text-center border">Thời gian xử lý</th>
@@ -933,6 +934,7 @@
               <td *ngIf="i === 0" [attr.rowspan]="cpl.recheckDetails.length" class="text-center border">{{ rowIndex + 1 }}</td>
               <td *ngIf="i === 0" [attr.rowspan]="cpl.recheckDetails.length" class="text-center border">{{ cpl.criterialGroupName }}</td>
               <td *ngIf="i === 0" [attr.rowspan]="cpl.recheckDetails.length" class="text-center border">{{ cpl.criterialName }}</td>
+              <td *ngIf="i === 0" [attr.rowspan]="cpl.recheckDetails.length" class="text-center border">{{ cpl.result }}</td>
               <td *ngIf="i === 0" [attr.rowspan]="cpl.recheckDetails.length" class="text-center border">{{ cpl.userHandle }}</td>
               <td *ngIf="i === 0" [attr.rowspan]="cpl.recheckDetails.length" class="text-center border">{{ cpl.solution }}</td>
               <td *ngIf="i === 0" [attr.rowspan]="cpl.recheckDetails.length" class="text-center border">
@@ -957,6 +959,7 @@
               <td class="text-center border">{{ rowIndex + 1 }}</td>
               <td class="text-center border">{{ cpl.criterialGroupName }}</td>
               <td class="text-center border">{{ cpl.criterialName }}</td>
+              <td class="text-center border">{{ cpl.result }}</td>
               <td class="text-center border">{{ cpl.userHandle }}</td>
               <td class="text-center border">{{ cpl.solution }}</td>
               <td class="text-center border">{{ cpl.planTimeComplete | date: 'short' }}</td>

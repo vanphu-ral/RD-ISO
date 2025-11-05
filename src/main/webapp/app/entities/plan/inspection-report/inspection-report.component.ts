@@ -593,7 +593,7 @@ export class InspectionReportComponent implements OnInit {
     this.disableCheckComplete = isView;
     this.remediationPlanInfo = data;
     this.remediationPlanService.getRemediationPlanWithFullDetails(data.id).subscribe(res => {
-      this.completeRemePlan = res.body.details || [];
+      this.completeRemePlan = res.body.details.map((item: any) => ({ ...item, result: JSON.parse(item.detail).result })) || [];
       this.completeRemeDialog = true;
     });
   }
@@ -603,9 +603,8 @@ export class InspectionReportComponent implements OnInit {
       return;
     }
     const updateRequests: any[] = this.selectedRecheckCriterial.map(cpl => {
-      const { detail, ...rest } = cpl;
       return {
-        ...rest,
+        ...cpl,
         status: 'Đã hoàn thành',
         repairDate: dayjs(cpl.repairDate).toISOString(),
       };

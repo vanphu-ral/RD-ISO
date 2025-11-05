@@ -113,6 +113,7 @@ export class CreatePlanFixDialog {
     data.status = 'Đang xử lý';
     this.remediationPlanService.create(data).subscribe(res => {
       const arrCriterialErr = this.selectedlistCriterialError.map((item: any) => {
+        const detail = structuredClone(item);
         delete item.result;
         delete item.errorType;
         delete item.resultRecheck;
@@ -124,7 +125,7 @@ export class CreatePlanFixDialog {
           remediationPlanId: res.body,
           convertScore: item.convertScore,
           reportId: item.reportId,
-          detail: JSON.stringify(item),
+          detail: JSON.stringify(detail),
           planTimeComplete: dayjs(item.planTimeComplete).toISOString(),
           createdAt: dayjs(),
           createdBy: data.createdBy,

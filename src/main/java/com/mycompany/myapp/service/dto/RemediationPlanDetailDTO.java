@@ -5,21 +5,28 @@ import java.util.List;
 
 public class RemediationPlanDetailDTO {
 
-    private Long id;
-    private Long remediationPlanId;
-    private String criterialName;
-    private String criterialGroupName;
     private String convertScore;
+    private ZonedDateTime createdAt;
+    private String createdBy;
+    private String criterialGroupName;
+    private String criterialName;
+    private Integer fixed;
+    private String frequency;
+    private Integer hasEvaluation;
+    private Long id;
+    private String image;
     private String note;
-    private String solution;
+    private Long planGroupHistoryId;
+    private Long reportId; // Mã báo cáo liên quan
+    private String reportName;
+    private String result;
     private String status;
+    private ZonedDateTime updatedAt;
+    private Long remediationPlanId;
+    private String solution;
     private ZonedDateTime planTimeComplete;
     private String userHandle;
     private String detail;
-    private Long reportId; // Mã báo cáo liên quan
-    private ZonedDateTime createdAt;
-    private ZonedDateTime updatedAt;
-    private String createdBy;
 
     // Key 'recheckDetails' chứa arr các recheck_remediation_plan_detail
     private List<RecheckRemediationPlanDetailDTO> recheckDetails;
@@ -61,6 +68,62 @@ public class RemediationPlanDetailDTO {
         this.updatedAt = updatedAt;
         this.createdBy = createdBy;
         this.recheckDetails = recheckDetails;
+    }
+
+    public Integer getFixed() {
+        return fixed;
+    }
+
+    public void setFixed(Integer fixed) {
+        this.fixed = fixed;
+    }
+
+    public String getFrequency() {
+        return frequency;
+    }
+
+    public void setFrequency(String frequency) {
+        this.frequency = frequency;
+    }
+
+    public Integer getHasEvaluation() {
+        return hasEvaluation;
+    }
+
+    public void setHasEvaluation(Integer hasEvaluation) {
+        this.hasEvaluation = hasEvaluation;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public Long getPlanGroupHistoryId() {
+        return planGroupHistoryId;
+    }
+
+    public void setPlanGroupHistoryId(Long planGroupHistoryId) {
+        this.planGroupHistoryId = planGroupHistoryId;
+    }
+
+    public String getReportName() {
+        return reportName;
+    }
+
+    public void setReportName(String reportName) {
+        this.reportName = reportName;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
     }
 
     public Long getReportId() {

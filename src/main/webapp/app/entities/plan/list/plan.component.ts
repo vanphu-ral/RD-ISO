@@ -804,7 +804,7 @@ export class PlanComponent implements OnInit {
       const arrCriterialFix = arrRptGrDetail.filter(item => item.fixed == 1);
       const planFix = {
         code: `RP-FIXAUTO-${this.report.id}-${this.fallbackUUID()}`,
-        name: `AUTO FIX - ${this.account.login}-${dayjs().toISOString()}`,
+        name: `AUTO FIX-${this.account.login}-${dayjs().toISOString()}`,
         reportId: this.report.id,
         planId: this.planParent.id,
         repairDate: dayjs().toISOString(),

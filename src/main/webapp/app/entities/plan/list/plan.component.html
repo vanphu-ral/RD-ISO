@@ -1026,7 +1026,7 @@
         </td>
         <td class="text-center border">
           <p-checkbox
-            *ngIf="item.result === 'LY' || item.result === 'NC' || item.result === 'Không đạt'"
+            *ngIf="item.result === 'LY' || item.result === 'NC' || item.result === 'Không đạt' || item.result === 'Chọn Lại'"
             [binary]="true"
             [(ngModel)]="item.fixed"
             [trueValue]="1"
@@ -1224,7 +1224,7 @@
         </td>
         <td class="text-center border">
           <p-checkbox
-            *ngIf="item.result === 'LY' || item.result === 'NC' || item.result === 'Không đạt'"
+            *ngIf="item.result === 'LY' || item.result === 'NC' || item.result === 'Không đạt' || item.result === 'Chọn Lại'"
             [binary]="true"
             [(ngModel)]="item.fixed"
             [trueValue]="1"
