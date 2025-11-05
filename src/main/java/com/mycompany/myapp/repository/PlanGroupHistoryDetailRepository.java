@@ -76,7 +76,7 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         "            AND rpd.report_id = pghd.report_id\n" +
         "    ) AS sumOfRecheck\n" +
         "FROM iso.plan_group_history_detail pghd\n" +
-        "WHERE pghd.result NOT IN ('Đạt', 'PASS')\n" +
+        "WHERE pghd.result NOT IN ('Đạt', 'PASS','Chọn lại')\n" +
         "AND pghd.report_id = :reportId\n" +
         "AND  pghd.criterial_name LIKE %:criterialName%\n" +
         "AND  pghd.criterial_group_name LIKE %:criterialGroupName%",
@@ -140,7 +140,7 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         "            AND rpd.report_id = pghd.report_id\n" +
         "    ) AS sumOfRecheck\n" +
         "FROM iso.plan_group_history_detail pghd\n" +
-        "WHERE pghd.result NOT IN ('Đạt', 'PASS')\n" +
+        "WHERE pghd.result NOT IN ('Đạt', 'PASS','Chọn lại')\n" +
         "AND pghd.report_id = :reportId\n",
         nativeQuery = true
     )
@@ -199,7 +199,7 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         "    ) AS sumOfRecheck\n" +
         "FROM iso.plan_group_history_detail pghd " +
         "inner join iso.report as r on r.id = pghd.report_id \n" +
-        "WHERE pghd.result NOT IN ('Đạt', 'PASS')\n" +
+        "WHERE pghd.result NOT IN ('Đạt', 'PASS','Chọn lại')\n" +
         "AND r.plan_id = :planId\n" +
         "AND  pghd.criterial_name LIKE %:criterialName%\n" +
         "AND  pghd.criterial_group_name LIKE %:criterialGroupName%",
@@ -216,7 +216,7 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         value = "SELECT \n" +
         "    pghd.criterial_name as criterialName,\n" +
         "    pghd.criterial_group_name as criterialGroupName," +
-        "pghd.result as errorType,\n" +
+        "pghd.result as result,\n" +
         "    (\n" +
         "        SELECT rrpd.result\n" +
         "        FROM iso.remediation_plan_detail rpd\n" +
@@ -250,7 +250,7 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         "    ) AS sumOfRecheck\n" +
         "FROM iso.plan_group_history_detail pghd " +
         "inner join iso.report as r on r.id = pghd.report_id \n" +
-        "WHERE pghd.result NOT IN ('Đạt', 'PASS')\n" +
+        "WHERE pghd.result NOT IN ('Đạt', 'PASS','Chọn lại')\n" +
         "AND r.plan_id = :planId ;\n",
         nativeQuery = true
     )
@@ -262,7 +262,9 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         "    pghd.criterial_group_name as criterialGroupName," +
         "p.subject_of_assetment_plan as subjectOfAssetmentPlan," +
         "r.group_name as groupName," +
-        "pghd.result as errorType,\n" +
+        "CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0')) as time," +
+        "r.report_type AS reportType, " +
+        "pghd.result as result,\n" +
         "    (\n" +
         "        SELECT rrpd.result\n" +
         "        FROM iso.remediation_plan_detail rpd\n" +
@@ -297,7 +299,7 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         "FROM iso.plan_group_history_detail pghd " +
         "inner join iso.report as r on r.id = pghd.report_id " +
         "inner join iso.plan as p on p.id = r.plan_id \n" +
-        "WHERE pghd.result NOT IN ('Đạt', 'PASS')\n" +
+        "WHERE pghd.result NOT IN ('Đạt', 'PASS','Chọn lại')\n" +
         "AND p.subject_of_assetment_plan = :subjectOfAssetmentPlan ;\n",
         nativeQuery = true
     )
@@ -309,7 +311,9 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         "    pghd.criterial_group_name as criterialGroupName," +
         "p.subject_of_assetment_plan as subjectOfAssetmentPlan," +
         "r.group_name as groupName," +
-        "pghd.result as errorType,\n" +
+        "CONCAT(YEAR(p.time_start), '-', LPAD(MONTH(p.time_start), 2, '0')) as time," +
+        "r.report_type AS reportType, " +
+        "pghd.result as result,\n" +
         "    (\n" +
         "        SELECT rrpd.result\n" +
         "        FROM iso.remediation_plan_detail rpd\n" +
@@ -344,7 +348,7 @@ public interface PlanGroupHistoryDetailRepository extends JpaRepository<PlanGrou
         "FROM iso.plan_group_history_detail pghd " +
         "inner join iso.report as r on r.id = pghd.report_id \n" +
         "inner join iso.plan as p on p.id = r.plan_id \n" +
-        "WHERE pghd.result NOT IN ('Đạt', 'PASS')\n" +
+        "WHERE pghd.result NOT IN ('Đạt', 'PASS','Chọn lại')\n" +
         "AND p.subject_of_assetment_plan = :subjectOfAssetmentPlan AND r.group_name = :groupName ;\n",
         nativeQuery = true
     )
