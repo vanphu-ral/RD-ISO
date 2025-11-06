@@ -175,7 +175,7 @@ export class CheckTargetUpdateComponent implements OnInit {
 
   protected loadCheckGroups(): void {
     this.checkGroupService.getAllCheckerGroups().subscribe(data => {
-      this.checkGroups = data;
+      this.checkGroups = [...new Map(data.map((item: any) => [item.code, { id: item.id, code: item.code, name: item.name }])).values()];
     });
   }
 
