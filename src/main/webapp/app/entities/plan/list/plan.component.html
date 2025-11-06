@@ -297,6 +297,8 @@
                   <th style="min-width: 150px; padding: 0">Loại quy đổi</th>
                   <th style="min-width: 30px; padding: 0">NC</th>
                   <th style="min-width: 30px; padding: 0">LY</th>
+                  <th style="min-width: 30px; padding: 0">PASS</th>
+                  <th style="min-width: 30px; padding: 0">SL Đạt</th>
                   <th style="min-width: 110px; padding: 0">SL không đạt</th>
                   <th style="min-width: 100px; padding: 0">SL chọn lại</th>
                   <th class="text-center" style="min-width: 80px; padding: 0">Tổng lỗi đã khắc phục</th>
@@ -325,8 +327,6 @@
                   <th style="padding: 0"></th>
                   <th style="padding: 0"></th>
                   <th style="padding: 0"></th>
-                  <th style="padding: 0"></th>
-                  <th style="padding: 0"></th>
                   <th style="padding: 0">
                     <p-columnFilter field="convertScore" matchMode="equals" [showMenu]="false">
                       <ng-template pTemplate="filter" let-value let-filter="filterCallback">
@@ -341,6 +341,10 @@
                       </ng-template>
                     </p-columnFilter>
                   </th>
+                  <th style="padding: 0"></th>
+                  <th style="padding: 0"></th>
+                  <th style="padding: 0"></th>
+                  <th style="padding: 0"></th>
                   <th style="padding: 0"></th>
                   <th style="padding: 0"></th>
                   <th style="padding: 0"></th>
@@ -399,6 +403,8 @@
                   <td>{{ detail.convertScore }}</td>
                   <td>{{ detail.sumOfNc }}</td>
                   <td>{{ detail.sumOfLy }}</td>
+                  <td>{{ detail.sumOfPass }}</td>
+                  <td>{{ detail.sumOfDat }}</td>
                   <td>{{ detail.sumOfFail }}</td>
                   <td>{{ detail.sumOfSelectAgain }}</td>
                   <td (click)="listDialogCriterialFix(detail, 0, 'REPORT')" class="text-primary fw-bold" style="cursor: pointer">
@@ -1439,6 +1445,8 @@
         <th class="border text-center" style="padding: 0; min-width: 90px">Tổng điểm của BBKT</th>
         <th class="border text-center" style="padding: 0; min-width: 30px">NC</th>
         <th class="border text-center" style="padding: 0; min-width: 30px">LY</th>
+        <th class="border text-center" style="padding: 0; min-width: 30px">PASS</th>
+        <th class="border text-center" style="padding: 0; min-width: 30px">SL đạt</th>
         <th class="border text-center" style="padding: 0; min-width: 110px">SL không đạt</th>
         <th class="border text-center" style="padding: 0; min-width: 110px">SL chọn lại</th>
         <th class="border text-center" style="padding: 0; min-width: 150px">Người KT</th>
@@ -1490,6 +1498,8 @@
         <td class="border text-center">{{ getTotalPoint(detail) }}</td>
         <td class="border text-center">{{ detail.sumOfNc }}</td>
         <td class="border text-center">{{ detail.sumOfLy }}</td>
+        <td class="border text-center">{{ detail.sumOfPass }}</td>
+        <td class="border text-center">{{ detail.sumOfDat }}</td>
         <td class="border text-center">{{ detail.sumOfFail }}</td>
         <td class="border text-center">{{ detail.sumOfSelectAgain }}</td>
         <td class="border text-center">{{ detail.reviewer }}</td>
