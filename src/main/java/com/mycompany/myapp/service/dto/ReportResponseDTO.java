@@ -32,6 +32,24 @@ public class ReportResponseDTO {
     private Long sumOfSelectAgain;
     private Integer sumOfCheck;
     private Integer sumOfUncheck;
+    private Integer sumOfPass;
+    private Integer sumOfDat;
+
+    public Integer getSumOfPass() {
+        return sumOfPass;
+    }
+
+    public void setSumOfPass(Integer sumOfPass) {
+        this.sumOfPass = sumOfPass;
+    }
+
+    public Integer getSumOfDat() {
+        return sumOfDat;
+    }
+
+    public void setSumOfDat(Integer sumOfDat) {
+        this.sumOfDat = sumOfDat;
+    }
 
     public ReportResponseDTO() {}
 

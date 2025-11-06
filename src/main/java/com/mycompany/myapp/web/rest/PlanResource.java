@@ -601,6 +601,8 @@ public class PlanResource {
                 dto.setSumOfNc(report.getSumOfNc());
                 dto.setSumOfLy(report.getSumOfLy());
                 dto.setSumOfFail(report.getSumOfFail());
+                dto.setSumOfPass(report.getSumOfPass());
+                dto.setSumOfDat(report.getSumOfDat());
                 dto.setSumOfSelectAgain(report.getSumOfSelectAgain());
                 List<PlanGroupHistoryResponse> planGroupHistoryResponseList =
                     this.planGroupHistoryDetailRepository.getDetailRecheckByReportId(report.getId());
