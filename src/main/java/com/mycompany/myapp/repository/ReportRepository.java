@@ -106,6 +106,8 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
         "    ,COALESCE((SELECT COUNT(result) FROM temp_table_2 tb WHERE tb.report_id = rp.id AND result ='LY'), 0) AS sumOfLy\n" +
         "    ,COALESCE((SELECT COUNT(result) FROM temp_table_2 tb WHERE tb.report_id = rp.id AND result ='Không đạt'), 0) AS sumOfFail\n" +
         "    ,COALESCE((SELECT COUNT(result) FROM temp_table_2 tb WHERE tb.report_id = rp.id AND result ='Chọn Lại'), 0) AS sumOfSelectAgain\n" +
+        "    ,COALESCE((SELECT COUNT(result) FROM temp_table_2 tb WHERE tb.report_id = rp.id AND result ='Đạt'), 0) AS sumOfDat\n" +
+        "    ,COALESCE((SELECT COUNT(result) FROM temp_table_2 tb WHERE tb.report_id = rp.id AND result ='PASS'), 0) AS sumOfPass\n" +
         "FROM iso.report rp\n" +
         "INNER JOIN iso.plan p ON p.id = rp.plan_id \n" +
         "LEFT JOIN plan_group_history_detail pghd ON rp.id = pghd.report_id " +
