@@ -2780,3 +2780,7 @@ p-dialog {
 .tooltip {
   z-index: 99999 !important; /* Đảm bảo nó cao hơn baseZIndex của p-dialog (1100) */
 }
+
+.p-datatable-loading-overlay {
+  background-color: transparent !important;
+}
