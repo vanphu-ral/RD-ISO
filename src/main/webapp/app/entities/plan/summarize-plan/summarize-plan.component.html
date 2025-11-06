@@ -36,7 +36,6 @@
         <th class="text-center border">Tổng điểm BBKT</th>
         <th class="text-center border">Điểm trung bình</th>
         <th class="text-center border">Tổng lỗi</th>
-        <th class="text-center border">Số lượng tiêu chí không đạt</th>
         <th class="text-center border">Tuỳ chọn</th>
       </tr>
     </ng-template>
@@ -64,11 +63,6 @@
           <ng-template #buocNhay>
             {{ summarize.sumOfFail }}
           </ng-template>
-        </td>
-        <td class="text-center border">
-          <ng-container *ngIf="summarize.convertScore == 'Bước nhảy'">
-            {{ summarize.sumOfFail }}
-          </ng-container>
         </td>
 
         <td class="text-center border">
