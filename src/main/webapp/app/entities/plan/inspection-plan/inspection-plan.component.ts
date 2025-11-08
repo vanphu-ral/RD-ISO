@@ -109,11 +109,11 @@ export class InspectionPlanComponent implements OnInit {
     this.layoutService.isMobile$.subscribe(value => {
       this.isMobile = value;
     });
-    this.evaluatorService.getAllCheckTargets().subscribe(res => {
-      this.evaluator = res;
-    });
-    this.checkTargetService.getAllCheckTargets().subscribe(res => {
-      this.listUserHander = res;
+    this.evaluatorService.getAllCheckTargets().subscribe(res1 => {
+      this.checkTargetService.getAllCheckTargets().subscribe(res2 => {
+        this.evaluator = [...res1, ...res2];
+        this.listUserHander = res2;
+      });
     });
     this.activatedRoute.data.pipe(take(1)).subscribe(({ plan }) => {
       this.plan = plan;
@@ -546,10 +546,6 @@ export class InspectionPlanComponent implements OnInit {
   }
 
   completePlanRepair() {
-    // console.log(this.selectedRecheckCriterial);
-    if (this.selectedRecheckCriterial.length === 0) {
-      return;
-    }
     const updateRequests: any[] = this.selectedRecheckCriterial.map(cpl => {
       return {
         ...cpl,
@@ -560,6 +556,24 @@ export class InspectionPlanComponent implements OnInit {
     const arrRecheck: any[] = this.selectedRecheckCriterial
       .flatMap(item => item.recheckDetails || [])
       .map(detail => ({ ...detail, status: 'Đã hoàn thành' }));
+    if (updateRequests.length === 0 || arrRecheck.length === 0) {
+      Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        icon: 'error',
+        showConfirmButton: false,
+        timer: 2500,
+        timerProgressBar: true,
+        didOpen(toast) {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+        },
+      }).fire({
+        icon: 'error',
+        title: 'Có tiêu chí đang chưa có đợt đánh giá lại',
+      });
+      return;
+    }
     this.remediationPlanService.createRecheckRemePlan(arrRecheck).subscribe();
     this.remediationPlanService.createRemediationPlanDetail(updateRequests).subscribe(repo => {
       this.selectedRecheckCriterial.forEach(selectedCpl => {
