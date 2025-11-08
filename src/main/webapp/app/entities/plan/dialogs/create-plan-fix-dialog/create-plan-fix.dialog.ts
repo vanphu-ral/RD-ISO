@@ -48,15 +48,15 @@ export class CreatePlanFixDialog {
     this.layoutService.isMobile$.subscribe(value => {
       this.isMobile = value;
     });
-    this.evaluatorService.getAllCheckTargets().subscribe(res => {
-      this.evaluator = res;
+    this.evaluatorService.getAllCheckTargets().subscribe(res1 => {
+      this.checkTargetService.getAllCheckTargets().subscribe(res2 => {
+        this.evaluator = [...res1, ...res2];
+        this.listUserHander = res2;
+      });
     });
     this.planGrHistoryDetailService.getRecheckDetails(this.data.id, '', '', 0, 10).subscribe(res => {
       this.listCriterialError =
         res.body?.content.filter((item: any) => item.result != 'Đạt' && item.statusRecheck != 'Đã hoàn thành') || [];
-    });
-    this.checkTargetService.getAllCheckTargets().subscribe(res => {
-      this.listUserHander = res;
     });
     this.groupCriterialError.repairDate = new Date().toISOString().substring(0, 10);
     this.groupCriterialError.name = `KHKP-${this.account.login}-${new Date().getDate()}-${
