@@ -122,7 +122,7 @@
   >
     <div class="modal-body">
       <div class="row">
-        <div class="col">
+        <div class="col-md-6">
           <label for="userNameGroups">Tên kế hoạch khắc phục</label>
           <input
             type="text"
@@ -139,6 +139,20 @@
             <span *ngIf="isNameDuplicate">Tên này đã tồn tại</span>
           </div>
         </div>
+        <div class="col-md-6">
+          <label for="inspector">Người phúc tra</label>
+          <p-dropdown
+            name="inspector"
+            appendTo="body"
+            [styleClass]="'w-100'"
+            [options]="evaluator"
+            [(ngModel)]="groupCriterialError.inspector"
+            optionLabel="name"
+            optionValue="name"
+            placeholder="Chọn người phúc tra"
+            [filter]="true"
+          />
+        </div>
       </div>
       <div class="row">
         <div class="col-md-6">
@@ -146,12 +160,18 @@
           <input type="date" name="checkDate" [(ngModel)]="groupCriterialError.repairDate" required class="form-control" />
         </div>
         <div class="col-md-6">
-          <label for="createdBy">Người kiểm tra</label>
-          <select name="createdBy" [(ngModel)]="groupCriterialError.createdBy" required class="form-control">
-            <option *ngFor="let data of evaluator" [value]="data.name">
-              {{ data.name }}
-            </option>
-          </select>
+          <label for="createdBy">Người tạo</label>
+          <p-dropdown
+            [options]="listUser"
+            [(ngModel)]="groupCriterialError.createdBy"
+            optionLabel="name"
+            [filter]="true"
+            placeholder="Chọn người dùng"
+            [style]="{ width: '100%' }"
+            optionValue="name"
+            dataKey="name"
+          >
+          </p-dropdown>
         </div>
       </div>
       <div class="mt-3" style="overflow-x: auto; width: 100%">
@@ -190,12 +210,23 @@
                 <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="row.description"></textarea>
               </td>
               <td class="text-center border">
-                <select name="userHandle" class="form-control" [(ngModel)]="row.userHandle">
+                <!-- <select name="userHandle" class="form-control" [(ngModel)]="row.userHandle">
                   <option value="" disabled selected>-- Chọn người đánh giá --</option>
                   <option *ngFor="let data of listUserHander" [value]="data.name">
                     {{ data.name }}
                   </option>
-                </select>
+                </select> -->
+                <p-dropdown
+                  name="createdBy"
+                  appendTo="body"
+                  [styleClass]="'w-100'"
+                  [options]="listUserHander"
+                  [(ngModel)]="row.userHandle"
+                  optionLabel="name"
+                  optionValue="name"
+                  placeholder="Chọn người xử lý"
+                  [filter]="true"
+                />
               </td>
               <td class="text-center border">
                 <input type="date" [(ngModel)]="row.planTimeComplete" />
@@ -306,7 +337,8 @@
           <th class="text-center border">Mã kế hoạch</th>
           <th class="text-center border">Tên kế hoạch</th>
           <th class="text-center border">Thời gian khắc phục</th>
-          <th class="text-center border">Người tham gia</th>
+          <th class="text-center border">Người phúc tra</th>
+          <th class="text-center border">Người tạo</th>
           <th class="text-center border">Trạng thái</th>
           <th class="text-center border">Tuỳ chọn</th>
         </tr>
@@ -317,6 +349,7 @@
           <td class="text-center border">{{ reme.code }}</td>
           <td class="text-center border">{{ reme.name }}</td>
           <td class="text-center border">{{ reme.repairDate }}</td>
+          <td class="text-center border">{{ reme.inspector }}</td>
           <td class="text-center border">{{ reme.createdBy }}</td>
           <td class="text-center border">
             <p-tag [value]="reme.status" [severity]="reme.status == 'Đã hoàn thành' ? 'success' : 'danger'" />

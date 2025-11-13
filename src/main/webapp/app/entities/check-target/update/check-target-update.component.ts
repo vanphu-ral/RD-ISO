@@ -29,6 +29,8 @@ export class CheckTargetUpdateComponent implements OnInit {
   checkGroups: any[] = [];
   account: Account | null = null;
   checkLevels: any[] = [];
+  listGroup: any[] = [];
+  groupInfoBase: any[] = [];
   name = '';
   check = '';
   protected checkTargetService = inject(CheckTargetService);
@@ -175,8 +177,30 @@ export class CheckTargetUpdateComponent implements OnInit {
 
   protected loadCheckGroups(): void {
     this.checkGroupService.getAllCheckerGroups().subscribe(data => {
+      this.groupInfoBase = data;
       this.checkGroups = [...new Map(data.map((item: any) => [item.code, { id: item.id, code: item.code, name: item.name }])).values()];
     });
+  }
+
+  protected checkGroup() {
+    const checkGroupId = Number(this.editForm.get('checkGroupId')?.value);
+    const checkGroup = this.checkGroups.find(x => x.id === checkGroupId);
+    this.listGroup = this.groupInfoBase.filter(x => x.code === checkGroup.code);
+    this.listGroup = Array.from(
+      new Map(
+        this.listGroup
+          .filter(item => item.groupCode && item.groupName)
+          .map(item => [item.groupCode, { code: item.groupCode, name: item.groupName }]),
+      ).values(),
+    );
+    if (this.listGroup.length === 0) {
+      Swal.fire({
+        title: 'Error',
+        text: `Không có dữ liệu tổ đánh giá thuộc bộ phận ${checkGroup.name}`,
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+    }
   }
 
   protected updateCheckLevel(): void {

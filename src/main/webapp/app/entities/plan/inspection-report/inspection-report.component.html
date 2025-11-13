@@ -409,6 +409,7 @@
           <th class="text-center border" *ngIf="!isMobile">Mã kế hoạch</th>
           <th class="text-center border">Tên kế hoạch</th>
           <th class="text-center border">Thời gian khắc phục</th>
+          <th class="text-center border">Người phúc tra</th>
           <th class="text-center border">Người tạo</th>
           <th class="text-center border">Trạng thái</th>
           <th class="text-center border">Tuỳ chọn</th>
@@ -420,6 +421,7 @@
           <td class="text-center border" *ngIf="!isMobile">{{ reme.code }}</td>
           <td class="text-center border">{{ reme.name }}</td>
           <td class="text-center border">{{ reme.repairDate }}</td>
+          <td class="text-center border">{{ reme.inspector }}</td>
           <td class="text-center border">{{ reme.createdBy }}</td>
           <td class="text-center border">
             <p-tag [value]="reme.status" [severity]="reme.status == 'Đã hoàn thành' ? 'success' : 'danger'" />

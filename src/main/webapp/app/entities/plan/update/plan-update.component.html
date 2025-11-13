@@ -152,7 +152,12 @@
                 </select>
               </td>
               <td>
-                <select [(ngModel)]="report.testOfObject" [ngModelOptions]="{ standalone: true }" (click)="checkTarget()">
+                <select
+                  [(ngModel)]="report.testOfObject"
+                  [ngModelOptions]="{ standalone: true }"
+                  (click)="checkTarget()"
+                  (ngModelChange)="fillGroup(index, report.testOfObject)"
+                >
                   <option *ngFor="let data of checkTargets" [value]="data.name">
                     {{ data.name }}
                   </option>

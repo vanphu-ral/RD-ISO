@@ -27,6 +27,8 @@ import { TagModule } from 'primeng/tag';
 import HasAnyAuthorityDirective from 'app/shared/auth/has-any-authority.directive';
 import { LayoutService } from 'app/layouts/service/layout.service';
 import { PlanGroupService } from 'app/entities/plan-group/service/plan-group.service';
+import { DropdownModule } from 'primeng/dropdown';
+import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
   selector: 'jhi-inspection-report',
@@ -50,6 +52,7 @@ import { PlanGroupService } from 'app/entities/plan-group/service/plan-group.ser
     FileUploadModule,
     TagModule,
     HasAnyAuthorityDirective,
+    DropdownModule,
   ],
   templateUrl: './inspection-plan.component.html',
   styleUrl: './inspection-plan.component.scss',
@@ -91,6 +94,8 @@ export class InspectionPlanComponent implements OnInit {
   selectedRowRepair: any = null;
   editFieldRepair: 'note' | 'reason' | null = null;
   listUserHander: any[] = [];
+  listUser: any[] = [];
+  account: any = {};
 
   constructor(
     protected activatedRoute: ActivatedRoute,
@@ -101,7 +106,7 @@ export class InspectionPlanComponent implements OnInit {
     private router: Router,
     private layoutService: LayoutService,
     private planGrHistoryDetailService: PlanGroupService,
-    private reportService: ReportService,
+    private accountService: AccountService,
     private checkTargetService: CheckTargetService,
   ) {}
 
@@ -109,11 +114,25 @@ export class InspectionPlanComponent implements OnInit {
     this.layoutService.isMobile$.subscribe(value => {
       this.isMobile = value;
     });
-    this.evaluatorService.getAllCheckTargets().subscribe(res1 => {
-      this.checkTargetService.getAllCheckTargets().subscribe(res2 => {
-        this.evaluator = [...res1, ...res2];
-        this.listUserHander = res2;
+    this.evaluatorService.getAllCheckTargets().subscribe(res => {
+      this.evaluator = res;
+    });
+    this.checkTargetService.getAllCheckTargets().subscribe(res => {
+      this.listUserHander = res;
+    });
+    this.evaluatorService.getUsers().subscribe(res => {
+      this.listUser = res.map(user => {
+        const firstName = user.firstName ?? '';
+        const lastName = user.lastName ?? '';
+        const fullName = [firstName, lastName].filter(Boolean).join(' ').trim();
+        return {
+          name: fullName ? `${user.username} - ${fullName}` : user.username,
+          username: user.username,
+        };
       });
+    });
+    this.accountService.identity().subscribe(account => {
+      this.account = account;
     });
     this.activatedRoute.data.pipe(take(1)).subscribe(({ plan }) => {
       this.plan = plan;
@@ -537,6 +556,10 @@ export class InspectionPlanComponent implements OnInit {
         today.getMonth() + 1
       }-${today.getFullYear()}-${new Date().getHours()}h${new Date().getMinutes()}p`;
       this.groupCriterialError.repairDate = today.toISOString().substring(0, 10);
+      const found = this.listUser.find(u => u.username === this.account.login);
+      if (found) {
+        this.groupCriterialError.createdBy = found.name;
+      }
     }
   }
 
