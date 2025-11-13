@@ -56,6 +56,7 @@ export class CheckTargetComponent implements OnInit {
     createdAt: '',
     updatedAt: '',
     evalCheckGroup: '',
+    groupName: '',
     status: '',
     updateBy: '',
   };
@@ -143,6 +144,7 @@ export class CheckTargetComponent implements OnInit {
         (!this.filters.createdAt || createdDate === searchCreatedDate) &&
         (!this.filters.updatedAt || updatedDate === searchUpdatedDate) &&
         (!this.filters.evalCheckGroup || checkTarget.evalCheckGroup?.toLowerCase().includes(this.filters.evalCheckGroup.toLowerCase())) &&
+        (!this.filters.groupName || checkTarget.groupName?.toLowerCase().includes(this.filters.groupName.toLowerCase())) &&
         (!this.filters.status || checkTarget.status?.toString().includes(this.filters.status)) &&
         (!this.filters.updateBy || checkTarget.updateBy?.toLowerCase().includes(this.filters.updateBy.toLowerCase()))
       );
