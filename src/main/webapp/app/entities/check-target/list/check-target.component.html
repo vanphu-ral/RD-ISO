@@ -237,6 +237,7 @@
         <th class="text-center border">STT</th>
         <th class="text-center border">Tên</th>
         <th class="text-center border">Bộ phận được kiểm tra</th>
+        <th class="text-center border">Tổ</th>
         <th class="text-center border">Trạng thái</th>
         <th class="text-center border">Thời gian tạo</th>
         <th class="text-center border">Thời gian cập nhật</th>
@@ -259,6 +260,14 @@
               <i class="pi pi-search"></i>
             </p-inputIcon>
             <input pInputText type="text" placeholder="Search" style="padding-left: 30px" (input)="onSearch('evalCheckGroup', $event)" />
+          </p-iconField>
+        </th>
+        <th class="text-center border">
+          <p-iconField iconPosition="left" class="ml-auto">
+            <p-inputIcon>
+              <i class="pi pi-search"></i>
+            </p-inputIcon>
+            <input pInputText type="text" placeholder="Search" style="padding-left: 30px" (input)="onSearch('groupName', $event)" />
           </p-iconField>
         </th>
         <th class="text-center border">
@@ -301,6 +310,7 @@
         <td class="text-center border">{{ index + 1 }}</td>
         <td class="text-center border">{{ checkTarget.name }}</td>
         <td class="text-center border">{{ checkTarget.evalCheckGroup }}</td>
+        <td class="text-center border">{{ checkTarget.groupName }}</td>
         <td class="text-center border"><p-tag [value]="checkTarget.status" [severity]="getSeverity(checkTarget.status)" /></td>
         <td class="text-center border">{{ checkTarget.createdAt | formatMediumDatetime }}</td>
         <td class="text-center border">{{ checkTarget.updatedAt | formatMediumDatetime }}</td>
