@@ -50,6 +50,7 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
         " ,(SELECT COUNT(result) FROM temp_table_2 tb WHERE tb.plan_group_history_id = pghd.plan_group_history_id AND rp.id = report_id AND result ='NC') AS sumOfNc\n" +
         " ,(SELECT COUNT(result) FROM temp_table_2 tb WHERE tb.plan_group_history_id = pghd.plan_group_history_id AND rp.id = report_id AND result ='LY') AS sumOfLy\n" +
         " ,(SELECT COUNT(result) FROM temp_table_2 tb WHERE tb.plan_group_history_id = pghd.plan_group_history_id AND rp.id = report_id AND result ='Không đạt') AS sumOfFail\n" +
+        " ,(SELECT COUNT(result) FROM temp_table_2 tb WHERE tb.plan_group_history_id = pghd.plan_group_history_id AND rp.id = report_id AND result ='Chọn lại') AS sumOfSelectAgain\n" +
         "FROM iso.plan_group_history_detail pghd\n" +
         "INNER JOIN iso.plan_group_history pgh ON pghd.plan_group_history_id = pgh.id\n" +
         "INNER JOIN iso.report rp ON rp.id = pghd.report_id WHERE rp.id = ?2 ;",

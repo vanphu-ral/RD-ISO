@@ -26,6 +26,7 @@ public interface PlanStatisticalResponse {
     String getTimeStart(); // thoi gian bat dau
     Integer getSumOfPass(); // tong so tieu chi pass
     Integer getSumOfDat(); // tong so tieu chi dat
+    Integer getSumOfSelectAgain(); // tong so tieu chi chon lai
     Integer getTotal();
     Integer getSumOfUncheck(); // tong so loi chua khac phuc
     Integer getSumOfCheck(); // tong so loi da khac phuc

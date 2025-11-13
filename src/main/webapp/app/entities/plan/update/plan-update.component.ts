@@ -671,6 +671,15 @@ export class PlanUpdateComponent implements OnInit {
     }
   }
 
+  fillGroup(index: number, data: any) {
+    console.log(data);
+    const group = this.checkTargets.find(item => item.name === data).groupName;
+    console.log(group);
+    if (group) {
+      this.listReports[index].groupName = group;
+    }
+  }
+
   checkEvaluator(data: any) {
     const checkGroupId = data.id;
     this.evaluator = this.evaluators.filter(x => x.userGroupId === checkGroupId);

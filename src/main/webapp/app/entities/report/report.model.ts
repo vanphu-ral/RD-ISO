@@ -5,6 +5,7 @@ export interface IReport {
   name?: string | null;
   code?: string | null;
   sampleReportId?: number | null;
+  groupName?: string | null;
   testOfObject?: string | null;
   checker?: string | null;
   status?: string | null;

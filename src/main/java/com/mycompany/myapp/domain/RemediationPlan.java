@@ -19,6 +19,9 @@ public class RemediationPlan implements Serializable {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "inspector")
+    private String inspector;
+
     @Column(name = "report_id")
     private Long reportId;
 
@@ -65,6 +68,14 @@ public class RemediationPlan implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getInspector() {
+        return inspector;
+    }
+
+    public void setInspector(String inspector) {
+        this.inspector = inspector;
     }
 
     public Long getReportId() {

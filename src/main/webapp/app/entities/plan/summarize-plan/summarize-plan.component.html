@@ -148,6 +148,7 @@
           <th class="text-center border">NC</th>
           <th class="text-center border">LY</th>
         </ng-container>
+        <th class="text-center border">Chọn lại</th>
         <ng-template #buocNhayTH>
           <th class="text-center border">Không đạt</th>
         </ng-template>
@@ -165,6 +166,7 @@
           <td class="text-center border">{{ reportSum.sumOfNc }}</td>
           <td class="text-center border">{{ reportSum.sumOfLy }}</td>
         </ng-container>
+        <td class="text-center border">{{ reportSum.sumOfSelectAgain }}</td>
         <ng-template #buocNhay>
           <td class="text-center border">{{ reportSum.sumOfFail }}</td>
         </ng-template>

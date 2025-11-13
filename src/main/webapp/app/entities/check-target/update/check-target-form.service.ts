@@ -34,6 +34,7 @@ type CheckTargetFormGroupContent = {
   id: FormControl<CheckTargetFormRawValue['id'] | NewCheckTarget['id']>;
   name: FormControl<CheckTargetFormRawValue['name']>;
   checkGroupId: FormControl<CheckTargetFormRawValue['checkGroupId']>;
+  groupName: FormControl<CheckTargetFormRawValue['groupName']>;
   status: FormControl<CheckTargetFormRawValue['status']>;
   createdAt: FormControl<CheckTargetFormRawValue['createdAt']>;
   updatedAt: FormControl<CheckTargetFormRawValue['updatedAt']>;
@@ -62,6 +63,7 @@ export class CheckTargetFormService {
         validators: [Validators.required],
       }),
       checkGroupId: new FormControl(checkTargetRawValue.checkGroupId), // ✅ kiểu number
+      groupName: new FormControl(checkTargetRawValue.groupName),
       status: new FormControl(checkTargetRawValue.status ?? 'ACTIVE'),
       createdAt: new FormControl(checkTargetRawValue.createdAt),
       updatedAt: new FormControl(checkTargetRawValue.updatedAt),

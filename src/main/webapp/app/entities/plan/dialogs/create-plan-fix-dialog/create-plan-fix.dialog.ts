@@ -11,11 +11,12 @@ import { LayoutService } from 'app/layouts/service/layout.service';
 import dayjs from 'dayjs/esm';
 import { AccountService } from 'app/core/auth/account.service';
 import { CheckTargetService } from 'app/entities/check-target/service/check-target.service';
+import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
   standalone: true,
   templateUrl: './create-plan-fix.dialog.html',
-  imports: [SharedModule, FormsModule, TableModule, ButtonModule],
+  imports: [SharedModule, FormsModule, TableModule, ButtonModule, DropdownModule],
 })
 export class CreatePlanFixDialog {
   data: any;
@@ -27,6 +28,7 @@ export class CreatePlanFixDialog {
   selectedlistCriterialError: any[] = [];
   account: any = {};
   listUserHander: any[] = [];
+  listUser: any[] = [];
 
   constructor(
     public ref: DynamicDialogRef,
@@ -48,11 +50,26 @@ export class CreatePlanFixDialog {
     this.layoutService.isMobile$.subscribe(value => {
       this.isMobile = value;
     });
-    this.evaluatorService.getAllCheckTargets().subscribe(res1 => {
-      this.checkTargetService.getAllCheckTargets().subscribe(res2 => {
-        this.evaluator = [...res1, ...res2];
-        this.listUserHander = res2;
+    this.evaluatorService.getAllCheckTargets().subscribe(res => {
+      this.evaluator = res;
+    });
+    this.checkTargetService.getAllCheckTargets().subscribe(res => {
+      this.listUserHander = res;
+    });
+    this.evaluatorService.getUsers().subscribe(res => {
+      this.listUser = res.map(user => {
+        const firstName = user.firstName ?? '';
+        const lastName = user.lastName ?? '';
+        const fullName = [firstName, lastName].filter(Boolean).join(' ').trim();
+        return {
+          name: fullName ? `${user.username} - ${fullName}` : user.username,
+          username: user.username,
+        };
       });
+      const found = this.listUser.find(u => u.username === this.account.login);
+      if (found) {
+        this.groupCriterialError.createdBy = found.name;
+      }
     });
     this.planGrHistoryDetailService.getRecheckDetails(this.data.id, '', '', 0, 10).subscribe(res => {
       this.listCriterialError =

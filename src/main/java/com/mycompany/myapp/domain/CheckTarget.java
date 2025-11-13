@@ -26,6 +26,9 @@ public class CheckTarget implements Serializable {
     @Column(name = "check_group_id")
     private Long checkGroupId;
 
+    @Column(name = "group_name")
+    private String groupName;
+
     @Column(name = "status")
     private String status;
 
@@ -72,6 +75,14 @@ public class CheckTarget implements Serializable {
 
     public void setCheckGroupId(Long checkGroupId) {
         this.checkGroupId = checkGroupId;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
     public String getStatus() {
