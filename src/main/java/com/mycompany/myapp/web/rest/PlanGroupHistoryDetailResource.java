@@ -105,10 +105,10 @@ public class PlanGroupHistoryDetailResource {
         @RequestParam Long planId,
         @RequestParam(required = false) String criterialName,
         @RequestParam(required = false) String groupCriterialName,
-        @PageableDefault(size = 10) Pageable pageable
+        @PageableDefault(size = 100) Pageable pageable
     ) {
-        String criterialNameFilter = (criterialName != null) ? criterialName : "";
-        String groupCriterialNameFilter = (groupCriterialName != null) ? groupCriterialName : "";
+        String criterialNameFilter = (criterialName != null) ? "%" + criterialName + "%" : "%%";
+        String groupCriterialNameFilter = (groupCriterialName != null) ? "%" + groupCriterialName + "%" : "%%";
         Page<PlanGroupHistoryResponse> result = planGroupHistoryDetailRepository.getDetailRecheckByPlanIdWithFilter(
             planId,
             criterialNameFilter,
