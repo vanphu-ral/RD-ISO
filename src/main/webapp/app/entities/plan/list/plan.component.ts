@@ -44,6 +44,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { RemediationPlanService } from '../service/remediationPlan.service';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ListCriterialFixDialog } from '../dialogs/list-criterial-fix-dialog/list-criterial-fix.dialog';
+import { CheckerGroupService } from 'app/entities/checker-group/service/checker-group.service';
 
 @Component({
   standalone: true,
@@ -137,6 +138,7 @@ export class PlanComponent implements OnInit {
   checkAll: boolean = false;
   selectedFrequencies: string[] = [];
   IsHasRemediationPlan: boolean = false;
+  listOfSubjectOfAssetmentPlan: any[] = [];
 
   // filter page
   filter: any = {};
@@ -166,6 +168,7 @@ export class PlanComponent implements OnInit {
     private layoutService: LayoutService,
     protected reportService: ReportService,
     private remediationPlanService: RemediationPlanService,
+    private checkerGroupService: CheckerGroupService,
     private dialogService: DialogService,
   ) {}
 
@@ -212,8 +215,12 @@ export class PlanComponent implements OnInit {
       evaluators: this.evaluatorService.getAllCheckTargets(),
       converts: this.convertService.query(),
       frequencies: this.frequencyService.getAllCheckFrequency(),
+      checkerGroups: this.checkerGroupService.getAllCheckerGroups(),
       account: this.accountService.identity(),
-    }).subscribe(({ evaluators, converts, frequencies, account }) => {
+    }).subscribe(({ evaluators, converts, frequencies, checkerGroups, account }) => {
+      this.listOfSubjectOfAssetmentPlan = [
+        ...new Map(checkerGroups.map((item: any) => [item.code, { code: item.code, name: item.name }])).values(),
+      ];
       this.evaluators = evaluators;
       this.listEvalReportBase = converts.body;
       this.listOfFrequency = frequencies;
