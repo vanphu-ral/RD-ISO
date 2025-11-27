@@ -66,6 +66,7 @@ export class SummaryDetailComponent implements OnInit {
   listEvalReportBase: any = [];
   listEvaluator: any[] = [];
   listTestOfObject: any[] = [];
+  fullCheckerGroup: any[] = [];
 
   // Pagination and loading state
   totalRecords: number = 0;
@@ -98,8 +99,11 @@ export class SummaryDetailComponent implements OnInit {
       checkTarget: checkTarget$,
     }).subscribe(({ convert, checkerGroup, reportType, evaluator, checkTarget }) => {
       this.listEvalReportBase = convert.body || [];
+      this.fullCheckerGroup = checkerGroup;
       this.listBranch = [...new Map(checkerGroup.map((item: any) => [item.code, { code: item.code, name: item.name }])).values()];
-      this.listTeams = checkerGroup.map((item: any) => ({ code: item.groupCode, name: item.groupName }));
+      this.listTeams = checkerGroup
+        .filter((item: any) => item.groupCode && item.groupName)
+        .map((item: any) => ({ code: item.groupCode, name: item.groupName }));
       this.reportDto.subjectOfAssetmentPlan = this.listBranch.map(item => item.name);
       this.reportDto.groupName = this.listTeams.map(item => item.name);
       this.listReportType = reportType;
@@ -155,6 +159,26 @@ export class SummaryDetailComponent implements OnInit {
     } else {
       return data.sumOfScoreScale;
     }
+  }
+
+  filterTeamsByBranch() {
+    const selectedBranches = this.reportDto.subjectOfAssetmentPlan;
+    if (!selectedBranches || selectedBranches.length === 0) {
+      this.listTeams = this.fullCheckerGroup.map(item => ({
+        code: item.groupCode,
+        name: item.groupName,
+      }));
+      return;
+    }
+    const selectedCodes = this.listBranch.filter(b => selectedBranches.includes(b.name)).map(b => b.code);
+    const teams = this.fullCheckerGroup
+      .filter(item => selectedCodes.includes(item.code) && item.groupCode)
+      .map(item => ({
+        code: item.groupCode,
+        name: item.groupName,
+      }));
+    this.listTeams = teams;
+    this.reportDto.groupName = this.reportDto.groupName?.filter(team => this.listTeams.some(t => t.name === team));
   }
 
   // export excel
