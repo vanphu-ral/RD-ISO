@@ -31,7 +31,7 @@ export class ListCriterialFixDialog {
 
   ngOnInit(): void {
     if (this.type == 'PLAN') {
-      this.planGrHistoryDetailService.getRecheckDetailPlan(this.data.id, '', '', 0, 10).subscribe(res => {
+      this.planGrHistoryDetailService.getRecheckDetailPlan(this.data.id, '', '', 0, 100).subscribe(res => {
         if (this.typeCriterial == 0) {
           this.listCriterialFix =
             res.body?.content.filter((item: any) => item.resultRecheck === 'Đạt' && item.statusRecheck === 'Đã hoàn thành') || [];
@@ -41,7 +41,7 @@ export class ListCriterialFixDialog {
         }
       });
     } else {
-      this.planGrHistoryDetailService.getRecheckDetails(this.data.id, '', '', 0, 10).subscribe(res => {
+      this.planGrHistoryDetailService.getRecheckDetails(this.data.id, '', '', 0, 100).subscribe(res => {
         if (this.typeCriterial == 0) {
           this.listCriterialFix =
             res.body?.content.filter((item: any) => item.resultRecheck === 'Đạt' && item.statusRecheck === 'Đã hoàn thành') || [];
