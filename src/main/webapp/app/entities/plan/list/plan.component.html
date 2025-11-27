@@ -78,14 +78,17 @@
           <input pInputText type="text" placeholder="Search" [(ngModel)]="filter.name" class="w-100" (keydown.enter)="onSearch()" />
         </th>
         <th style="padding: 0">
-          <input
-            pInputText
-            type="text"
-            placeholder="Search"
+          <p-dropdown
             [(ngModel)]="filter.subjectOfAssetmentPlan"
-            class="w-100"
-            (keydown.enter)="onSearch()"
-          />
+            [options]="listOfSubjectOfAssetmentPlan"
+            optionLabel="name"
+            optionValue="name"
+            (onChange)="onSearch()"
+            [showClear]="true"
+            [appendTo]="'body'"
+            [style]="{ width: '100%' }"
+          >
+          </p-dropdown>
         </th>
         <th style="padding: 0">
           <p-dropdown
