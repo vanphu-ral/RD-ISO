@@ -231,7 +231,7 @@ export class PlanUpdateComponent implements OnInit {
         error(error) {},
       });
 
-    this.isCopyMode = history.state.mode === 'COPY' ? true : false;
+    this.isCopyMode = this.activatedRoute.snapshot.queryParamMap.get('mode') === 'COPY' ? true : false;
     this.activatedRoute.data.pipe(take(1)).subscribe(({ plan }) => {
       forkJoin({
         checkTargets: this.checkTargetService.getAllCheckTargets(),
@@ -334,7 +334,7 @@ export class PlanUpdateComponent implements OnInit {
       createBy: formPlan.createBy ?? this.plan?.createBy,
       createdAt: formPlan.createdAt ?? this.plan?.createdAt,
     };
-    if (plan.id === null || this.mode === 'COPY') {
+    if (plan.id === null || this.isCopyMode) {
       // Create mode
       const newPlan = { ...plan, id: null };
       newPlan.createBy = this.account?.login;
