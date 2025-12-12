@@ -59,7 +59,6 @@ export class CriteriaUpdateComponent implements OnInit {
       }
     });
     this.editForm.get('name')?.addValidators([Validators.required]);
-    this.editForm.get('name')?.setAsyncValidators([this.duplicateNameValidator.bind(this)]);
     this.editForm.get('name')?.updateValueAndValidity();
     this.loadCriateriaGroups();
   }
