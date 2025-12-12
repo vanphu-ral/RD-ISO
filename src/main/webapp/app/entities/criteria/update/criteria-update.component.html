@@ -29,7 +29,6 @@
             *ngIf="editForm.get('name')?.invalid && (editForm.get('name')?.touched || editForm.get('name')?.dirty)"
           >
             <span *ngIf="editForm.get('name')?.errors?.['required']">Tên không được để trống </span>
-            <span *ngIf="editForm.get('name')?.errors?.['duplicate']">Tên này đã tồn tại</span>
           </div>
         </div>
 
