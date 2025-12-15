@@ -42,6 +42,7 @@
             data-cy="checkGroupId"
             formControlName="checkGroupId"
             name="checkGroupId"
+            (change)="checkGroup()"
           >
             <option *ngFor="let item of checkGroups" [value]="item.id">{{ item.name }}</option>
           </select>
@@ -49,14 +50,7 @@
 
         <div class="mb-3">
           <label class="form-label" for="field_groupName">Tổ</label>
-          <select
-            class="form-control form-select"
-            id="field_groupName"
-            data-cy="groupName"
-            formControlName="groupName"
-            name="groupName"
-            (click)="checkGroup()"
-          >
+          <select class="form-control form-select" id="field_groupName" data-cy="groupName" formControlName="groupName" name="groupName">
             <option *ngFor="let item of listGroup" [value]="item.name">{{ item.name }}</option>
           </select>
         </div>
